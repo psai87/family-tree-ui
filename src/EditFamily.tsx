@@ -44,41 +44,45 @@ function EditFamily() {
 
     return (
         <>
-                <div className="p-8 bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
-                    {/* Buttons */}
-                    <div className="flex justify-end mb-6 gap-4">
-                        <button
-                            onClick={handleAddRow}
-                            className="bg-blue-600 text-white px-5 py-2 rounded-xl shadow hover:bg-blue-700 transition duration-300"
-                        >
-                            ➕ Add Record
-                        </button>
-                        <button
-                            onClick={handleSaveAll}
-                            className="bg-green-600 text-white px-5 py-2 rounded-xl shadow hover:bg-green-700 transition duration-300"
-                        >
-                            💾 Save All
-                        </button>
+            <div className="min-h-screen bg-neutral-100 py-12 px-6 md:px-12">
+                <div className="max-w-5xl mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 p-6">
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-xl font-semibold text-gray-800">Editable Records</h2>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={handleAddRow}
+                                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm transition"
+                            >
+                                ➕ Add Record
+                            </button>
+                            <button
+                                onClick={handleSaveAll}
+                                className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 shadow-sm transition"
+                            >
+                                💾 Save All
+                            </button>
+                        </div>
                     </div>
 
                     {/* Table */}
-                    <div className="overflow-auto shadow-2xl rounded-2xl border border-gray-200 bg-white">
-                        <table className="min-w-full table-auto">
-                            <thead className="bg-gray-100 text-gray-700 text-left">
-                            <tr>
-                                <th className="py-3 px-6">Name</th>
-                                <th className="py-3 px-6">Email</th>
-                                <th className="py-3 px-6">Age</th>
-                                <th className="py-3 px-6">Actions</th>
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full border-separate border-spacing-y-2">
+                            <thead>
+                            <tr className="text-left text-sm text-gray-600">
+                                <th className="px-4 py-2">Name</th>
+                                <th className="px-4 py-2">Email</th>
+                                <th className="px-4 py-2">Age</th>
+                                <th className="px-4 py-2">Actions</th>
                             </tr>
                             </thead>
                             <tbody>
                             {rows.map((row) => (
                                 <tr
                                     key={row.id}
-                                    className="border-t hover:bg-gray-50 transition duration-150"
+                                    className="bg-neutral-50 hover:bg-neutral-100 transition rounded-lg shadow-sm"
                                 >
-                                    <td className="py-3 px-6">
+                                    <td className="px-4 py-2">
                                         {row.isEditing ? (
                                             <input
                                                 type="text"
@@ -86,13 +90,13 @@ function EditFamily() {
                                                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                                                     handleInputChange(row.id, "name", e.target.value)
                                                 }
-                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
                                             />
                                         ) : (
-                                            <span className="text-gray-800">{row.name}</span>
+                                            <span>{row.name}</span>
                                         )}
                                     </td>
-                                    <td className="py-3 px-6">
+                                    <td className="px-4 py-2">
                                         {row.isEditing ? (
                                             <input
                                                 type="email"
@@ -100,13 +104,13 @@ function EditFamily() {
                                                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                                                     handleInputChange(row.id, "email", e.target.value)
                                                 }
-                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
                                             />
                                         ) : (
-                                            <span className="text-gray-800">{row.email}</span>
+                                            <span>{row.email}</span>
                                         )}
                                     </td>
-                                    <td className="py-3 px-6">
+                                    <td className="px-4 py-2">
                                         {row.isEditing ? (
                                             <input
                                                 type="number"
@@ -114,24 +118,24 @@ function EditFamily() {
                                                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                                                     handleInputChange(row.id, "age", e.target.value)
                                                 }
-                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
                                             />
                                         ) : (
-                                            <span className="text-gray-800">{row.age}</span>
+                                            <span>{row.age}</span>
                                         )}
                                     </td>
-                                    <td className="py-3 px-6">
+                                    <td className="px-4 py-2">
                                         {row.isEditing ? (
                                             <button
                                                 onClick={() => handleSaveRow(row.id)}
-                                                className="bg-green-500 text-white px-4 py-1 rounded-md hover:bg-green-600 transition"
+                                                className="text-sm bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
                                             >
                                                 ✅ Save
                                             </button>
                                         ) : (
                                             <button
                                                 onClick={() => handleEdit(row.id)}
-                                                className="bg-gray-500 text-white px-4 py-1 rounded-md hover:bg-gray-600 transition"
+                                                className="text-sm bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 transition"
                                             >
                                                 ✏️ Edit
                                             </button>
@@ -143,6 +147,7 @@ function EditFamily() {
                         </table>
                     </div>
                 </div>
+            </div>
         </>
     );
 }

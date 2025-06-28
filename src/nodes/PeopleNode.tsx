@@ -7,7 +7,7 @@ class PeopleNode extends Component<{ data: any }> {
         return (
             <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400">
                 <div className="flex">
-                    <div className="rounded-full w-12 h-12 flex justify-center items-center bg-gray-100">
+                    <div className="rounded-full w-10 h-12 flex justify-center items-center bg-gray-100">
                         {data.emoji}
                     </div>
                     <div className="ml-2">
@@ -20,7 +20,7 @@ class PeopleNode extends Component<{ data: any }> {
                 <Handle
                     type="target"
                     position={Position.Top}
-                    className="w-12 !bg-teal-500"
+                    className="w-10 !bg-teal-500"
                 />
                 {/*<Handle*/}
                 {/*    type="source"*/}
@@ -30,12 +30,12 @@ class PeopleNode extends Component<{ data: any }> {
                 <Handle
                     type="source"
                     position={Position.Right}
-                    className="h-12 !bg-teal-500"
+                    className="h-8 !bg-teal-500"
                 />
                 <Handle
                     type="source"
                     position={Position.Left}
-                    className="h-12 !bg-teal-500"
+                    className="h-8 !bg-teal-500"
                 />
             </div>
         );

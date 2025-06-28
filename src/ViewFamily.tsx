@@ -11,11 +11,13 @@ import {
 import '@xyflow/react/dist/base.css';
 
 import PeopleNode from './nodes/PeopleNode';
+import FamilyNode from "./nodes/FamilyNode.tsx";
 
 function ViewFamily() {
 
     const nodeTypes = {
         peopleNode: PeopleNode,
+        familyNode: FamilyNode
     };
 
     const initNodes = [
@@ -34,7 +36,7 @@ function ViewFamily() {
         },
         {
             id: '3',
-            type: 'peopleNode',
+            type: 'familyNode',
             data: {name: 'Kristi Price', job: 'Developer', emoji: '🤩'},
             position: {x: 200, y: 200},
         },
@@ -53,7 +55,7 @@ function ViewFamily() {
         },
     ];
 
-    const [nodes, , onNodesChange] = useNodesState(initNodes);
+    const [nodes, _, onNodesChange] = useNodesState(initNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initEdges);
 
     const onConnect = useCallback(

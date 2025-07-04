@@ -5,7 +5,7 @@ import {
     useEdgesState,
     addEdge,
     MiniMap,
-    Controls,
+    Controls, MarkerType,
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/base.css';
@@ -22,46 +22,27 @@ function ViewFamily() {
 
     const initNodes = [
         {
-            id: '1',
+            id: '0',
             type: 'peopleNode',
-            data: {name: 'sai shravan peravali', job: 'CEO', emoji: '😎'},
+            data: {name: 'temp name', job: 'n/a', emoji: '😎'},
             position: {x: 0, y: 50},
-        },
-        {
-            id: '2',
-            type: 'peopleNode',
-            data: {name: 'Tyler Weary', job: 'Designer', emoji: '🤓'},
-
-            position: {x: -200, y: 200},
-        },
-        {
-            id: '3',
-            type: 'familyNode',
-            data: {name: 'Kristi Price', job: 'Developer', emoji: '🤩'},
-            position: {x: 200, y: 200},
-        },
-    ];
-
-    const initEdges = [
-        {
-            id: 'e1-2',
-            source: '1',
-            target: '2',
-        },
-        {
-            id: 'e1-3',
-            source: '1',
-            target: '3',
-        },
+        }
     ];
 
     const [nodes, _, onNodesChange] = useNodesState(initNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initEdges);
+    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
     const onConnect = useCallback(
-        (params: any) => setEdges((eds) => addEdge(params, eds)),
+        (params: any) => setEdges((eds): any => addEdge(params, eds)),
         [],
     );
+
+    const defaultEdgeOptions = {
+        type: 'smoothstep',
+        markerEnd: {
+            type: MarkerType.Arrow, // Adds a standard arrow at the end
+        },
+    }
 
     return (
         <ReactFlow
@@ -72,6 +53,7 @@ function ViewFamily() {
             onConnect={onConnect}
             nodeTypes={nodeTypes}
             fitView
+            defaultEdgeOptions={defaultEdgeOptions}
             className="bg-teal-50"
         >
             <MiniMap/>

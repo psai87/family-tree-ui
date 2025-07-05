@@ -1,12 +1,25 @@
-import {type ChangeEvent, type JSX, useState} from "react";
+import {type ChangeEvent, type JSX, useEffect, useState} from "react";
 import type {Person} from "./model/Person.ts";
 import type {PersonRowDetail} from "./model/PersonRowDetail.ts";
 import {RowState} from "./model/Constants.ts";
+import PeopleRelationService from "./service/PeopleRelationService.ts";
+
 
 function EditFamily(): JSX.Element {
+    const peopleRelationService: PeopleRelationService = new PeopleRelationService();
     const [rowPersons, setRowPersons] = useState<Person[]>([])
     const [rowDetails, setRowDetails] = useState<Map<string, PersonRowDetail>>(new Map<string, PersonRowDetail>())
     const [tempRowPersons, setTempRowPersons] = useState<Map<string, Person>>(new Map<string, Person>())
+
+    useEffect(() => {
+        peopleRelationService.getPersons()
+            .then(response => {
+                setRowPersons(response[0])
+                setRowDetails(response[1])
+            })
+            .catch(error => console.log(error))
+    }, []);
+
 
     const handleAddRow = () => {
         const newPerson: Person = {
@@ -29,7 +42,19 @@ function EditFamily(): JSX.Element {
 
     const handleSaveAll = (): void => {
         console.log("Saving data");
-        alert("All data saved to console!");
+        peopleRelationService.savePersons(rowPersons, rowDetails)
+            .then(_ => {
+                peopleRelationService.getPersons()
+                    .then(response => {
+                        setRowPersons(response[0])
+                        setRowDetails(response[1])
+                    })
+                    .catch(error => console.log(error))
+            })
+            .catch(reason => {
+                console.log(reason)
+            })
+            .finally(() => console.log("Data saved"));
     };
 
     const handleEdit = (id: string): void => {
@@ -54,7 +79,11 @@ function EditFamily(): JSX.Element {
     const handleRemove = (id: string): void => {
         setRowDetails(prevMap => {
             const newMap = new Map(prevMap);
-            newMap.delete(id)
+            if (newMap.get(id)?.state == RowState.Added) {
+                newMap.delete(id)
+            } else {
+                newMap.set(id, {...newMap.get(id) as PersonRowDetail, state: RowState.Deleted});
+            }
             return newMap;
         })
         setRowPersons(prevMap => prevMap.filter(person => person.id !== id))
@@ -78,7 +107,7 @@ function EditFamily(): JSX.Element {
 
     const handleSaveRow = (id: string): void => {
         setRowDetails(prevMap => {
-            const prevDetail: PersonRowDetail = prevMap.get(id) ?? {state: RowState.Unknown, editable: false};
+            const prevDetail: PersonRowDetail = prevMap.get(id) as PersonRowDetail;
             return new Map(prevMap).set(id, {
                 ...prevDetail,
                 editable: false,
@@ -95,24 +124,10 @@ function EditFamily(): JSX.Element {
     return (
         <>
             <div className="min-h-screen bg-neutral-100 py-12 px-6 md:px-12">
-                <div className="max-w-5xl mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 p-6">
+                <div className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 p-6">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-xl font-semibold text-gray-800">Editable Records</h2>
-                        <div className="flex gap-3">
-                            <button
-                                onClick={handleAddRow}
-                                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm transition"
-                            >
-                                ➕ Add Record
-                            </button>
-                            <button
-                                onClick={handleSaveAll}
-                                className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 shadow-sm transition"
-                            >
-                                💾 Save All
-                            </button>
-                        </div>
                     </div>
 
                     {/* Table */}
@@ -272,6 +287,21 @@ function EditFamily(): JSX.Element {
                             </tbody>
                         </table>
                     </div>
+                    <div className="flex justify-end gap-3 mt-4">
+                        <button
+                            onClick={handleAddRow}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm transition"
+                        >
+                            ➕ Add Record
+                        </button>
+                        <button
+                            onClick={handleSaveAll}
+                            className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 shadow-sm transition"
+                        >
+                            💾 Save All
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </>

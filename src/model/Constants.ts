@@ -1,4 +1,4 @@
-export const host: string = "localhost:8080";
+export const host: string = "http://localhost:8080";
 
 export enum RowState {
     Original,

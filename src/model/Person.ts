@@ -1,5 +1,5 @@
 export interface Person {
-    id: string,
+    id: `${string}-${string}-${string}-${string}-${string}`,
     firstName: string,
     lastName: string,
     occupation: string,

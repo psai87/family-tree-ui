@@ -1,45 +1,95 @@
-import {type ChangeEvent, useState} from "react";
+import {type ChangeEvent, type JSX, useState} from "react";
+import type {Person} from "./model/Person.ts";
+import type {PersonRowDetail} from "./model/PersonRowDetail.ts";
+import {RowState} from "./model/Constants.ts";
 
-function EditFamily() {
-    const [rows, setRows] = useState<RowData[]>([])
+function EditFamily(): JSX.Element {
+    const [rowPersons, setRowPersons] = useState<Person[]>([])
+    const [rowDetails, setRowDetails] = useState<Map<string, PersonRowDetail>>(new Map<string, PersonRowDetail>())
+    const [tempRowPersons, setTempRowPersons] = useState<Map<string, Person>>(new Map<string, Person>())
+
     const handleAddRow = () => {
-        const newRow: RowData = {
-            id: Date.now(),
-            name: "",
+        const newPerson: Person = {
+            id: crypto.randomUUID(),
+            firstName: "",
+            lastName: "",
+            occupation: "",
             email: "",
-            age: "",
-            isEditing: true,
+            yearOfBirth: -1,
+            yearOfDeath: -1,
+            imageUrl: "",
         };
-        setRows([...rows, newRow]);
+        const newPersonRowDetail: PersonRowDetail = {
+            editable: false,
+            state: RowState.Added
+        }
+        setRowPersons([...rowPersons, newPerson]);
+        setRowDetails(prevMap => new Map(prevMap).set(newPerson.id, newPersonRowDetail));
     };
 
-    const handleSaveAll = () => {
-        console.log("Saved data:", rows);
+    const handleSaveAll = (): void => {
+        console.log("Saving data");
         alert("All data saved to console!");
     };
 
-    const handleEdit = (id: number) => {
-        setRows((prev) =>
-            prev.map((row) => (row.id === id ? { ...row, isEditing: true } : row))
-        );
+    const handleEdit = (id: string): void => {
+        setRowDetails(prevMap =>
+            new Map(prevMap).set(id, {...prevMap.get(id) as PersonRowDetail, editable: true}));
+        setTempRowPersons(prevMap =>
+            new Map(prevMap).set(id, rowPersons.find(data => data.id === id) as Person));
     };
 
-    const handleSaveRow = (id: number) => {
-        setRows((prev) =>
-            prev.map((row) => (row.id === id ? { ...row, isEditing: false } : row))
-        );
+    const handleCancel = (id: string): void => {
+        setRowDetails(prevMap =>
+            new Map(prevMap).set(id, {...prevMap.get(id) as PersonRowDetail, editable: false}));
+        setRowPersons(prevMap => prevMap.filter(person => person.id !== id)
+            .concat(tempRowPersons.get(id) as Person));
+        setTempRowPersons(prevMap => {
+            const newMap = new Map(prevMap);
+            newMap.delete(id)
+            return newMap;
+        })
+    };
+
+    const handleRemove = (id: string): void => {
+        setRowDetails(prevMap => {
+            const newMap = new Map(prevMap);
+            newMap.delete(id)
+            return newMap;
+        })
+        setRowPersons(prevMap => prevMap.filter(person => person.id !== id))
+        setTempRowPersons(prevMap => {
+            const newMap = new Map(prevMap);
+            newMap.delete(id)
+            return newMap;
+        })
     };
 
     const handleInputChange = (
-        id: number,
-        field: keyof Omit<RowData, "id" | "isEditing">,
+        id: string,
+        field: string,
         value: string
-    ) => {
-        setRows((prev) =>
-            prev.map((row) =>
-                row.id === id ? { ...row, [field]: value } : row
-            )
-        );
+    ): void => {
+        setRowPersons((prev) =>
+            prev.map((row: Person) =>
+                row.id === id ? {...row, [field]: value} : row
+            ));
+    }
+
+    const handleSaveRow = (id: string): void => {
+        setRowDetails(prevMap => {
+            const prevDetail: PersonRowDetail = prevMap.get(id) ?? {state: RowState.Unknown, editable: false};
+            return new Map(prevMap).set(id, {
+                ...prevDetail,
+                editable: false,
+                state: prevDetail?.state === RowState.Added ? RowState.Added : RowState.Edited,
+            });
+        });
+        setTempRowPersons(prevMap => {
+            const newMap = new Map(prevMap);
+            newMap.delete(id)
+            return newMap;
+        })
     };
 
     return (
@@ -70,36 +120,67 @@ function EditFamily() {
                         <table className="min-w-full border-separate border-spacing-y-2">
                             <thead>
                             <tr className="text-left text-sm text-gray-600">
-                                <th className="px-4 py-2">Name</th>
+                                <th className="px-4 py-2">First Name</th>
+                                <th className="px-4 py-2">Last Name</th>
+                                <th className="px-4 py-2">Occupation</th>
                                 <th className="px-4 py-2">Email</th>
-                                <th className="px-4 py-2">Age</th>
-                                <th className="px-4 py-2">Actions</th>
+                                <th className="px-4 py-2">YOB</th>
+                                <th className="px-4 py-2">YOD</th>
+                                <th className="px-4 py-2">Image</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {rows.map((row) => (
+                            {rowPersons.map((row: Person) => (
                                 <tr
                                     key={row.id}
                                     className="bg-neutral-50 hover:bg-neutral-100 transition rounded-lg shadow-sm"
                                 >
                                     <td className="px-4 py-2">
-                                        {row.isEditing ? (
+                                        {rowDetails.get(row.id)?.editable ? (
                                             <input
                                                 type="text"
-                                                value={row.name}
+                                                value={row.firstName}
                                                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                    handleInputChange(row.id, "name", e.target.value)
+                                                    handleInputChange(row.id, "firstName", e.target.value)
                                                 }
                                                 className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
                                             />
                                         ) : (
-                                            <span>{row.name}</span>
+                                            <span>{row.firstName}</span>
                                         )}
                                     </td>
                                     <td className="px-4 py-2">
-                                        {row.isEditing ? (
+                                        {rowDetails.get(row.id)?.editable ? (
                                             <input
-                                                type="email"
+                                                type="text"
+                                                value={row.lastName}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                                    handleInputChange(row.id, "lastName", e.target.value)
+                                                }
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
+                                            />
+                                        ) : (
+                                            <span>{row.lastName}</span>
+                                        )}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {rowDetails.get(row.id)?.editable ? (
+                                            <input
+                                                type="text"
+                                                value={row.occupation}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                                    handleInputChange(row.id, "occupation", e.target.value)
+                                                }
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
+                                            />
+                                        ) : (
+                                            <span>{row.occupation}</span>
+                                        )}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {rowDetails.get(row.id)?.editable ? (
+                                            <input
+                                                type="text"
                                                 value={row.email}
                                                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                                                     handleInputChange(row.id, "email", e.target.value)
@@ -111,36 +192,81 @@ function EditFamily() {
                                         )}
                                     </td>
                                     <td className="px-4 py-2">
-                                        {row.isEditing ? (
+                                        {rowDetails.get(row.id)?.editable ? (
                                             <input
-                                                type="number"
-                                                value={row.age}
+                                                type="text"
+                                                value={row.yearOfBirth}
                                                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                    handleInputChange(row.id, "age", e.target.value)
+                                                    handleInputChange(row.id, "yearOfBirth", e.target.value)
                                                 }
                                                 className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
                                             />
                                         ) : (
-                                            <span>{row.age}</span>
+                                            <span>{row.yearOfBirth}</span>
                                         )}
                                     </td>
                                     <td className="px-4 py-2">
-                                        {row.isEditing ? (
-                                            <button
-                                                onClick={() => handleSaveRow(row.id)}
-                                                className="text-sm bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
-                                            >
-                                                ✅ Save
-                                            </button>
+                                        {rowDetails.get(row.id)?.editable ? (
+                                            <input
+                                                type="text"
+                                                value={row.yearOfDeath}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                                    handleInputChange(row.id, "yearOfDeath", e.target.value)
+                                                }
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
+                                            />
                                         ) : (
-                                            <button
-                                                onClick={() => handleEdit(row.id)}
-                                                className="text-sm bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 transition"
-                                            >
-                                                ✏️ Edit
-                                            </button>
+                                            <span>{row.yearOfDeath}</span>
                                         )}
                                     </td>
+                                    <td className="px-4 py-2">
+                                        {rowDetails.get(row.id)?.editable ? (
+                                            <input
+                                                type="text"
+                                                value={row.imageUrl}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                                    handleInputChange(row.id, "imageUrl", e.target.value)
+                                                }
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
+                                            />
+                                        ) : (
+                                            <span>{row.imageUrl}</span>
+                                        )}
+                                    </td>
+                                    <td className="px-4 py-2">
+                                        {rowDetails.get(row.id)?.editable ? (
+                                            <div className="inline-flex gap-2">
+                                                <button
+                                                    onClick={() => handleSaveRow(row.id)}
+                                                    className="text-sm bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
+                                                >
+                                                    ✅ Save
+                                                </button>
+                                                <button
+                                                    onClick={() => handleCancel(row.id)}
+                                                    className="text-sm bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 transition"
+                                                >
+                                                    ❌ Cancel
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="inline-flex gap-2">
+                                                <button
+                                                    onClick={() => handleEdit(row.id)}
+                                                    className="text-sm bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 transition"
+                                                >
+                                                    ✏️ Edit
+                                                </button>
+                                                <button
+                                                    onClick={() => handleRemove(row.id)}
+                                                    className="text-sm bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 transition"
+                                                >
+                                                    ❌ Remove
+                                                </button>
+                                            </div>
+                                        )}
+                                    </td>
+
                                 </tr>
                             ))}
                             </tbody>
@@ -153,12 +279,3 @@ function EditFamily() {
 }
 
 export default EditFamily
-
-// Type for each table row
-export interface RowData {
-    id: number;
-    name: string;
-    email: string;
-    age: string;
-    isEditing: boolean;
-}

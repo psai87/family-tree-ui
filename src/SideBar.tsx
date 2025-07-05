@@ -25,7 +25,7 @@ function SideBar() {
                 <div
                     className={`transition-all duration-300 ${
                         isOpen ? "w-64" : "w-16"
-                    } bg-gray-900 h-screen text-white flex flex-col`}
+                    } bg-gray-900 min-h-screen text-white flex flex-col`}
                 >
                     <div className="flex items-center justify-between p-4 border-b border-gray-700">
                         {isOpen && <h1 className="text-xl font-bold">Family-Tree</h1>}

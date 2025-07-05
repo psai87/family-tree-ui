@@ -22,7 +22,7 @@ function ViewFamily() {
 
     const initNodes = [
         {
-            id: '0',
+            id: crypto.randomUUID(),
             type: 'peopleNode',
             data: {name: 'temp name', job: 'n/a', emoji: '😎'},
             position: {x: 0, y: 50},

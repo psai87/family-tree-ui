@@ -63,16 +63,19 @@ function PeopleNode({id, data}) {
                 <Handle
                     type="target"
                     position={Position.Top}
+                    id="c"
                     className="w-10 !bg-teal-500"
                 />
                 <Handle
                     type="source"
                     position={Position.Right}
+                    id="b"
                     className="h-8 !bg-teal-500"
                 />
                 <Handle
                     type="source"
                     position={Position.Left}
+                    id="a"
                     className="h-8 !bg-teal-500"
                 />
             </div>

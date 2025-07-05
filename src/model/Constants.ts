@@ -1,0 +1,1 @@
+export const host: string = "localhost:8080";

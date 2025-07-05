@@ -1,4 +1,4 @@
-import {Component, memo} from 'react';
+import {memo} from 'react';
 import {Handle, NodeToolbar, Position, useReactFlow} from '@xyflow/react';
 
 
@@ -65,11 +65,6 @@ function PeopleNode({id, data}) {
                     position={Position.Top}
                     className="w-10 !bg-teal-500"
                 />
-                {/*<Handle*/}
-                {/*    type="source"*/}
-                {/*    position={Position.Bottom}*/}
-                {/*    className="w-12 !bg-teal-500"*/}
-                {/*/>*/}
                 <Handle
                     type="source"
                     position={Position.Right}

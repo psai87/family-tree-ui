@@ -1,16 +1,17 @@
 import type {Person} from "../model/Person.ts";
 import type {PersonRowDetail} from "../model/PersonRowDetail.ts";
+import type {Node} from "../model/Node.ts";
 import PeopleClient from "../client/PeopleClient.ts";
 import {RowState} from "../model/Constants.ts";
+import RelationClient from "../client/RelationClient.ts";
 
 
 export default class PeopleRelationService {
 
     peopleClient: PeopleClient = new PeopleClient();
+    relationClient: RelationClient = new RelationClient();
 
     async savePersons(persons: Person[], personRowDetails: Map<string, PersonRowDetail>): Promise<void> {
-        console.log("aall"+JSON.stringify(persons))
-        console.log(personRowDetails)
         const added: Person[] = persons.filter(data => RowState.Added === personRowDetails.get(data.id)?.state)
         const updated: Person[] = persons.filter(data => RowState.Edited === personRowDetails.get(data.id)?.state)
         const deleted: string[] = [...personRowDetails.entries()]
@@ -18,14 +19,15 @@ export default class PeopleRelationService {
             .map(([key, _]) => key)
         let promiseArray: Promise<void>[] = []
         if (added) {
-            console.log("added"+JSON.stringify(added))
+            console.log("added persons [size=" + added.length + "]");
             promiseArray.push(this.peopleClient.createPersons(added));
         }
         if (updated) {
-            console.log("updates"+JSON.stringify(updated))
+            console.log("updates persons [size=" + updated.length + "]")
             promiseArray.push(this.peopleClient.updatePersons(updated));
         }
         if (deleted) {
+            console.log("deleted persons [size=" + deleted.length + "]");
             promiseArray.push(this.peopleClient.deletePersons(deleted));
         }
         await Promise.all(promiseArray)
@@ -39,5 +41,9 @@ export default class PeopleRelationService {
                     editable: false,
                     state: RowState.Original
                 } as PersonRowDetail]))]);
+    }
+
+    async getNodes(): Promise<Node[]> {
+        return await this.relationClient.getNodes();
     }
 }

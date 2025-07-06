@@ -5,3 +5,5 @@ export interface Edge {
     sourceHandler: string,
     targetHandler: string
 }
+
+export type EdgeData = {}

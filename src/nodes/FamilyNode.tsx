@@ -1,7 +1,8 @@
 import {Component, memo} from 'react';
 import {Handle, Position} from '@xyflow/react';
+import type {NodeData} from "../model/Node.ts";
 
-class FamilyNode extends Component<{ data: any }> {
+class FamilyNode extends Component<{ data: NodeData }> {
     render() {
         return (
             <div className="w-8 h-8 flex items-center justify-center text-2xl bg-transparent">

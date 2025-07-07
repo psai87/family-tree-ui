@@ -44,6 +44,9 @@ function ViewFamily() {
                 setRowPersons(new Map(response[0].map(data => [data.id, data])))
             })
             .catch(error => console.log(error))
+    }, []);
+
+    useEffect(() => {
         peopleRelationService.getNodes()
             .then(response => {
                 const initNodes: Node<NodeData>[] = response.length > 0
@@ -65,7 +68,7 @@ function ViewFamily() {
                 setNodes(initNodes)
             })
             .catch(error => console.log(error))
-    }, []);
+    }, [rowPersons]);
 
 
     return (

@@ -1,7 +1,6 @@
 import React, {memo} from 'react';
 import {Handle, type NodeProps, type Node, NodeToolbar, Position, useReactFlow} from '@xyflow/react';
 import type {NodeData} from "../model/Node.ts";
-import {RowState} from "../model/Constants.ts";
 
 
 function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
@@ -14,7 +13,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                 id: crypto.randomUUID(),
                 type: 'familyNode',
                 position: {x: node.position.x + 200, y: node.position.y},
-                data: {rowState: RowState.Added},
+                data: {editable: false},
             };
             setNodes((nds) => nds.concat(newNode));
         }
@@ -27,7 +26,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                 id: crypto.randomUUID(),
                 type: 'peopleNode',
                 position: {x: node.position.x, y: node.position.y + 200},
-                data: {persons: node.data.persons},
+                data: {persons: node.data.persons, editable: data.editable},
             };
             setNodes((nds) => nds.concat(newNode));
         }
@@ -68,7 +67,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                         />
                     </div>
                     <div className="ml-2">
-                        <select
+                        {data.editable && <select
                             id={id + "_fruit"}
                             name="fruit"
                             className="text-xs rounded-md border border-gray-300 bg-white
@@ -79,16 +78,16 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                             <option value="">— pick one —</option>
                             {Array.from(data.persons?.entries() ?? [])
                                 .map(([key, val]) => (
-                                    <option key={key} value={val.id}>
+                                    <option key={key} value={val.id} selected={val.id === data.personId}>
                                         {val.firstName} {val.lastName}
                                     </option>
                                 ))}
-                        </select>
-                        {/*<div*/}
-                        {/*    className="text-xs font-bold break-words whitespace-normal">{data.persons?.get(data.personId)?.firstName}</div>*/}
+                        </select>}
+                        {!data.editable && <div
+                            className="text-xs font-bold break-words whitespace-normal">{data.persons?.get(data.personId)?.firstName}</div>}
                         <div className="text-xs text-gray-500">{data.persons?.get(data.personId)?.lastName}</div>
                         <div
-                            className="text-xs text-gray-500">{"Birth:" + data.persons?.get(data.personId)?.yearOfBirth}</div>
+                            className="text-xs text-gray-500">{"Born:" + data.persons?.get(data.personId)?.yearOfBirth}</div>
                     </div>
                 </div>
 

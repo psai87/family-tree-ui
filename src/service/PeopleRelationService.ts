@@ -1,10 +1,14 @@
 import type {Person} from "../model/Person.ts";
 import type {PersonRowDetail} from "../model/PersonRowDetail.ts";
-import type {Node} from "../model/Node.ts";
+import type {Node, NodeData} from "../model/Node.ts";
 import PeopleClient from "../client/PeopleClient.ts";
 import {RowState} from "../model/Constants.ts";
 import RelationClient from "../client/RelationClient.ts";
-import type {Edge} from "../model/Edge.ts";
+import type {Edge, EdgeData} from "../model/Edge.ts";
+import {
+    type Edge as REdge,
+    type Node as RNode,
+} from '@xyflow/react';
 
 
 export default class PeopleRelationService {
@@ -50,5 +54,81 @@ export default class PeopleRelationService {
 
     async getEdges(): Promise<Edge[]> {
         return await this.relationClient.getEdges();
+    }
+
+    async saveNodes(nodes: RNode<NodeData>[], nodesState: Map<string, RowState>): Promise<void> {
+        const added: Node[] = nodes.filter(data => RowState.Added === nodesState.get(data.id))
+            .map(data => {
+                return {
+                    id: data.id,
+                    type: data.type,
+                    personId: data.data.personId,
+                    position: {x: data.position.x, y: data.position.y},
+                } as Node
+            })
+        const updated: Node[] = nodes.filter(data => RowState.Edited === nodesState.get(data.id))
+            .map(data => {
+                return {
+                    id: data.id,
+                    type: data.type,
+                    personId: data.data.personId,
+                    position: {x: data.position.x, y: data.position.y},
+                } as Node
+            })
+        const deleted: string[] = nodes.filter(data => RowState.Deleted === nodesState.get(data.id))
+            .map(data => data.id)
+        let promiseArray: Promise<void>[] = []
+        if (added) {
+            console.log("added nodes [size=" + added.length + "]");
+            promiseArray.push(this.relationClient.createNodes(added));
+        }
+        if (updated) {
+            console.log("updates nodes [size=" + updated.length + "]")
+            promiseArray.push(this.relationClient.updateNodes(updated));
+        }
+        if (deleted) {
+            console.log("deleted nodes [size=" + deleted.length + "]");
+            promiseArray.push(this.relationClient.deleteNodes(deleted));
+        }
+        await Promise.all(promiseArray)
+    }
+
+    async saveEdges(edges: REdge<EdgeData>[], edgesState: Map<string, RowState>): Promise<void> {
+        const added: Edge[] = edges.filter(data => RowState.Added === edgesState.get(data.id))
+            .map(data => {
+                return {
+                    id: data.id,
+                    source: data.source,
+                    sourceHandler: data.sourceHandle,
+                    target: data.target,
+                    targetHandler: data.targetHandle,
+                } as Edge
+            })
+        const updated: Edge[] = edges.filter(data => RowState.Edited === edgesState.get(data.id))
+            .map(data => {
+                return {
+                    id: data.id,
+                    source: data.source,
+                    sourceHandler: data.sourceHandle,
+                    target: data.target,
+                    targetHandler: data.targetHandle,
+                } as Edge
+            })
+        const deleted: string[] = edges.filter(data => RowState.Deleted === edgesState.get(data.id))
+            .map(data => data.id)
+        let promiseArray: Promise<void>[] = []
+        if (added) {
+            console.log("added edges [size=" + added.length + "]");
+            promiseArray.push(this.relationClient.createEdges(added));
+        }
+        if (updated) {
+            console.log("updates edges [size=" + updated.length + "]")
+            promiseArray.push(this.relationClient.updateEdges(updated));
+        }
+        if (deleted) {
+            console.log("deleted edges [size=" + deleted.length + "]");
+            promiseArray.push(this.relationClient.deleteEdges(deleted));
+        }
+        await Promise.all(promiseArray)
     }
 }

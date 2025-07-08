@@ -15,4 +15,5 @@ export interface Position {
 export type NodeData = {
     personId: string,
     persons: Map<string, Person>
+    editable: boolean
 }

@@ -34,17 +34,16 @@ function ViewFamily() {
     const [edgesState, setEdgesState] = useState<Map<string, RowState>>(new Map<string, RowState>())
     const [nodes, setNodes, onNodesChange] = useNodesState<Node<NodeData>>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge<EdgeData>>([]);
-    const onConnect = useCallback((params: Connection) =>
+    const onConnect = useCallback((params: Connection) => {
+            const idUuid: string = crypto.randomUUID();
             setEdges((eds): Edge<EdgeData>[] => {
-                const newEdgesStateMap = new Map(edgesState);
-                const customEdge: Edge = {
-                    ...params,
-                    id: crypto.randomUUID()
-                };
-                newEdgesStateMap.set(customEdge.id, RowState.Added)
-                setEdgesState(newEdgesStateMap)
+                const customEdge: Edge = {...params, id: idUuid};
                 return addEdge(customEdge, eds);
-            }),
+            })
+            const newEdgesStateMap = new Map(edgesState);
+            newEdgesStateMap.set(idUuid, RowState.Added)
+            setEdgesState(newEdgesStateMap)
+        },
         [edgesState],
     );
 
@@ -71,14 +70,14 @@ function ViewFamily() {
                     ? response.map(data => ({
                         id: data.id,
                         type: data.type,
-                        data: {personId: data.personId, persons: rowPersons},
+                        data: {personId: data.personId, persons: rowPersons, editable: false},
                         position: {x: data.position.x, y: data.position.y},
                     }))
                     : [
                         {
                             id: crypto.randomUUID().toString(),
                             type: 'peopleNode',
-                            data: {personId: '', persons: rowPersons},
+                            data: {personId: '', persons: rowPersons, editable: false},
                             position: {x: 0, y: 50},
                         },
                     ];
@@ -117,14 +116,37 @@ function ViewFamily() {
     }, [rowPersons]);
 
     const editClicked: () => void = () => {
-        console.log(nodes)
-        console.log(edges)
-        console.log(nodesState)
-        console.log(edgesState)
+        setNodes((prevNodes) =>
+            prevNodes.map((node) => ({
+                ...node,
+                data: {
+                    ...node.data,
+                    editable: true
+                },
+            }))
+        );
     }
 
     const saveClicked: () => void = () => {
-
+        setNodes((prevNodes) =>
+            prevNodes.map((node) => ({
+                ...node,
+                data: {
+                    ...node.data,
+                    editable: false
+                },
+            }))
+        );
+        peopleRelationService.saveNodes(nodes, nodesState)
+            .catch(reason => {
+                console.log(reason)
+            })
+            .finally(() => console.log("Nodes saved"));
+        peopleRelationService.saveEdges(edges, edgesState)
+            .catch(reason => {
+                console.log(reason)
+            })
+            .finally(() => console.log("Edges saved"));
     }
 
     const handleNodesChange = useCallback((changes: NodeChange<Node<NodeData>>[]) => {

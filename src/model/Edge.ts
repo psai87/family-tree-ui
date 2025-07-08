@@ -1,3 +1,4 @@
+
 export interface Edge {
     id: string,
     source: string,
@@ -6,4 +7,5 @@ export interface Edge {
     targetHandler: string
 }
 
-export type EdgeData = {}
+export type EdgeData = {
+}

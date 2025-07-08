@@ -4,6 +4,7 @@ import type {Node} from "../model/Node.ts";
 import PeopleClient from "../client/PeopleClient.ts";
 import {RowState} from "../model/Constants.ts";
 import RelationClient from "../client/RelationClient.ts";
+import type {Edge} from "../model/Edge.ts";
 
 
 export default class PeopleRelationService {
@@ -45,5 +46,9 @@ export default class PeopleRelationService {
 
     async getNodes(): Promise<Node[]> {
         return await this.relationClient.getNodes();
+    }
+
+    async getEdges(): Promise<Edge[]> {
+        return await this.relationClient.getEdges();
     }
 }

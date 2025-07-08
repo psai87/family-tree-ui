@@ -1,6 +1,7 @@
 import React, {memo} from 'react';
 import {Handle, type NodeProps, type Node, NodeToolbar, Position, useReactFlow} from '@xyflow/react';
 import type {NodeData} from "../model/Node.ts";
+import {RowState} from "../model/Constants.ts";
 
 
 function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
@@ -13,7 +14,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                 id: crypto.randomUUID(),
                 type: 'familyNode',
                 position: {x: node.position.x + 200, y: node.position.y},
-                data: {},
+                data: {rowState: RowState.Added},
             };
             setNodes((nds) => nds.concat(newNode));
         }
@@ -26,7 +27,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                 id: crypto.randomUUID(),
                 type: 'peopleNode',
                 position: {x: node.position.x, y: node.position.y + 200},
-                data: {},
+                data: {persons: node.data.persons},
             };
             setNodes((nds) => nds.concat(newNode));
         }
@@ -59,7 +60,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
             </NodeToolbar>
             <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400">
                 <div className="flex">
-                    <div className=" rounded-full w-10 h-12 flex justify-center items-center bg-gray-100">
+                    <div className="text-xs rounded-full w-10 h-12 flex justify-center items-center bg-gray-100">
                         <img
                             src={data.persons?.get(data.personId)?.imageUrl}
                             alt="Preview"
@@ -86,6 +87,8 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                         {/*<div*/}
                         {/*    className="text-xs font-bold break-words whitespace-normal">{data.persons?.get(data.personId)?.firstName}</div>*/}
                         <div className="text-xs text-gray-500">{data.persons?.get(data.personId)?.lastName}</div>
+                        <div
+                            className="text-xs text-gray-500">{"Birth:" + data.persons?.get(data.personId)?.yearOfBirth}</div>
                     </div>
                 </div>
 

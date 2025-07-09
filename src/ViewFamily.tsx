@@ -34,6 +34,7 @@ function ViewFamily() {
     const [edgesState, setEdgesState] = useState<Map<string, RowState>>(new Map<string, RowState>())
     const [nodes, setNodes, onNodesChange] = useNodesState<Node<NodeData>>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge<EdgeData>>([]);
+    const [editButtonClicked, setEditableButtonClicked] = useState<boolean>(false);
     const onConnect = useCallback((params: Connection) => {
             const idUuid: string = crypto.randomUUID();
             setEdges((eds): Edge<EdgeData>[] => {
@@ -116,6 +117,7 @@ function ViewFamily() {
     }, [rowPersons]);
 
     const editClicked: () => void = () => {
+        setEditableButtonClicked(true)
         setNodes((prevNodes) =>
             prevNodes.map((node) => ({
                 ...node,
@@ -128,6 +130,7 @@ function ViewFamily() {
     }
 
     const saveClicked: () => void = () => {
+        setEditableButtonClicked(false)
         setNodes((prevNodes) =>
             prevNodes.map((node) => ({
                 ...node,
@@ -189,6 +192,7 @@ function ViewFamily() {
         <div className="h-screen w-full flex flex-col">
 
             <ReactFlow
+
                 nodes={nodes}
                 edges={edges}
                 onNodesChange={handleNodesChange}
@@ -198,6 +202,12 @@ function ViewFamily() {
                 fitView
                 defaultEdgeOptions={defaultEdgeOptions}
                 className="bg-teal-50"
+                minZoom={1}
+                maxZoom={1.5}
+                nodesDraggable={editButtonClicked}
+                nodesConnectable={editButtonClicked}
+                draggable={true}
+                elementsSelectable={editButtonClicked}
             >
                 <MiniMap/>
                 <Controls/>

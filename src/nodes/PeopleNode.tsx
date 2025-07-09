@@ -57,13 +57,13 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                     </button>
                 </div>
             </NodeToolbar>
-            <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400">
+            <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 w-50 h-20">
                 <div className="flex">
                     <div className="text-xs rounded-full w-10 h-12 flex justify-center items-center bg-gray-100">
                         <img
                             src={data.persons?.get(data.personId)?.imageUrl}
                             alt="Preview"
-                            className="w-16 h-14 object-cover rounded border border-gray-300 shadow-sm"
+                            className={data.persons?.get(data.personId)?.yearOfDeath == -1 ? "w-16 h-14 object-cover rounded border border-gray-400 shadow-sm" : "w-16 h-14 object-cover rounded border border-rose-300 shadow-sm"}
                         />
                     </div>
                     <div className="ml-2">
@@ -72,13 +72,14 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                             name="fruit"
                             className="text-xs rounded-md border border-gray-300 bg-white
              focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500
-             hover:border-gray-400 transition w-20 h-5"
+             hover:border-gray-400 transition w-30 h-5"
                             onChange={onPersonSelect}
+                            value={data.personId}
                         >
                             <option value="">— pick one —</option>
                             {Array.from(data.persons?.entries() ?? [])
                                 .map(([key, val]) => (
-                                    <option key={key} value={val.id} selected={val.id === data.personId}>
+                                    <option key={key} value={val.id}>
                                         {val.firstName} {val.lastName}
                                     </option>
                                 ))}

@@ -1,4 +1,4 @@
-export const host: string = "http://localhost:8080";
+export const host: string = "http://sai-space.ddns.net";
 
 export enum RowState {
     Original,

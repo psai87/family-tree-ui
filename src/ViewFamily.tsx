@@ -206,7 +206,7 @@ function ViewFamily() {
                 maxZoom={1.5}
                 nodesDraggable={editButtonClicked}
                 nodesConnectable={editButtonClicked}
-                draggable={true}
+                draggable={!editButtonClicked}
                 elementsSelectable={editButtonClicked}
             >
                 <MiniMap/>

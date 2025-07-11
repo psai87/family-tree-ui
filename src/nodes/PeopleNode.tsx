@@ -60,7 +60,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                     </button>
                 </div>
             </NodeToolbar>
-            <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 w-50 h-20">
+            <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 w-40 h-17">
                 <div className="flex">
                     <div className="text-xs rounded-full w-10 h-12 flex justify-center items-center bg-gray-100">
                         <img
@@ -88,7 +88,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                                 ))}
                         </select>}
                         {!data.editable && <div
-                            className="text-xs font-bold break-words whitespace-normal">{data.persons?.get(data.personId)?.firstName}</div>}
+                            className="text-xs font-bold whitespace-nowrap truncate w-20 ">{data.persons?.get(data.personId)?.firstName}</div>}
                         <div className="text-xs text-gray-500">{data.persons?.get(data.personId)?.lastName}</div>
                         <div
                             className="text-xs text-gray-500">{"Born:" + data.persons?.get(data.personId)?.yearOfBirth}</div>

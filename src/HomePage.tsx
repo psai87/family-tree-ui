@@ -7,8 +7,7 @@ function HomePage() {
                         👋 Welcome to Family Tree!
                     </h1>
                     <p className="text-gray-700 text-lg mb-6">
-                        You can view all your relatives. This is in beta, still a lot needs to be done to create a family tree for all relatives.
-                        Click on the View Family navigation bar to view the family tree page.
+                        You can view all your relatives. This is in beta.
                     </p>
                 </div>
             </div>

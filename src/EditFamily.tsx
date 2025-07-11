@@ -123,18 +123,18 @@ function EditFamily(): JSX.Element {
 
     return (
         <>
-            <div className="min-h-screen bg-neutral-100 py-12 px-6 md:px-12">
-                <div className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 p-6">
+            <div className="h-screen bg-neutral-100 py-6 px-6 md:px-1">
+                <div className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 flex flex-col h-full">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center justify-between mb-4 shrink-0 px-6 py-2">
                         <h2 className="text-xl font-semibold text-gray-800">Editable Records</h2>
                     </div>
 
                     {/* Table */}
-                    <div className="overflow-x-auto">
+                    <div className="flex-1 overflow-auto px-6">
                         <table className="min-w-full border-separate border-spacing-y-2">
-                            <thead>
-                            <tr className="text-left text-sm text-gray-600">
+                            <thead  className="sticky top-0 bg-white/95 backdrop-blur shadow-sm z-10">
+                            <tr className="text-left text-lg text-gray-600">
                                 <th className="px-4 py-2">First Name</th>
                                 <th className="px-4 py-2">Last Name</th>
                                 <th className="px-4 py-2">Occupation</th>
@@ -287,7 +287,7 @@ function EditFamily(): JSX.Element {
                             </tbody>
                         </table>
                     </div>
-                    <div className="flex justify-end gap-3 mt-4">
+                    <div className="flex justify-end gap-3 mt-4 py-3 px-3">
                         <button
                             onClick={handleAddRow}
                             className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm transition"

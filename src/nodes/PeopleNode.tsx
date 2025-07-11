@@ -34,7 +34,10 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
 
     const onPersonSelect: (event: React.ChangeEvent<HTMLSelectElement>) => void = (event): void => {
         const currentNode: Node = getNode(id) as Node
-        let newNode: Node = {...currentNode, data: {personId: event.target.value, persons: currentNode.data.persons},};
+        let newNode: Node = {
+            ...currentNode,
+            data: {personId: event.target.value, persons: currentNode.data.persons, editable: data.editable},
+        };
         setNodes((nodes) => {
             return nodes.filter(data => data.id !== id)
                 .concat(newNode)

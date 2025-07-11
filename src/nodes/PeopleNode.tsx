@@ -60,13 +60,13 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                     </button>
                 </div>
             </NodeToolbar>
-            <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 w-40 h-17">
+            <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 w-42 h-20">
                 <div className="flex">
-                    <div className="text-xs rounded-full w-10 h-12 flex justify-center items-center bg-gray-100">
+                    <div className="text-xs rounded-full w-14 h-15 flex justify-center items-center bg-gray-100">
                         <img
                             src={data.persons?.get(data.personId)?.imageUrl}
                             alt="Preview"
-                            className={data.persons?.get(data.personId)?.yearOfDeath == -1 ? "w-16 h-14 object-cover rounded border border-gray-400 shadow-sm" : "w-16 h-14 object-cover rounded border border-rose-300 shadow-sm"}
+                            className={data.persons?.get(data.personId)?.yearOfDeath == -1 ? "w-full h-full object-cover rounded border border-gray-400 shadow-sm" : "w-full h-full object-cover rounded border border-rose-300 shadow-sm"}
                         />
                     </div>
                     <div className="ml-2">

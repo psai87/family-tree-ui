@@ -75,7 +75,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                             name="fruit"
                             className="text-xs rounded-md border border-gray-300 bg-white
              focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500
-             hover:border-gray-400 transition w-30 h-5"
+             hover:border-gray-400 transition w-20 h-5"
                             onChange={onPersonSelect}
                             value={data.personId}
                         >
@@ -88,7 +88,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                                 ))}
                         </select>}
                         {!data.editable && <div
-                            className="text-xs font-bold whitespace-nowrap truncate w-20 ">{data.persons?.get(data.personId)?.firstName}</div>}
+                            className="text-xs font-bold whitespace-nowrap truncate w-20">{data.persons?.get(data.personId)?.firstName}</div>}
                         <div className="text-xs text-gray-500">{data.persons?.get(data.personId)?.lastName}</div>
                         <div
                             className="text-xs text-gray-500">{"Born:" + data.persons?.get(data.personId)?.yearOfBirth}</div>

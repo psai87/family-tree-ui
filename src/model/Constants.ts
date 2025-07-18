@@ -7,3 +7,7 @@ export enum RowState {
     Deleted,
     Unknown
 }
+
+export const AuthState = {
+    token: undefined as string | undefined,
+};

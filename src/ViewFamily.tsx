@@ -22,6 +22,7 @@ import PeopleRelationService from "./service/PeopleRelationService.ts";
 import type {Person} from "./model/Person.ts";
 import type {EdgeData} from "./model/Edge.ts";
 import {RowState} from "./model/Constants.ts";
+import type {Workspace} from "./model/Workspace.ts";
 
 function ViewFamily() {
     const peopleRelationService: PeopleRelationService = new PeopleRelationService();
@@ -55,6 +56,14 @@ function ViewFamily() {
         },
     }
 
+    const [workspaces, setWorkspaces] = useState<Workspace[]>([])
+    const [workspace, setWorkspace] = useState<Workspace>()
+    const onWorkspaceSelect: (selectedId: string) => void = (selectedId): void => {
+        const selectedWorkspace: Workspace | undefined = workspaces?.find(data => data.id === selectedId)
+        setWorkspace(selectedWorkspace)
+    }
+
+
     useEffect(() => {
         if (rowPersons.size > 0) return;
         peopleRelationService.getPersons()
@@ -65,7 +74,23 @@ function ViewFamily() {
     }, []);
 
     useEffect(() => {
-        peopleRelationService.getNodes()
+        if (workspaces.length > 0) return;
+        peopleRelationService.getWorkspaces()
+            .then(response => {
+                setWorkspaces(response[0])
+                setWorkspace(response[0][0])
+            })
+            .catch(error => console.log(error))
+    }, []);
+
+    useEffect(() => {
+        if (!workspace || rowPersons?.size == 0) {
+            setNodes([])
+            setNodesState(new Map<string, RowState>)
+            return;
+        }
+
+        peopleRelationService.getNodes(workspace.id)
             .then(response => {
                 const initNodes: Node<NodeData>[] = response.length > 0
                     ? response.map(data => ({
@@ -94,10 +119,15 @@ function ViewFamily() {
                 setNodesState(newNodesStateMap)
             })
             .catch(error => console.log(error))
-    }, [rowPersons]);
+    }, [rowPersons, workspace]);
 
     useEffect(() => {
-        peopleRelationService.getEdges()
+        if (!workspace || rowPersons?.size == 0) {
+            setNodes([])
+            setNodesState(new Map<string, RowState>)
+            return;
+        }
+        peopleRelationService.getEdges(workspace.id)
             .then(response => {
                 const initEdges: Edge<EdgeData>[] = response.map(data => ({
                     id: data.id,
@@ -114,7 +144,7 @@ function ViewFamily() {
                 setEdgesState(newEdgesStateMap)
             })
             .catch(error => console.log(error))
-    }, [rowPersons]);
+    }, [rowPersons, workspace]);
 
     const editClicked: () => void = () => {
         setEditableButtonClicked(true)
@@ -215,6 +245,16 @@ function ViewFamily() {
 
             {/* Toolbar */}
             <div className="p-2 flex gap-3 bg-gray-100 border-b border-gray-300 shadow-sm justify-end">
+                <select id="workspace" name="workspace"
+                        value={workspace?.id}
+                        className="text-sm border border-gray-300 bg-white rounded-lg px-4 py-3 shadow focus:outline-none focus:ring-2 focus:ring-blue-400 transition w-100"
+                        onChange={(event) => onWorkspaceSelect(event.target.value)}>
+                    <option value="">Pick a workspace</option>
+                    {workspaces?.map((data) => (
+                        <option key={data.id} value={data.id}>{data.name}</option>
+                    ))}
+                </select>
+
                 <button className="px-3 py-1 text-sm rounded bg-blue-600 text-white hover:bg-blue-700"
                         onClick={saveClicked}>
                     Save

@@ -3,9 +3,11 @@ import type {Person} from "./model/Person.ts";
 import type {PersonRowDetail} from "./model/PersonRowDetail.ts";
 import {RowState} from "./model/Constants.ts";
 import PeopleRelationService from "./service/PeopleRelationService.ts";
+import Util from "./model/Util.ts";
 
 
 function EditFamily(): JSX.Element {
+    const util: Util = new Util();
     const peopleRelationService: PeopleRelationService = new PeopleRelationService();
     const [rowPersons, setRowPersons] = useState<Person[]>([])
     const [rowDetails, setRowDetails] = useState<Map<string, PersonRowDetail>>(new Map<string, PersonRowDetail>())
@@ -30,7 +32,7 @@ function EditFamily(): JSX.Element {
             email: "",
             yearOfBirth: -1,
             yearOfDeath: -1,
-            imageUrl: "",
+            image: "",
         };
         const newPersonRowDetail: PersonRowDetail = {
             editable: false,
@@ -105,6 +107,24 @@ function EditFamily(): JSX.Element {
             ));
     }
 
+    const handleFileInputChange = (
+        id: string,
+        field: string,
+        value: FileList | null
+    ): void => {
+        getFileBytes(value).then(response => {
+            setRowPersons((prev) =>
+                prev.map((row: Person) =>
+                    row.id === id ? {...row, [field]: response} : row
+                ));
+        })
+    }
+
+    async function getFileBytes(value: FileList | null): Promise<string> {
+        const bytes = await value?.item(0)?.arrayBuffer();
+        return bytes ? util.arrayBufferToBase64(bytes) : "";
+    }
+
     const handleSaveRow = (id: string): void => {
         setRowDetails(prevMap => {
             const prevDetail: PersonRowDetail = prevMap.get(id) as PersonRowDetail;
@@ -124,7 +144,8 @@ function EditFamily(): JSX.Element {
     return (
         <>
             <div className="h-screen bg-neutral-100 py-6 px-6 md:px-1">
-                <div className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 flex flex-col h-full">
+                <div
+                    className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 flex flex-col h-full">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-4 shrink-0 px-6 py-2">
                         <h2 className="text-xl font-semibold text-gray-800">Editable Records</h2>
@@ -133,7 +154,7 @@ function EditFamily(): JSX.Element {
                     {/* Table */}
                     <div className="flex-1 overflow-auto px-6">
                         <table className="min-w-full border-separate border-spacing-y-2">
-                            <thead  className="sticky top-0 bg-white/95 backdrop-blur shadow-sm z-10">
+                            <thead className="sticky top-0 bg-white/95 backdrop-blur shadow-sm z-10">
                             <tr className="text-left text-lg text-gray-600">
                                 <th className="px-4 py-2">First Name</th>
                                 <th className="px-4 py-2">Last Name</th>
@@ -237,15 +258,22 @@ function EditFamily(): JSX.Element {
                                     <td className="px-4 py-2">
                                         {rowDetails.get(row.id)?.editable ? (
                                             <input
-                                                type="text"
-                                                value={row.imageUrl}
+                                                type="file"
+                                                accept="image/*"
                                                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                    handleInputChange(row.id, "imageUrl", e.target.value)
+                                                    handleFileInputChange(row.id, "image", e.target.files)
                                                 }
-                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
+                                                className="w-25 border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
                                             />
                                         ) : (
-                                            <span>{row.imageUrl}</span>
+                                            <div
+                                                className="text-xs rounded-full w-11 h-11 flex justify-center items-center bg-gray-100">
+                                                <img
+                                                    src={URL.createObjectURL(new Blob([util.base64ToArrayBuffer(row.image)], {type: "image/jpeg"}))}
+                                                    alt="Preview"
+                                                    className="w-full h-full object-cover rounded border border-gray-400 shadow-sm"
+                                                />
+                                            </div>
                                         )}
                                     </td>
                                     <td className="px-4 py-2">

@@ -1,11 +1,13 @@
 import React, {memo} from 'react';
 import {Handle, type NodeProps, type Node, NodeToolbar, Position, useReactFlow} from '@xyflow/react';
 import type {NodeData} from "../model/Node.ts";
+import Util from "../model/Util.ts";
 
 
 function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
 
     const {setNodes, getNode} = useReactFlow();
+    const util: Util = new Util();
     const handleAddHeart: () => void = (): void => {
         const node = getNode(id);
         if (node) {
@@ -64,9 +66,9 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                 <div className="flex">
                     <div className="text-xs rounded-full w-14 h-15 flex justify-center items-center bg-gray-100">
                         <img
-                            src={data.persons?.get(data.personId)?.imageUrl}
+                            src={URL.createObjectURL(new Blob([util.base64ToArrayBuffer(data.persons?.get(data.personId)?.image ?? '')], {type: "image/jpeg"}))}
                             alt="Preview"
-                            className={data.persons?.get(data.personId)?.yearOfDeath == -1 ? "w-full h-full object-cover rounded border border-gray-400 shadow-sm" : "w-full h-full object-cover rounded border border-rose-300 shadow-sm"}
+                            className={data.persons?.get(data.personId)?.yearOfDeath == -1 ? "w-full h-full object-cover rounded border border-gray-400 shadow-sm" : "w-full h-full object-cover rounded border-3 border-rose-900 shadow-sm"}
                         />
                     </div>
                     <div className="ml-2">

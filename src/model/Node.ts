@@ -4,7 +4,8 @@ export interface Node {
     id: string,
     type: string,
     personId: string,
-    position: Position
+    position: Position,
+    workspaceId: string,
 }
 
 export interface Position {

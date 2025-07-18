@@ -6,5 +6,5 @@ export interface Person {
     email: string | undefined,
     yearOfBirth: number,
     yearOfDeath: number,
-    imageUrl: string
+    image: string
 }

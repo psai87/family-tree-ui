@@ -1,14 +1,12 @@
 import React, {memo} from 'react';
 import {Handle, type NodeProps, type Node, NodeToolbar, Position, useReactFlow} from '@xyflow/react';
 import type {NodeData} from "../model/Node.ts";
-import Util from "../model/Util.ts";
 import ImagePreview from "../ImagePreview.tsx";
 
 
 function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
 
     const {setNodes, getNode} = useReactFlow();
-    const util: Util = new Util();
     const handleAddHeart: () => void = (): void => {
         const node = getNode(id);
         if (node) {

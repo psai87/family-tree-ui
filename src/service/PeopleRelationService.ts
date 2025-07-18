@@ -29,15 +29,15 @@ export default class PeopleRelationService {
             .filter(([_, item]) => RowState.Deleted === item.state)
             .map(([key, _]) => key)
         let promiseArray: Promise<void>[] = []
-        if (added?.length>0) {
+        if (added?.length > 0) {
             console.log("added persons [size=" + added.length + "]");
             promiseArray.push(this.peopleClient.createPersons(added));
         }
-        if (updated?.length>0) {
+        if (updated?.length > 0) {
             console.log("updates persons [size=" + updated.length + "]")
             promiseArray.push(this.peopleClient.updatePersons(updated));
         }
-        if (deleted?.length>0) {
+        if (deleted?.length > 0) {
             console.log("deleted persons [size=" + deleted.length + "]");
             promiseArray.push(this.peopleClient.deletePersons(deleted));
         }
@@ -84,15 +84,15 @@ export default class PeopleRelationService {
         const deleted: string[] = nodes.filter(data => RowState.Deleted === nodesState.get(data.id))
             .map(data => data.id)
         let promiseArray: Promise<void>[] = []
-        if (added?.length>0) {
+        if (added?.length > 0) {
             console.log("added nodes [size=" + added.length + "]");
             promiseArray.push(this.relationClient.createNodes(added));
         }
-        if (updated?.length>0) {
+        if (updated?.length > 0) {
             console.log("updates nodes [size=" + updated.length + "]")
             promiseArray.push(this.relationClient.updateNodes(updated));
         }
-        if (deleted?.length>0) {
+        if (deleted?.length > 0) {
             console.log("deleted nodes [size=" + deleted.length + "]");
             promiseArray.push(this.relationClient.deleteNodes(deleted));
         }
@@ -123,15 +123,15 @@ export default class PeopleRelationService {
         const deleted: string[] = edges.filter(data => RowState.Deleted === edgesState.get(data.id))
             .map(data => data.id)
         let promiseArray: Promise<void>[] = []
-        if (added) {
+        if (added?.length > 0) {
             console.log("added edges [size=" + added.length + "]");
             promiseArray.push(this.relationClient.createEdges(added));
         }
-        if (updated) {
+        if (updated?.length > 0) {
             console.log("updates edges [size=" + updated.length + "]")
             promiseArray.push(this.relationClient.updateEdges(updated));
         }
-        if (deleted) {
+        if (deleted?.length > 0) {
             console.log("deleted edges [size=" + deleted.length + "]");
             promiseArray.push(this.relationClient.deleteEdges(deleted));
         }
@@ -158,15 +158,15 @@ export default class PeopleRelationService {
             .filter(([_, item]) => RowState.Deleted === item.state)
             .map(([key, _]) => key)
         let promiseArray: Promise<void>[] = []
-        if (added?.length>0) {
+        if (added?.length > 0) {
             console.log("added workspaces [size=" + added.length + "]");
             promiseArray.push(this.workspaceClient.createWorkspaces(added));
         }
-        if (updated?.length>0) {
+        if (updated?.length > 0) {
             console.log("updates workspaces [size=" + updated.length + "]")
             promiseArray.push(this.workspaceClient.updateWorkspaces(updated));
         }
-        if (deleted?.length>0) {
+        if (deleted?.length > 0) {
             console.log("deleted workspaces [size=" + deleted.length + "]");
             promiseArray.push(this.workspaceClient.deleteWorkspaces(deleted));
         }

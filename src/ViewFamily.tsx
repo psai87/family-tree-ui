@@ -198,7 +198,7 @@ function ViewFamily() {
                 newNodesStateMap.set(change.id, state)
                 setNodesState(newNodesStateMap)
             } else {
-                console.log("should not happen", change.type)
+                //console.log("should not happen", change.type)
             }
         });
         onNodesChange(changes);
@@ -211,7 +211,7 @@ function ViewFamily() {
                 newEdgesStateMap.set(change.id, RowState.Deleted)
                 setEdgesState(newEdgesStateMap)
             } else {
-                console.log("should not happen", change.type)
+               // console.log("should not happen", change.type)
             }
         });
         onEdgesChange(changes);

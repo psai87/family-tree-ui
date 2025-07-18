@@ -161,6 +161,11 @@ function ViewFamily() {
 
     const saveClicked: () => void = () => {
         setEditableButtonClicked(false)
+        if (!workspace) {
+            return
+        }else{
+            console.log("selected workspace", workspace.name)
+        }
         setNodes((prevNodes) =>
             prevNodes.map((node) => ({
                 ...node,
@@ -170,12 +175,12 @@ function ViewFamily() {
                 },
             }))
         );
-        peopleRelationService.saveNodes(nodes, nodesState)
+        peopleRelationService.saveNodes(nodes, nodesState, workspace.id)
             .catch(reason => {
                 console.log(reason)
             })
             .finally(() => console.log("Nodes saved"));
-        peopleRelationService.saveEdges(edges, edgesState)
+        peopleRelationService.saveEdges(edges, edgesState, workspace.id)
             .catch(reason => {
                 console.log(reason)
             })
@@ -211,7 +216,7 @@ function ViewFamily() {
                 newEdgesStateMap.set(change.id, RowState.Deleted)
                 setEdgesState(newEdgesStateMap)
             } else {
-               // console.log("should not happen", change.type)
+                // console.log("should not happen", change.type)
             }
         });
         onEdgesChange(changes);

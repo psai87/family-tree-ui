@@ -62,7 +62,7 @@ export default class PeopleRelationService {
         return await this.relationClient.getEdges(workspaceId);
     }
 
-    async saveNodes(nodes: RNode<NodeData>[], nodesState: Map<string, RowState>): Promise<void> {
+    async saveNodes(nodes: RNode<NodeData>[], nodesState: Map<string, RowState>, workspaceId: string): Promise<void> {
         const added: Node[] = nodes.filter(data => RowState.Added === nodesState.get(data.id))
             .map(data => {
                 return {
@@ -70,6 +70,7 @@ export default class PeopleRelationService {
                     type: data.type,
                     personId: data.data.personId,
                     position: {x: data.position.x, y: data.position.y},
+                    workspaceId: workspaceId,
                 } as Node
             })
         const updated: Node[] = nodes.filter(data => RowState.Edited === nodesState.get(data.id))
@@ -79,6 +80,7 @@ export default class PeopleRelationService {
                     type: data.type,
                     personId: data.data.personId,
                     position: {x: data.position.x, y: data.position.y},
+                    workspaceId: workspaceId,
                 } as Node
             })
         const deleted: string[] = nodes.filter(data => RowState.Deleted === nodesState.get(data.id))
@@ -99,7 +101,7 @@ export default class PeopleRelationService {
         await Promise.all(promiseArray)
     }
 
-    async saveEdges(edges: REdge<EdgeData>[], edgesState: Map<string, RowState>): Promise<void> {
+    async saveEdges(edges: REdge<EdgeData>[], edgesState: Map<string, RowState>, workspaceId: string): Promise<void> {
         const added: Edge[] = edges.filter(data => RowState.Added === edgesState.get(data.id))
             .map(data => {
                 return {
@@ -108,6 +110,7 @@ export default class PeopleRelationService {
                     sourceHandler: data.sourceHandle,
                     target: data.target,
                     targetHandler: data.targetHandle,
+                    workspaceId: workspaceId,
                 } as Edge
             })
         const updated: Edge[] = edges.filter(data => RowState.Edited === edgesState.get(data.id))
@@ -118,6 +121,7 @@ export default class PeopleRelationService {
                     sourceHandler: data.sourceHandle,
                     target: data.target,
                     targetHandler: data.targetHandle,
+                    workspaceId: workspaceId,
                 } as Edge
             })
         const deleted: string[] = edges.filter(data => RowState.Deleted === edgesState.get(data.id))

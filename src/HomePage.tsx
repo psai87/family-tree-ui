@@ -15,12 +15,12 @@ function HomePage({setAuthenticated, setTooltip}: HomePageProps) {
             .then(data => {
                 setAuthenticated(data.authenticated)
                 console.log("auth successful")
-                setTooltip({type: "success", text: "Authenticated successful"})
+                setTooltip({type: "success", text: "Authentication successful"})
             })
             .catch(err => {
                 console.log(err)
                 setAuthenticated(false)
-                setTooltip({type: "error", text: "Authenticated Failed"})
+                setTooltip({type: "error", text: "Authentication Failed"})
             })
             .finally(()=> setTimeout(() => setTooltip(null), 1000));
     }

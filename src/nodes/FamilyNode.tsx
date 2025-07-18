@@ -9,19 +9,19 @@ class FamilyNode extends Component<{ data: NodeData }> {
                 ❤️
                 <Handle
                     type="source"
-                    position={Position.Bottom}
+                    position={Position.Right}
                     id="c"
                     className="w-1 h-1 rounded-full !bg-teal-500"
                 />
                 <Handle
                     type="target"
-                    position={Position.Right}
+                    position={Position.Bottom}
                     id="b"
                     className="w-1 h-1 rounded-full !bg-teal-500"
                 />
                 <Handle
                     type="target"
-                    position={Position.Left}
+                    position={Position.Top}
                     id="a"
                     className="w-1 h-1 rounded-full !bg-teal-500"
                 />

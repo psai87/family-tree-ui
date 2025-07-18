@@ -95,21 +95,21 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
 
                 <Handle
                     type="target"
-                    position={Position.Top}
+                    position={Position.Left}
                     id="c"
+                    className="h-8 !bg-teal-500"
+                />
+                <Handle
+                    type="source"
+                    position={Position.Bottom}
+                    id="b"
                     className="w-10 !bg-teal-500"
                 />
                 <Handle
                     type="source"
-                    position={Position.Right}
-                    id="b"
-                    className="h-8 !bg-teal-500"
-                />
-                <Handle
-                    type="source"
-                    position={Position.Left}
+                    position={Position.Top}
                     id="a"
-                    className="h-8 !bg-teal-500"
+                    className="w-10 !bg-teal-500"
                 />
             </div>
         </>

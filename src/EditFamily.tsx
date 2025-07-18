@@ -4,6 +4,7 @@ import type {PersonRowDetail} from "./model/PersonRowDetail.ts";
 import {RowState} from "./model/Constants.ts";
 import PeopleRelationService from "./service/PeopleRelationService.ts";
 import Util from "./model/Util.ts";
+import ImagePreview from "./ImagePreview.tsx";
 
 
 function EditFamily(): JSX.Element {
@@ -268,11 +269,7 @@ function EditFamily(): JSX.Element {
                                         ) : (
                                             <div
                                                 className="text-xs rounded-full w-11 h-11 flex justify-center items-center bg-gray-100">
-                                                <img
-                                                    src={URL.createObjectURL(new Blob([util.base64ToArrayBuffer(row.image)], {type: "image/jpeg"}))}
-                                                    alt="Preview"
-                                                    className="w-full h-full object-cover rounded border border-gray-400 shadow-sm"
-                                                />
+                                                <ImagePreview base64={row.image} yearOfDeath={row.yearOfDeath}/>
                                             </div>
                                         )}
                                     </td>

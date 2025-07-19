@@ -2,6 +2,7 @@ import React, {memo} from 'react';
 import {Handle, type NodeProps, type Node, NodeToolbar, Position, useReactFlow} from '@xyflow/react';
 import type {NodeData} from "../model/Node.ts";
 import ImagePreview from "../ImagePreview.tsx";
+import {AutocompleteSelect} from "../AutocompleteSelect.tsx";
 
 
 function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
@@ -33,11 +34,11 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
         }
     };
 
-    const onPersonSelect: (event: React.ChangeEvent<HTMLSelectElement>) => void = (event): void => {
+    const onPersonSelect: (pId: string) => void = (pId): void => {
         const currentNode: Node = getNode(id) as Node
         let newNode: Node = {
             ...currentNode,
-            data: {personId: event.target.value, persons: currentNode.data.persons, editable: data.editable},
+            data: {personId: pId, persons: currentNode.data.persons, editable: data.editable},
         };
         setNodes((nodes) => {
             return nodes.filter(data => data.id !== id)
@@ -63,7 +64,8 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
             </NodeToolbar>
             <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 w-42 h-20">
                 <div className="flex">
-                    <div className="relative group pointer-events-auto text-xs rounded-full w-14 h-15 flex justify-center items-center bg-gray-100">
+                    <div
+                        className="relative group pointer-events-auto text-xs rounded-full w-14 h-15 flex justify-center items-center bg-gray-100">
                         <ImagePreview base64={data.persons?.get(data.personId)?.image}
                                       yearOfDeath={data.persons?.get(data.personId)?.yearOfDeath ?? -1}/>
                         <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2
@@ -74,23 +76,32 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                         </div>
                     </div>
                     <div className="ml-2">
-                        {data.editable && <select
-                            id={id + "_fruit"}
-                            name="fruit"
-                            className="text-xs rounded-md border border-gray-300 bg-white
-             focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500
-             hover:border-gray-400 transition w-20 h-5"
-                            onChange={onPersonSelect}
-                            value={data.personId}
-                        >
-                            <option value="">— pick one —</option>
-                            {Array.from(data.persons?.entries() ?? [])
-                                .map(([key, val]) => (
-                                    <option key={key} value={val.id}>
-                                        {val.firstName} {val.lastName}
-                                    </option>
-                                ))}
-                        </select>}
+                        {data.editable &&
+                            //                <select
+                            //                id={id + "_fruit"}
+                            //                name="fruit"
+                            //                className="text-xs rounded-md border border-gray-300 bg-white
+                            // focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500
+                            // hover:border-gray-400 transition w-20 h-5"
+                            //                onChange={onPersonSelect}
+                            //                value={data.personId}
+                            //            >
+                            //                <option value="">— pick one —</option>
+                            //                {Array.from(data.persons?.entries() ?? [])
+                            //                    .map(([key, val]) => (
+                            //                        <option key={key} value={val.id}>
+                            //                            {val.firstName} {val.lastName}
+                            //                        </option>
+                            //                    ))}
+                            //            </select>
+                            <AutocompleteSelect
+                                options={Array.from(data.persons?.entries() ?? []).map(([_, val]) => {
+                                    return {id: val.id, value: val.firstName +" "+ val.lastName};
+                                })}
+                                value={{id:data.personId, value:data.persons?.get(data.personId)?.firstName??'' +" "+ data.persons?.get(data.personId)?.lastName??''}}
+                                onChange={onPersonSelect}
+                            />
+                        }
                         {!data.editable && <div
                             className="text-xs font-bold whitespace-nowrap truncate w-20">{data.persons?.get(data.personId)?.firstName}</div>}
                         <div className="text-xs text-gray-500">{data.persons?.get(data.personId)?.lastName}</div>

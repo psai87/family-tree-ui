@@ -31,7 +31,6 @@ export class AutocompleteSelect extends Component<AutocompleteSelectProps, Autoc
     }
 
     componentDidMount() {
-        console.log("mounted",);
         document.addEventListener("mousedown", this.handleClickOutside, true);
         this.updateInputValueFromProps();
     }
@@ -49,7 +48,6 @@ export class AutocompleteSelect extends Component<AutocompleteSelectProps, Autoc
     updateInputValueFromProps = () => {
         const {value, options} = this.props;
         const selected = options.find((opt) => opt.id === value.id);
-        console.log("updateInputValueFromProps");
         if (selected) {
             this.setState({inputValue: selected.value});
         }

@@ -6,7 +6,10 @@ function ImagePreview({base64, yearOfDeath}: { base64: string | undefined, yearO
     const [url, setUrl] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!base64) return;
+        if (!base64) {
+            setUrl(null);
+            return
+        }
 
         const buffer = util.base64ToArrayBuffer(base64); // 👈 Ensure this returns valid ArrayBuffer
         const blob = new Blob([buffer], {type: "image/jpeg"});

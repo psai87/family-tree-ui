@@ -63,9 +63,15 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
             </NodeToolbar>
             <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 w-42 h-20">
                 <div className="flex">
-                    <div className="text-xs rounded-full w-14 h-15 flex justify-center items-center bg-gray-100">
+                    <div className="relative group pointer-events-auto text-xs rounded-full w-14 h-15 flex justify-center items-center bg-gray-100">
                         <ImagePreview base64={data.persons?.get(data.personId)?.image}
                                       yearOfDeath={data.persons?.get(data.personId)?.yearOfDeath ?? -1}/>
+                        <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2
+                opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100
+                bg-white text-gray-800 text-xs rounded-md px-3 py-1 shadow-md border border-gray-200
+                z-10 whitespace-nowrap pointer-events-auto">
+                            {data.persons?.get(data.personId)?.firstName}
+                        </div>
                     </div>
                     <div className="ml-2">
                         {data.editable && <select

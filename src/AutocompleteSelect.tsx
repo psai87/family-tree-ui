@@ -1,5 +1,4 @@
-import React, {Component, createRef} from "react";
-import { createPortal } from "react-dom";
+import React, {Component, createRef, type Dispatch, type SetStateAction} from "react";
 
 // Option type
 type Option = {
@@ -13,37 +12,28 @@ type AutocompleteSelectProps = {
     value: Option;
     onChange: (option: string) => void;
     placeholder?: string;
+    setShowDropdown: Dispatch<SetStateAction<boolean>>;
 };
-
-type Pos = {
-    top: number;
-    left: number;
-    width: number
-}
 
 // State type
 type AutocompleteSelectState = {
     inputValue: string;
     showDropdown: boolean;
-    dropdownPosition: Pos | null;
 };
 
 export class AutocompleteSelect extends Component<AutocompleteSelectProps, AutocompleteSelectState> {
     containerRef: React.RefObject<HTMLDivElement | null>;
-    inputRef: React.RefObject<HTMLInputElement | null>;
 
     constructor(props: AutocompleteSelectProps) {
         super(props);
-        this.state = {inputValue: "", showDropdown: false, dropdownPosition: null};
+        this.state = {inputValue: "", showDropdown: false};
         this.containerRef = createRef();
-        this.inputRef = createRef();
     }
 
     componentDidMount() {
         console.log("mounted",);
         document.addEventListener("mousedown", this.handleClickOutside, true);
         this.updateInputValueFromProps();
-        window.addEventListener("resize", this.updateDropdownPosition);
     }
 
     componentDidUpdate(prevProps: AutocompleteSelectProps) {
@@ -54,7 +44,6 @@ export class AutocompleteSelect extends Component<AutocompleteSelectProps, Autoc
 
     componentWillUnmount() {
         document.removeEventListener("mousedown", this.handleClickOutside, true);
-        window.removeEventListener("resize", this.updateDropdownPosition); // Clean up resize listener
     }
 
     updateInputValueFromProps = () => {
@@ -70,62 +59,45 @@ export class AutocompleteSelect extends Component<AutocompleteSelectProps, Autoc
         if (
             this.containerRef.current && !this.containerRef.current.contains(e.target as Node)
         ) {
+            this.props.setShowDropdown(false);
             this.setState({showDropdown: false});
         }
     };
 
     handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        this.props.setShowDropdown(true);
         this.setState({inputValue: e.target.value, showDropdown: true});
     };
 
     handleSelect = (option: Option) => {
         this.props.onChange(option.id);
+        this.props.setShowDropdown(false);
         this.setState({inputValue: option.value, showDropdown: false});
     };
 
-    // New method to calculate dropdown position
-    updateDropdownPosition = () => {
-        if (this.inputRef.current) {
-            const {bottom, left, width} = this.inputRef.current.getBoundingClientRect();
-            this.setState({
-                dropdownPosition: {top: bottom + window.scrollY, left: left + window.scrollX, width},
-            });
-        }
-    };
-
     render() {
-        const {options, placeholder} = this.props;
-        const {inputValue, showDropdown, dropdownPosition} = this.state;
+        const {options, placeholder, setShowDropdown} = this.props;
+        const {inputValue, showDropdown} = this.state;
 
         const filtered = options.filter((opt) =>
             opt.value.toLowerCase().includes(inputValue.toLowerCase())
         );
 
         return (
-            <div ref={this.containerRef} className="relative pointer-events-auto">
+            <div ref={this.containerRef} className="relative pointer-events-auto z-[999999] ">
                 <input
                     type="text"
-                    ref={this.inputRef}
                     value={inputValue}
                     placeholder={placeholder || "Select..."}
-                    className="w-20 h-5 border border-gray-300 rounded-md p-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-20 h-5 border border-gray-300 rounded-md p-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none nodrag nowheel nopan"
                     onChange={this.handleInputChange}
                     onFocus={() => {
-                        this.updateDropdownPosition()
-                        this.setState({showDropdown: true})}
-                    }
+                        setShowDropdown(true)
+                        this.setState({showDropdown: true})
+                    }}
                 />
                 {showDropdown && filtered.length > 0 && (
-                    <ul className="absolute mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto text-[10px] min-w-full"
-                        style={{
-                            top: dropdownPosition?.top,
-                            left: dropdownPosition?.left,
-                            width: dropdownPosition?.width,
-                            zIndex: 9999,
-                        }}
-                        onWheelCapture={(e) => {
-                            e.stopPropagation();
-                        }}>
+                    <ul className="absolute mt-1 z-[999999] bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto text-[10px] min-w-full nodrag nowheel">
                         {filtered.map((opt) => (
                             <li
                                 key={opt.id}

@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import {memo, useState} from 'react';
 import {Handle, type NodeProps, type Node, NodeToolbar, Position, useReactFlow} from '@xyflow/react';
 import type {NodeData} from "../model/Node.ts";
 import ImagePreview from "../ImagePreview.tsx";
@@ -8,6 +8,7 @@ import {AutocompleteSelect} from "../AutocompleteSelect.tsx";
 function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
 
     const {setNodes, getNode} = useReactFlow();
+    const [showDropdown, setShowDropdown] = useState<boolean>(false);
     const handleAddHeart: () => void = (): void => {
         const node = getNode(id);
         if (node) {
@@ -48,7 +49,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
 
     return (
         <>
-            <NodeToolbar position={Position.Bottom}>
+            {!showDropdown &&  <NodeToolbar position={Position.Bottom}>
                 <div className="flex gap-4 bg-gray-100 p-2 rounded-md shadow">
                     <button
                         onClick={handleAddHeart}
@@ -61,7 +62,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                         add-people
                     </button>
                 </div>
-            </NodeToolbar>
+            </NodeToolbar>}
             <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 w-42 h-20">
                 <div className="flex">
                     <div
@@ -96,10 +97,14 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                             //            </select>
                             <AutocompleteSelect
                                 options={Array.from(data.persons?.entries() ?? []).map(([_, val]) => {
-                                    return {id: val.id, value: val.firstName +" "+ val.lastName};
+                                    return {id: val.id, value: val.firstName + " " + val.lastName};
                                 })}
-                                value={{id:data.personId, value:data.persons?.get(data.personId)?.firstName??'' +" "+ data.persons?.get(data.personId)?.lastName??''}}
+                                value={{
+                                    id: data.personId,
+                                    value: data.persons?.get(data.personId)?.firstName ?? '' + " " + data.persons?.get(data.personId)?.lastName ?? ''
+                                }}
                                 onChange={onPersonSelect}
+                                setShowDropdown={setShowDropdown}
                             />
                         }
                         {!data.editable && <div

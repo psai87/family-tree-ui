@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import { useCallback, useEffect, useState} from 'react';
 import {
     addEdge, type Connection,
     Controls,
@@ -159,11 +159,296 @@ function ViewFamily() {
         );
     }
 
+    type WrapperTempNode = {
+        id: string;
+        node: string | null;
+        heartNode: string | null;
+        spouseNode: string | null;
+        rootNode: boolean
+    };
+
+
+    type WrapperTempEdge = {
+        id: string;
+        handler: string
+    }
+
+    const formatClicked: () => void = () => {
+        // console.log("formatting started")
+        // //put node into map for easy access
+        // const parentsMap = new Map<string, WrapperTempEdge[]>();
+        // const childMapEdge = edges.reduce((map, edge) => {
+        //     if (!map.has(edge.source)) {
+        //         map.set(edge.source, []);
+        //     }
+        //     map.get(edge.source)!.push(edge);
+        //     return map;
+        // }, new Map<string, Edge<EdgeData>[]>());
+        //
+        //
+        // for (const node of nodes) {
+        //     parentsMap.set(node.id, []);
+        // }
+        //
+        // for (const edge of edges) {
+        //     const {source, target, sourceHandle} = edge;
+        //     parentsMap.get(target)?.push({id: source, handler: sourceHandle as string});
+        // }
+        //
+        //
+        // const mapVisitedNodes: Map<string, boolean> = nodes.filter(node => node.type === "peopleNode").reduce((map, node) => map.set(node.id, false), new Map<string, boolean>());
+        // const heartNodes: string[] = nodes.filter(node => node.type === "familyNode").map(node => node.id)
+        //
+        //
+        // const wrapperMap: WrapperTempNode[] = [];
+        //
+        // for (const heartNode of heartNodes) {
+        //     const parents = parentsMap.get(heartNode)
+        //     let tempNode: WrapperTempNode = {
+        //         id: crypto.randomUUID(),
+        //         node: null,
+        //         heartNode: heartNode,
+        //         spouseNode: null,
+        //         rootNode: (heartNode === "5eca3c72-1977-46c2-acf2-208eb4065cb3")
+        //     };
+        //     if (parents) {
+        //         mapVisitedNodes.set(parents[0].id, true)
+        //         mapVisitedNodes.set(parents[1].id, true)
+        //         if (parents[0].handler === "b") {
+        //             tempNode.node = parents[0].id
+        //             tempNode.spouseNode = parents[1].id
+        //         } else {
+        //             tempNode.spouseNode = parents[0].id
+        //             tempNode.node = parents[1].id
+        //         }
+        //         wrapperMap.push(tempNode)
+        //     }
+        // }
+        // Array.from(mapVisitedNodes.entries()).filter(entry => !entry[1])
+        //     .forEach((entry) => {
+        //         wrapperMap.push({
+        //             id: crypto.randomUUID(),
+        //             node: entry[0],
+        //             heartNode: null,
+        //             spouseNode: null,
+        //             rootNode: false
+        //         })
+        //     })
+        //
+        //
+        // const wrapperEdgeX: Map<string, WrapperTempNode> = new Map<string, WrapperTempNode>()
+        // wrapperMap.forEach((node) => {
+        //     wrapperEdgeX.set(node.heartNode ?? "", node)
+        //     wrapperEdgeX.set(node.node ?? "", node)
+        //     wrapperEdgeX.set(node.spouseNode ?? "", node)
+        // })
+        //
+        //
+        // const spacingX = 300;
+        // const spacingY = 300;
+        // const newchildrenMap = new Map<string, WrapperTempNode[]>();
+        // wrapperMap.filter(data => data.heartNode !== null).forEach((node) => {
+        //     newchildrenMap.set(node.id, []);
+        // })
+        //
+        // wrapperMap.filter(data => data.heartNode !== null).forEach((node) => {
+        //     const childs = childMapEdge.get(node.heartNode ?? "")?.map(data => wrapperEdgeX.get(data.target) as WrapperTempNode) ?? []
+        //     newchildrenMap.get(node.id)?.push(...childs)
+        // })
+        //
+        //
+        // const subtreeHeights = new Map();
+        //
+        // function computeSubtreeHeight(id: string) {
+        //     const children = newchildrenMap.get(id);
+        //     if (!children || children.length === 0) {
+        //         subtreeHeights.set(id, 1);
+        //         return 1;
+        //     }
+        //     const height: number = children.reduce((sum, childId) => sum + computeSubtreeHeight(childId.id), 0);
+        //     subtreeHeights.set(id, height);
+        //     return height;
+        // }
+        //
+        // computeSubtreeHeight(wrapperMap.find(data => data.rootNode)?.id as string); // root assumed as '1'
+        // console.log(subtreeHeights);
+        // const positions = new Map<string, { px: number, py: number }>();
+        //
+        // function setPositions(id: WrapperTempNode, x: number, y: number) {
+        //     const height = subtreeHeights.get(id.id);
+        //     const children = newchildrenMap.get(id.id);
+        //
+        //     let startY = y - (height * spacingY) / 2 + spacingY / 2;
+        //     positions.set(id.node as string, {px: x, py: y});
+        //     positions.set(id.heartNode as string, {px: (x + 68), py: y+(100)});
+        //     positions.set(id.spouseNode as string, {px: x, py: (y+(150))});
+        //
+        //     if (!children || children.length === 0) return;
+        //
+        //     for (const child of children) {
+        //         const childHeight = subtreeHeights.get(child.id);
+        //         const childY = startY + (childHeight * spacingY) / 2 - spacingY / 2;
+        //         setPositions(child, x + spacingX, childY);
+        //         startY += childHeight * spacingY;
+        //     }
+        // }
+        // setPositions(wrapperMap.find(data => data.rootNode) as WrapperTempNode, 200, 200);
+        //
+        // setNodes(prevState => prevState.map(node =>  {
+        //     return {
+        //     ...node,
+        //     position:{x:positions.get(node.id)?.px as number,y:positions.get(node.id)?.py as number},
+        //     }})
+        // )
+
+// === BUILD MAPS ===
+        const parentsMap = new Map<string, WrapperTempEdge[]>();
+        const childMapEdge = new Map<string, Edge<EdgeData>[]>();
+        const mapVisitedNodes = new Map<string, boolean>();
+        const heartNodes: string[] = [];
+
+        for (const node of nodes) {
+            parentsMap.set(node.id, []);
+            if (node.type === "peopleNode") {
+                mapVisitedNodes.set(node.id, false);
+            } else if (node.type === "familyNode") {
+                heartNodes.push(node.id);
+            }
+        }
+
+        for (const edge of edges) {
+            const { source, target, sourceHandle } = edge;
+
+            // childMapEdge: maps source → all children
+            if (!childMapEdge.has(source)) childMapEdge.set(source, []);
+            childMapEdge.get(source)!.push(edge);
+
+            // parentsMap: maps child (target) → its parent(s)
+            if (!parentsMap.has(target)) parentsMap.set(target, []);
+            parentsMap.get(target)!.push({ id: source, handler: sourceHandle! });
+        }
+
+// === WRAP HEART NODES ===
+        const wrapperMap: WrapperTempNode[] = [];
+
+        for (const heartNode of heartNodes) {
+            const parents = parentsMap.get(heartNode);
+            if (parents && parents.length === 2) {
+                const isRoot = heartNode === "5eca3c72-1977-46c2-acf2-208eb4065cb3";
+
+                const [p1, p2] = parents;
+                const node = p1.handler === "b" ? p1.id : p2.id;
+                const spouse = p1.handler === "b" ? p2.id : p1.id;
+
+                mapVisitedNodes.set(node, true);
+                mapVisitedNodes.set(spouse, true);
+
+                wrapperMap.push({ id: crypto.randomUUID(), node, heartNode, spouseNode: spouse, rootNode: isRoot });
+            }
+        }
+
+// === ADD UNGROUPED PEOPLE ===
+        for (const [id, visited] of mapVisitedNodes.entries()) {
+            if (!visited) {
+                wrapperMap.push({ id: crypto.randomUUID(), node: id, heartNode: null, spouseNode: null, rootNode: false });
+            }
+        }
+
+// === EDGE TO WRAPPER NODE MAPPING ===
+        const wrapperEdgeX = new Map<string, WrapperTempNode>();
+        for (const wrapper of wrapperMap) {
+            if (wrapper.heartNode) wrapperEdgeX.set(wrapper.heartNode, wrapper);
+            if (wrapper.node) wrapperEdgeX.set(wrapper.node, wrapper);
+            if (wrapper.spouseNode) wrapperEdgeX.set(wrapper.spouseNode, wrapper);
+        }
+
+// === BUILD CHILDREN MAP ===
+        const newChildrenMap = new Map<string, WrapperTempNode[]>();
+
+        for (const wrapper of wrapperMap) {
+            if (wrapper.heartNode) newChildrenMap.set(wrapper.id, []);
+        }
+
+        for (const wrapper of wrapperMap) {
+            if (!wrapper.heartNode) continue;
+
+            const childEdges = childMapEdge.get(wrapper.heartNode) || [];
+            const children = childEdges.map(edge => wrapperEdgeX.get(edge.target)!).filter(Boolean);
+            newChildrenMap.get(wrapper.id)?.push(...children);
+        }
+
+// === CALCULATE SUBTREE HEIGHTS ===
+        const subtreeHeights = new Map<string, number>();
+
+        function computeSubtreeHeight(id: string): number {
+            const children = newChildrenMap.get(id);
+            if (!children || children.length === 0) {
+                subtreeHeights.set(id, 1);
+                return 1;
+            }
+
+            let total = 0;
+            for (const child of children) {
+                total += computeSubtreeHeight(child.id);
+            }
+
+            subtreeHeights.set(id, total);
+            return total;
+        }
+
+        const root = wrapperMap.find(w => w.rootNode);
+        if (root) computeSubtreeHeight(root.id);
+
+// === SET POSITIONS ===
+        const positions = new Map<string, { px: number, py: number }>();
+        const spacingX = 300;
+        const spacingY = 300;
+
+        function setPositions(wrapper: WrapperTempNode, x: number, y: number) {
+            const height = subtreeHeights.get(wrapper.id) || 1;
+            const children = newChildrenMap.get(wrapper.id);
+
+            let startY = y - (height * spacingY) / 2 ;
+            console.log("children"+children?.length)
+            console.log("Y"+y)
+            console.log("height"+height)
+            console.log("startY"+startY)
+            console.log("wrapper"+JSON.stringify(wrapper))
+
+            if (wrapper.node) positions.set(wrapper.node, { px: x, py: y });
+            if (wrapper.heartNode) positions.set(wrapper.heartNode, { px: x + 68, py: y + 100 });
+            if (wrapper.spouseNode) positions.set(wrapper.spouseNode, { px: x, py: y + 150 });
+
+            if (!children || children.length === 0) return;
+
+            for (const child of children) {
+                const childHeight = subtreeHeights.get(child.id) || 1;
+                const childY = startY + (childHeight * spacingY) / 2 ;
+                setPositions(child, x + spacingX, childY);
+                startY += childHeight * spacingY;
+            }
+        }
+
+        if (root) setPositions(root, 200, 200);
+
+// === APPLY POSITIONS ===
+        setNodes(prev =>
+            prev.map(node => ({
+                ...node,
+                position: {
+                    x: positions.get(node.id)?.px ?? node.position.x,
+                    y: positions.get(node.id)?.py ?? node.position.y,
+                },
+            }))
+        );
+
+    }
+
     const saveClicked: () => void = () => {
         setEditableButtonClicked(false)
         if (!workspace) {
             return
-        }else{
+        } else {
             console.log("selected workspace", workspace.name)
         }
         setNodes((prevNodes) =>
@@ -252,7 +537,7 @@ function ViewFamily() {
             <div className="p-2 flex gap-3 bg-gray-100 border-b border-gray-300 shadow-sm justify-end">
                 <select id="workspace" name="workspace"
                         value={workspace?.id}
-                        className="text-sm border border-gray-300 bg-white rounded-lg px-4 py-3 shadow focus:outline-none focus:ring-2 focus:ring-blue-400 transition w-100"
+                        className="text-sm border border-gray-300 bg-white rounded-lg px-4 py-3 shadow focus:outline-none focus:ring-2 focus:ring-blue-400 transition w-50"
                         onChange={(event) => onWorkspaceSelect(event.target.value)}>
                     <option value="">Pick a workspace</option>
                     {workspaces?.map((data) => (
@@ -267,6 +552,10 @@ function ViewFamily() {
                 <button className="px-3 py-1 text-sm rounded bg-green-600 text-white hover:bg-green-700"
                         onClick={editClicked}>
                     Edit
+                </button>
+                <button className="px-3 py-1 text-sm rounded bg-green-600 text-white hover:bg-green-700"
+                        onClick={formatClicked}>
+                    Auto Format
                 </button>
             </div>
         </div>

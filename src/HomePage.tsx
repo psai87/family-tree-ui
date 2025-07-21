@@ -3,7 +3,7 @@ import {type ChangeEvent} from "react";
 import {AuthState} from "./model/Constants.ts";
 import type HomePageProps from "./model/Props.ts";
 
-function HomePage({setAuthenticated, setTooltip}: HomePageProps) {
+function HomePage({setAuthenticated, setAlerts}: HomePageProps) {
     const peopleRelationService: PeopleRelationService = new PeopleRelationService();
 
     function handleTokenChange(value: string) {
@@ -14,15 +14,23 @@ function HomePage({setAuthenticated, setTooltip}: HomePageProps) {
         peopleRelationService.authenticate()
             .then(data => {
                 setAuthenticated(data.authenticated)
-                console.log("auth successful")
-                setTooltip({type: "success", text: "Authentication successful"})
+                console.log("Authentication Successful")
+                setAlerts(prevState => [...prevState, {
+                    id: Date.now(),
+                    type: "success",
+                    message: "Authentication Successful"
+                }])
             })
             .catch(err => {
                 console.log(err)
                 setAuthenticated(false)
-                setTooltip({type: "error", text: "Authentication Failed"})
-            })
-            .finally(()=> setTimeout(() => setTooltip(null), 1000));
+                console.log("Authentication Failed")
+                setAlerts(prevState => [...prevState, {
+                    id: Date.now(),
+                    type: "error",
+                    message: "Authentication Failed"
+                }])
+            });
     }
 
     return (

@@ -1,7 +1,7 @@
 import HomePage from "./HomePage.tsx";
 import EditFamily from "./EditFamily.tsx";
 import ViewFamily from "./ViewFamily.tsx";
-import {type JSX, useState} from "react";
+import {type JSX, useEffect, useState} from "react";
 import {Menu, Home, User, Settings, X} from "lucide-react";
 import EditWorkspace from "./EditWorkspace.tsx";
 
@@ -10,9 +10,9 @@ function SideBar() {
     const [activePage, setActivePage] = useState<string>("HomePage");
     const toggleSidebar = () => setIsOpen(!isOpen);
     const [authenticated, setAuthenticated] = useState<boolean>(false)
-    const [tooltip, setTooltip] = useState<null | { type: "success" | "error"; text: string }>(null)
+    const [alerts, setAlerts] = useState<{id:number, type: "success" | "error"; message: string }[]>([])
     const pages: Record<string, JSX.Element> = {
-        "HomePage": <HomePage setAuthenticated={setAuthenticated} setTooltip={setTooltip}/>,
+        "HomePage": <HomePage setAuthenticated={setAuthenticated} setAlerts={setAlerts}/>,
         "ViewFamily": <ViewFamily/>,
         "EditFamily": <EditFamily/>,
         "EditWorkspace": <EditWorkspace/>,
@@ -23,6 +23,12 @@ function SideBar() {
         {label: "Edit Family", icon: <Settings/>, page: "EditFamily"},
         {label: "Edit Workspace", icon: <Settings/>, page: "EditWorkspace"},
     ];
+
+    useEffect(() => {
+        setTimeout(function(){
+            setAlerts(prevState => prevState.filter(data => data.id>Date.now()));
+        }, 1000);
+    }, [alerts]);
 
     return (
         <>
@@ -67,16 +73,19 @@ function SideBar() {
                 <div className="flex-1 bg-gray-100 min-h-screen">
                     {pages[activePage]}
                 </div>
-                {/* Tooltip / Toast */}
-                {tooltip && (
-                    <div
-                        className={`fixed bottom-5 right-5 px-4 py-3 rounded-xl text-white shadow-lg transition-all duration-300 ${
-                            tooltip.type === "success" ? "bg-green-500" : "bg-red-500"
-                        }`}
-                    >
-                        {tooltip.text}
-                    </div>
-                )}
+                //alerts
+                <div className="fixed bottom-4 right-4 space-y-2 z-50">
+                    {alerts.map((alert) => (
+                        <div
+                            key={alert.id}
+                            className={`px-4 py-2 rounded shadow-md text-white animate-fade-in-up transition-all duration-300 ${
+                                alert.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+                            }`}
+                        >
+                            {alert.message}
+                        </div>
+                    ))}
+                </div>
             </div>
         </>
     );

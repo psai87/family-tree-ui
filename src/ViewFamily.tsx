@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {
-    addEdge, type Connection,
+    addEdge,
+    type Connection,
     Controls,
     type Edge,
     type EdgeChange,
@@ -441,6 +442,14 @@ function ViewFamily() {
                 },
             }))
         );
+
+        nodes.forEach(node => {
+            const selectedNode = nodesState.get(node.id)
+            if(!selectedNode)
+            {
+                nodesState.set(node.id, RowState.Edited)
+            }
+        })
 
     }
 

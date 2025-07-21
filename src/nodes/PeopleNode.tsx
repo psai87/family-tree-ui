@@ -69,7 +69,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                         className="relative group pointer-events-auto text-xs rounded-full w-14 h-15 flex justify-center items-center bg-gray-100">
                         <ImagePreview base64={data.persons?.get(data.personId)?.image}
                                       yearOfDeath={data.persons?.get(data.personId)?.yearOfDeath ?? -1}/>
-                        <div className="absolute right-full top-1/2 transform -translate-y-1/2 mr-2
+                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2
                 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100
                 bg-white text-gray-800 text-xs rounded-md px-3 py-1 shadow-md border border-gray-200
                 z-10 whitespace-nowrap pointer-events-auto">

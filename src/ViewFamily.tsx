@@ -410,11 +410,6 @@ function ViewFamily() {
             const children = newChildrenMap.get(wrapper.id);
 
             let startY = y - (height * spacingY) / 2 ;
-            console.log("children"+children?.length)
-            console.log("Y"+y)
-            console.log("height"+height)
-            console.log("startY"+startY)
-            console.log("wrapper"+JSON.stringify(wrapper))
 
             if (wrapper.node) positions.set(wrapper.node, { px: x, py: y });
             if (wrapper.heartNode) positions.set(wrapper.heartNode, { px: x + 68, py: y + 100 });

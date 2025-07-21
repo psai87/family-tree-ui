@@ -73,7 +73,7 @@ function SideBar() {
                 <div className="flex-1 bg-gray-100 min-h-screen">
                     {pages[activePage]}
                 </div>
-                //alerts
+                
                 <div className="fixed bottom-4 right-4 space-y-2 z-50">
                     {alerts.map((alert) => (
                         <div

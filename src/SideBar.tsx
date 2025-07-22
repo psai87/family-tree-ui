@@ -30,6 +30,13 @@ function SideBar() {
         }, 1000);
     }, [alerts]);
 
+    useEffect(() => {
+        if(authenticated)
+        {
+            setActivePage("ViewFamily")
+        }
+    }, [authenticated]);
+
     return (
         <>
             <div className="flex">

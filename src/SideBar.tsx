@@ -13,9 +13,9 @@ function SideBar() {
     const [alerts, setAlerts] = useState<{id:number, type: "success" | "error"; message: string }[]>([])
     const pages: Record<string, JSX.Element> = {
         "HomePage": <HomePage setAuthenticated={setAuthenticated} setAlerts={setAlerts}/>,
-        "ViewFamily": <ViewFamily/>,
-        "EditFamily": <EditFamily/>,
-        "EditWorkspace": <EditWorkspace/>,
+        "ViewFamily": <ViewFamily setAlerts={setAlerts}/>,
+        "EditFamily": <EditFamily setAlerts={setAlerts}/>,
+        "EditWorkspace": <EditWorkspace setAlerts={setAlerts}/>,
     };
     const navItems = [
         {label: "Home Page", icon: <Home/>, page: "HomePage"},
@@ -27,7 +27,7 @@ function SideBar() {
     useEffect(() => {
         setTimeout(function(){
             setAlerts(prevState => prevState.filter(data => data.id>Date.now()));
-        }, 1000);
+        }, 5000);
     }, [alerts]);
 
     useEffect(() => {

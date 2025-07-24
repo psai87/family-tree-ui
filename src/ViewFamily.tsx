@@ -24,8 +24,9 @@ import type {Person} from "./model/Person.ts";
 import type {EdgeData} from "./model/Edge.ts";
 import {RowState} from "./model/Constants.ts";
 import type {Workspace} from "./model/Workspace.ts";
+import type {AlertsProps} from "./model/Props.ts";
 
-function ViewFamily() {
+function ViewFamily({setAlerts}: AlertsProps) {
     const peopleRelationService: PeopleRelationService = new PeopleRelationService();
     const [rowPersons, setRowPersons] = useState<Map<string, Person>>(new Map())
     const nodeTypes = {
@@ -318,7 +319,7 @@ function ViewFamily() {
         }
 
         for (const edge of edges) {
-            const { source, target, sourceHandle } = edge;
+            const {source, target, sourceHandle} = edge;
 
             // childMapEdge: maps source → all children
             if (!childMapEdge.has(source)) childMapEdge.set(source, []);
@@ -326,7 +327,7 @@ function ViewFamily() {
 
             // parentsMap: maps child (target) → its parent(s)
             if (!parentsMap.has(target)) parentsMap.set(target, []);
-            parentsMap.get(target)!.push({ id: source, handler: sourceHandle! });
+            parentsMap.get(target)!.push({id: source, handler: sourceHandle!});
         }
 
 // === WRAP HEART NODES ===
@@ -340,18 +341,24 @@ function ViewFamily() {
                 const [p1, p2] = parents;
                 const node = p1.handler === "b" ? p1.id : p2.id;
                 const spouse = p1.handler === "b" ? p2.id : p1.id;
-                const isRoot =  parentsMap.get(node)?.length==0
+                const isRoot = parentsMap.get(node)?.length == 0
                 mapVisitedNodes.set(node, true);
                 mapVisitedNodes.set(spouse, true);
 
-                wrapperMap.push({ id: crypto.randomUUID(), node, heartNode, spouseNode: spouse, rootNode: isRoot });
+                wrapperMap.push({id: crypto.randomUUID(), node, heartNode, spouseNode: spouse, rootNode: isRoot});
             }
         }
 
 // === ADD UNGROUPED PEOPLE ===
         for (const [id, visited] of mapVisitedNodes.entries()) {
             if (!visited) {
-                wrapperMap.push({ id: crypto.randomUUID(), node: id, heartNode: null, spouseNode: null, rootNode: false });
+                wrapperMap.push({
+                    id: crypto.randomUUID(),
+                    node: id,
+                    heartNode: null,
+                    spouseNode: null,
+                    rootNode: false
+                });
             }
         }
 
@@ -409,17 +416,17 @@ function ViewFamily() {
             const height = subtreeHeights.get(wrapper.id) || 1;
             const children = newChildrenMap.get(wrapper.id);
 
-            let startY = y - (height * spacingY) / 2 ;
+            let startY = y - (height * spacingY) / 2;
 
-            if (wrapper.node) positions.set(wrapper.node, { px: x, py: y });
-            if (wrapper.heartNode) positions.set(wrapper.heartNode, { px: x + 68, py: y + 100 });
-            if (wrapper.spouseNode) positions.set(wrapper.spouseNode, { px: x, py: y + 150 });
+            if (wrapper.node) positions.set(wrapper.node, {px: x, py: y});
+            if (wrapper.heartNode) positions.set(wrapper.heartNode, {px: x + 68, py: y + 100});
+            if (wrapper.spouseNode) positions.set(wrapper.spouseNode, {px: x, py: y + 150});
 
             if (!children || children.length === 0) return;
 
             for (const child of children) {
                 const childHeight = subtreeHeights.get(child.id) || 1;
-                const childY = startY + (childHeight * spacingY) / 2 ;
+                const childY = startY + (childHeight * spacingY) / 2;
                 setPositions(child, x + spacingX, childY);
                 startY += childHeight * spacingY;
             }
@@ -440,8 +447,7 @@ function ViewFamily() {
 
         nodes.forEach(node => {
             const selectedNode = nodesState.get(node.id)
-            if(!selectedNode)
-            {
+            if (!selectedNode) {
                 nodesState.set(node.id, RowState.Edited)
             }
         })
@@ -467,11 +473,21 @@ function ViewFamily() {
         peopleRelationService.saveNodes(nodes, nodesState, workspace.id)
             .catch(reason => {
                 console.log(reason)
+                setAlerts(prevState => [...prevState, {
+                    id: Date.now(),
+                    type: "error",
+                    message: reason.message
+                }])
             })
             .finally(() => console.log("Nodes saved"));
         peopleRelationService.saveEdges(edges, edgesState, workspace.id)
             .catch(reason => {
                 console.log(reason)
+                setAlerts(prevState => [...prevState, {
+                    id: Date.now(),
+                    type: "error",
+                    message: reason.message
+                }])
             })
             .finally(() => console.log("Edges saved"));
     }

@@ -3,8 +3,9 @@ import type {PersonRowDetail} from "./model/PersonRowDetail.ts";
 import {RowState} from "./model/Constants.ts";
 import PeopleRelationService from "./service/PeopleRelationService.ts";
 import type {Workspace} from "./model/Workspace.ts";
+import type {AlertsProps} from "./model/Props.ts";
 
-function EditWorkspace(): JSX.Element {
+function EditWorkspace({setAlerts}: AlertsProps): JSX.Element {
 
     const peopleRelationService: PeopleRelationService = new PeopleRelationService();
     const [rowWorkspaces, setRowWorkspaces] = useState<Workspace[]>([])
@@ -47,6 +48,11 @@ function EditWorkspace(): JSX.Element {
             })
             .catch(reason => {
                 console.log(reason)
+                setAlerts(prevState => [...prevState, {
+                    id: Date.now(),
+                    type: "error",
+                    message: reason.message
+                }])
             })
             .finally(() => console.log("Data saved"));
     };

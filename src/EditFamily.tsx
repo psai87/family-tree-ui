@@ -5,9 +5,10 @@ import {RowState} from "./model/Constants.ts";
 import PeopleRelationService from "./service/PeopleRelationService.ts";
 import Util from "./model/Util.ts";
 import ImagePreview from "./ImagePreview.tsx";
+import type {AlertsProps} from "./model/Props.ts";
 
 
-function EditFamily(): JSX.Element {
+function EditFamily({setAlerts}: AlertsProps): JSX.Element {
     const util: Util = new Util();
     const peopleRelationService: PeopleRelationService = new PeopleRelationService();
     const [rowPersons, setRowPersons] = useState<Person[]>([])
@@ -56,6 +57,11 @@ function EditFamily(): JSX.Element {
             })
             .catch(reason => {
                 console.log(reason)
+                setAlerts(prevState => [...prevState, {
+                    id: Date.now(),
+                    type: "error",
+                    message: reason.message
+                }])
             })
             .finally(() => console.log("Data saved"));
     };

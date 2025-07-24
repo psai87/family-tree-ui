@@ -335,12 +335,12 @@ function ViewFamily() {
         for (const heartNode of heartNodes) {
             const parents = parentsMap.get(heartNode);
             if (parents && parents.length === 2) {
-                const isRoot = heartNode === "5eca3c72-1977-46c2-acf2-208eb4065cb3";
+                //const isRoot = heartNode === "5eca3c72-1977-46c2-acf2-208eb4065cb3";
 
                 const [p1, p2] = parents;
                 const node = p1.handler === "b" ? p1.id : p2.id;
                 const spouse = p1.handler === "b" ? p2.id : p1.id;
-
+                const isRoot =  parentsMap.get(node)?.length==0
                 mapVisitedNodes.set(node, true);
                 mapVisitedNodes.set(spouse, true);
 

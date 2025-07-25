@@ -342,7 +342,7 @@ function ViewFamily({setAlerts}: AlertsProps) {
                 const node = p1.handler === "b" ? p1.id : p2.id;
                 const spouse = p1.handler === "b" ? p2.id : p1.id;
                 const isRoot = parentsMap.get(node)?.length == 0
-                if(isRoot){
+                if (isRoot) {
                     console.log("root", heartNode)
                 }
                 mapVisitedNodes.set(node, true);
@@ -499,18 +499,24 @@ function ViewFamily({setAlerts}: AlertsProps) {
         changes.forEach(change => {
             if (change.type === 'remove') {
                 console.log("node-remove", change.id)
-                const newNodesStateMap = new Map(nodesState);
-                newNodesStateMap.set(change.id, RowState.Deleted)
-                setNodesState(newNodesStateMap)
+                setNodesState(oldMap => {
+                    const newNodesStateMap = new Map(oldMap);
+                    newNodesStateMap.set(change.id, RowState.Deleted)
+                    return newNodesStateMap;
+                })
             } else if (change.type === 'add') {
-                const newNodesStateMap = new Map(nodesState);
-                newNodesStateMap.set(change.item.id, RowState.Added)
-                setNodesState(newNodesStateMap)
+                setNodesState(oldMap => {
+                    const newNodesStateMap = new Map(oldMap);
+                    newNodesStateMap.set(change.item.id, RowState.Added)
+                    return newNodesStateMap;
+                })
             } else if (change.type === 'position' || change.type === 'replace') {
-                const newNodesStateMap = new Map(nodesState);
-                const state: RowState = (nodesState.get(change.id) && nodesState.get(change.id) == RowState.Added) ? RowState.Added : RowState.Edited
-                newNodesStateMap.set(change.id, state)
-                setNodesState(newNodesStateMap)
+                setNodesState(oldMap => {
+                    const newNodesStateMap = new Map(oldMap);
+                    const state: RowState = (newNodesStateMap.get(change.id) && newNodesStateMap.get(change.id) == RowState.Added) ? RowState.Added : RowState.Edited
+                    newNodesStateMap.set(change.id, state)
+                    return newNodesStateMap;
+                })
             } else {
                 console.log("should not happen", change.type)
             }
@@ -522,9 +528,11 @@ function ViewFamily({setAlerts}: AlertsProps) {
         changes.forEach(change => {
             if (change.type === 'remove') {
                 console.log("edge-remove", change.id)
-                const newEdgesStateMap = new Map(edgesState);
-                newEdgesStateMap.set(change.id, RowState.Deleted)
-                setEdgesState(newEdgesStateMap)
+                setEdgesState(oldMap => {
+                    const newEdgesStateMap = new Map(oldMap);
+                    newEdgesStateMap.set(change.id, RowState.Deleted)
+                    return newEdgesStateMap
+                })
             } else {
                 console.log("should not happen", change.type)
             }

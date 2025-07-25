@@ -342,6 +342,9 @@ function ViewFamily({setAlerts}: AlertsProps) {
                 const node = p1.handler === "b" ? p1.id : p2.id;
                 const spouse = p1.handler === "b" ? p2.id : p1.id;
                 const isRoot = parentsMap.get(node)?.length == 0
+                if(isRoot){
+                    console.log("root", heartNode)
+                }
                 mapVisitedNodes.set(node, true);
                 mapVisitedNodes.set(spouse, true);
 
@@ -495,6 +498,7 @@ function ViewFamily({setAlerts}: AlertsProps) {
     const handleNodesChange = useCallback((changes: NodeChange<Node<NodeData>>[]) => {
         changes.forEach(change => {
             if (change.type === 'remove') {
+                console.log("node-remove", change.id)
                 const newNodesStateMap = new Map(nodesState);
                 newNodesStateMap.set(change.id, RowState.Deleted)
                 setNodesState(newNodesStateMap)
@@ -508,7 +512,7 @@ function ViewFamily({setAlerts}: AlertsProps) {
                 newNodesStateMap.set(change.id, state)
                 setNodesState(newNodesStateMap)
             } else {
-                //console.log("should not happen", change.type)
+                console.log("should not happen", change.type)
             }
         });
         onNodesChange(changes);
@@ -517,11 +521,12 @@ function ViewFamily({setAlerts}: AlertsProps) {
     const handleEdgesChange = useCallback((changes: EdgeChange<Edge<EdgeData>>[]) => {
         changes.forEach(change => {
             if (change.type === 'remove') {
+                console.log("edge-remove", change.id)
                 const newEdgesStateMap = new Map(edgesState);
                 newEdgesStateMap.set(change.id, RowState.Deleted)
                 setEdgesState(newEdgesStateMap)
             } else {
-                // console.log("should not happen", change.type)
+                console.log("should not happen", change.type)
             }
         });
         onEdgesChange(changes);

@@ -83,8 +83,10 @@ export default class PeopleRelationService {
                     workspaceId: workspaceId,
                 } as Node
             })
-        const deleted: string[] = nodes.filter(data => RowState.Deleted === nodesState.get(data.id))
-            .map(data => data.id)
+        const deleted: string[] = [...nodesState.entries()]
+            .filter(([_, item]) => RowState.Deleted === item)
+            .map(([key, _]) => key)
+
         let promiseArray: Promise<void>[] = []
         if (added?.length > 0) {
             console.log("added nodes [size=" + added.length + "]");
@@ -124,8 +126,9 @@ export default class PeopleRelationService {
                     workspaceId: workspaceId,
                 } as Edge
             })
-        const deleted: string[] = edges.filter(data => RowState.Deleted === edgesState.get(data.id))
-            .map(data => data.id)
+        const deleted: string[] = [...edgesState.entries()]
+            .filter(([_, item]) => RowState.Deleted === item)
+            .map(([key, _]) => key)
         let promiseArray: Promise<void>[] = []
         if (added?.length > 0) {
             console.log("added edges [size=" + added.length + "]");

@@ -154,7 +154,7 @@ function EditFamily({setAlerts}: AlertsProps): JSX.Element {
 
     return (
         <>
-            <div className="h-screen bg-neutral-100 py-6 px-6 md:px-1">
+            <div className="h-dvh bg-neutral-100 py-6 px-6 md:px-1">
                 <div
                     className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 flex flex-col h-full">
                     {/* Header */}

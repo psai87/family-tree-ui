@@ -567,7 +567,7 @@ function ViewFamily({setAlerts}: AlertsProps) {
             </ReactFlow>
 
             {/* Toolbar */}
-            <div className="p-2 flex gap-3 bg-gray-100 border-b border-gray-300 shadow-sm justify-end">
+            <div className="p-2 flex flex-wrap gap-3 bg-gray-100 border-b border-gray-300 shadow-sm justify-end">
                 <select id="workspace" name="workspace"
                         value={workspace?.id}
                         className="text-sm border border-gray-300 bg-white rounded-lg px-4 py-3 shadow focus:outline-none focus:ring-2 focus:ring-blue-400 transition w-50"

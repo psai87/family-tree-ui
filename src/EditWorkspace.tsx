@@ -45,6 +45,11 @@ function EditWorkspace({setAlerts}: AlertsProps): JSX.Element {
                         setRowDetails(response[1])
                     })
                     .catch(error => console.log(error))
+                setAlerts(prevState => [...prevState, {
+                    id: Date.now(),
+                    type: "success",
+                    message: "Saved successfully",
+                }])
             })
             .catch(reason => {
                 console.log(reason)
@@ -53,8 +58,7 @@ function EditWorkspace({setAlerts}: AlertsProps): JSX.Element {
                     type: "error",
                     message: reason.message
                 }])
-            })
-            .finally(() => console.log("Data saved"));
+            });
     };
 
     const handleEdit = (id: string): void => {

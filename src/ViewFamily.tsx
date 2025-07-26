@@ -542,7 +542,7 @@ function ViewFamily({setAlerts}: AlertsProps) {
 
 
     return (
-        <div className="h-screen w-full flex flex-col">
+        <div className="h-dvh w-full flex flex-col">
 
             <ReactFlow
 

@@ -412,8 +412,8 @@ function ViewFamily({setAlerts}: AlertsProps) {
 
 // === SET POSITIONS ===
         const positions = new Map<string, { px: number, py: number }>();
-        const spacingX = 300;
-        const spacingY = 300;
+        const spacingX = 200;
+        const spacingY = 250;
 
         function setPositions(wrapper: WrapperTempNode, x: number, y: number) {
             const height = subtreeHeights.get(wrapper.id) || 1;
@@ -422,8 +422,8 @@ function ViewFamily({setAlerts}: AlertsProps) {
             let startY = y - (height * spacingY) / 2;
 
             if (wrapper.node) positions.set(wrapper.node, {px: x, py: y});
-            if (wrapper.heartNode) positions.set(wrapper.heartNode, {px: x + 68, py: y + 100});
-            if (wrapper.spouseNode) positions.set(wrapper.spouseNode, {px: x, py: y + 150});
+            if (wrapper.heartNode) positions.set(wrapper.heartNode, {px: x + 48, py: y + 90});
+            if (wrapper.spouseNode) positions.set(wrapper.spouseNode, {px: x, py: y + 135});
 
             if (!children || children.length === 0) return;
 

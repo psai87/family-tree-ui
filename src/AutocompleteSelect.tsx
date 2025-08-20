@@ -87,7 +87,7 @@ export class AutocompleteSelect extends Component<AutocompleteSelectProps, Autoc
                     type="text"
                     value={inputValue}
                     placeholder={placeholder || "Select..."}
-                    className="w-20 h-5 border border-gray-300 rounded-md p-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none nodrag nowheel nopan"
+                    className="w-15 h-5 border border-gray-300 rounded-md p-2 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none nodrag nowheel nopan"
                     onChange={this.handleInputChange}
                     onFocus={() => {
                         setShowDropdown(true)

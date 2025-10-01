@@ -1,14 +1,15 @@
-import {type ChangeEvent, type JSX, useEffect, useState} from "react";
+import {type JSX, useEffect, useState} from "react";
 import type {Person} from "./model/Person.ts";
 import type {PersonRowDetail} from "./model/PersonRowDetail.ts";
 import {RowState} from "./model/Constants.ts";
 import PeopleRelationService from "./service/PeopleRelationService.ts";
 import Util from "./model/Util.ts";
 import ImagePreview from "./ImagePreview.tsx";
-import type {AlertsProps} from "./model/Props.ts";
+import {Edit, HardDrive, Plus, Save, Trash2, X} from "lucide-react";
+import {toast} from "sonner";
 
 
-function EditFamily({setAlerts}: AlertsProps): JSX.Element {
+function EditFamily(): JSX.Element {
     const util: Util = new Util();
     const peopleRelationService: PeopleRelationService = new PeopleRelationService();
     const [rowPersons, setRowPersons] = useState<Person[]>([])
@@ -54,19 +55,11 @@ function EditFamily({setAlerts}: AlertsProps): JSX.Element {
                         setRowDetails(response[1])
                     })
                     .catch(error => console.log(error))
-                setAlerts(prevState => [...prevState, {
-                    id: Date.now(),
-                    type: "success",
-                    message: "Saved successfully",
-                }])
+                toast.success("Saved successfully")
             })
             .catch(reason => {
                 console.log(reason)
-                setAlerts(prevState => [...prevState, {
-                    id: Date.now(),
-                    type: "error",
-                    message: reason.message
-                }])
+                toast.error(reason.message)
             });
     };
 
@@ -158,7 +151,7 @@ function EditFamily({setAlerts}: AlertsProps): JSX.Element {
                 <div
                     className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 flex flex-col h-full">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-4 shrink-0 px-6 py-2">
+                    <div className="flex items-center justify-between mb-4 shrink-0 px-6 py-4">
                         <h2 className="text-xl font-semibold text-gray-800">Editable Records</h2>
                     </div>
 
@@ -174,10 +167,11 @@ function EditFamily({setAlerts}: AlertsProps): JSX.Element {
                                 <th className="px-4 py-2">YOB</th>
                                 <th className="px-4 py-2">YOD</th>
                                 <th className="px-4 py-2">Image</th>
+                                <th className="px-4 py-2 text-right">Actions</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {rowPersons.map((row: Person) => (
+                            {rowPersons.map((row) => (
                                 <tr
                                     key={row.id}
                                     className="bg-neutral-50 hover:bg-neutral-100 transition rounded-lg shadow-sm"
@@ -187,10 +181,8 @@ function EditFamily({setAlerts}: AlertsProps): JSX.Element {
                                             <input
                                                 type="text"
                                                 value={row.firstName}
-                                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                    handleInputChange(row.id, "firstName", e.target.value)
-                                                }
-                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
+                                                onChange={(e) => handleInputChange(row.id, "firstName", e.target.value)}
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
                                             />
                                         ) : (
                                             <span>{row.firstName}</span>
@@ -201,10 +193,8 @@ function EditFamily({setAlerts}: AlertsProps): JSX.Element {
                                             <input
                                                 type="text"
                                                 value={row.lastName}
-                                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                    handleInputChange(row.id, "lastName", e.target.value)
-                                                }
-                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
+                                                onChange={(e) => handleInputChange(row.id, "lastName", e.target.value)}
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
                                             />
                                         ) : (
                                             <span>{row.lastName}</span>
@@ -215,10 +205,8 @@ function EditFamily({setAlerts}: AlertsProps): JSX.Element {
                                             <input
                                                 type="text"
                                                 value={row.occupation}
-                                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                    handleInputChange(row.id, "occupation", e.target.value)
-                                                }
-                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
+                                                onChange={(e) => handleInputChange(row.id, "occupation", e.target.value)}
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
                                             />
                                         ) : (
                                             <span>{row.occupation}</span>
@@ -229,10 +217,8 @@ function EditFamily({setAlerts}: AlertsProps): JSX.Element {
                                             <input
                                                 type="text"
                                                 value={row.email}
-                                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                    handleInputChange(row.id, "email", e.target.value)
-                                                }
-                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
+                                                onChange={(e) => handleInputChange(row.id, "email", e.target.value)}
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
                                             />
                                         ) : (
                                             <span>{row.email}</span>
@@ -243,10 +229,8 @@ function EditFamily({setAlerts}: AlertsProps): JSX.Element {
                                             <input
                                                 type="text"
                                                 value={row.yearOfBirth}
-                                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                    handleInputChange(row.id, "yearOfBirth", e.target.value)
-                                                }
-                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
+                                                onChange={(e) => handleInputChange(row.id, "yearOfBirth", e.target.value)}
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
                                             />
                                         ) : (
                                             <span>{row.yearOfBirth}</span>
@@ -257,10 +241,8 @@ function EditFamily({setAlerts}: AlertsProps): JSX.Element {
                                             <input
                                                 type="text"
                                                 value={row.yearOfDeath}
-                                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                    handleInputChange(row.id, "yearOfDeath", e.target.value)
-                                                }
-                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
+                                                onChange={(e) => handleInputChange(row.id, "yearOfDeath", e.target.value)}
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
                                             />
                                         ) : (
                                             <span>{row.yearOfDeath}</span>
@@ -271,72 +253,75 @@ function EditFamily({setAlerts}: AlertsProps): JSX.Element {
                                             <input
                                                 type="file"
                                                 accept="image/*"
-                                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                    handleFileInputChange(row.id, "image", e.target.files)
-                                                }
-                                                className="w-25 border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
+                                                onChange={(e) => handleFileInputChange(row.id, "image", e.target.files)}
+                                                className="w-full text-xs file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 transition-colors"
                                             />
                                         ) : (
                                             <div
-                                                className="text-xs rounded-full w-11 h-11 flex justify-center items-center bg-gray-100">
+                                                className="text-xs rounded w-11 h-11 flex justify-center items-center bg-gray-100 overflow-hidden">
                                                 <ImagePreview base64={row.image} yearOfDeath={row.yearOfDeath}/>
                                             </div>
                                         )}
                                     </td>
-                                    <td className="px-4 py-2">
-                                        {rowDetails.get(row.id)?.editable ? (
-                                            <div className="inline-flex gap-2">
-                                                <button
-                                                    onClick={() => handleSaveRow(row.id)}
-                                                    className="text-sm bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
-                                                >
-                                                    ✅ Save
-                                                </button>
-                                                <button
-                                                    onClick={() => handleCancel(row.id)}
-                                                    className="text-sm bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 transition"
-                                                >
-                                                    ❌ Cancel
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className="inline-flex gap-2">
-                                                <button
-                                                    onClick={() => handleEdit(row.id)}
-                                                    className="text-sm bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 transition"
-                                                >
-                                                    ✏️ Edit
-                                                </button>
-                                                <button
-                                                    onClick={() => handleRemove(row.id)}
-                                                    className="text-sm bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 transition"
-                                                >
-                                                    ❌ Remove
-                                                </button>
-                                            </div>
-                                        )}
+                                    <td className="px-4 py-2 text-right">
+                                        <div className="inline-flex gap-2">
+                                            {rowDetails.get(row.id)?.editable ? (
+                                                <>
+                                                    <button
+                                                        onClick={() => handleSaveRow(row.id)}
+                                                        className="text-sm bg-green-500 text-white p-2 rounded hover:bg-green-600 transition flex items-center justify-center"
+                                                        title="Save"
+                                                    >
+                                                        <Save className="h-4 w-4"/>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleCancel(row.id)}
+                                                        className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center"
+                                                        title="Cancel"
+                                                    >
+                                                        <X className="h-4 w-4"/>
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        onClick={() => handleEdit(row.id)}
+                                                        className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center"
+                                                        title="Edit"
+                                                    >
+                                                        <Edit className="h-4 w-4"/>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleRemove(row.id)}
+                                                        className="text-sm bg-red-500 text-white p-2 rounded hover:bg-red-600 transition flex items-center justify-center"
+                                                        title="Remove"
+                                                    >
+                                                        <Trash2 className="h-4 w-4"/>
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
                                     </td>
-
                                 </tr>
                             ))}
                             </tbody>
                         </table>
                     </div>
+
                     <div className="flex justify-end gap-3 mt-4 py-3 px-3">
                         <button
                             onClick={handleAddRow}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm transition"
+                            className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm transition flex items-center gap-2"
                         >
-                            ➕ Add Record
+                            <Plus className="h-4 w-4"/> Add Record
                         </button>
                         <button
                             onClick={handleSaveAll}
-                            className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 shadow-sm transition"
+                            className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 shadow-sm transition flex items-center gap-2"
                         >
-                            💾 Save All
+                            <HardDrive className="h-4 w-4"/> Save All
                         </button>
                     </div>
-
                 </div>
             </div>
         </>

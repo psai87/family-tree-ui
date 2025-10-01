@@ -1,101 +1,120 @@
-import HomePage from "./HomePage.tsx";
-import EditFamily from "./EditFamily.tsx";
-import ViewFamily from "./ViewFamily.tsx";
-import {type JSX, useEffect, useState} from "react";
-import {Menu, Home, User, Settings, X} from "lucide-react";
-import EditWorkspace from "./EditWorkspace.tsx";
+import {useState} from "react";
+import {Home, User, Settings, Network} from "lucide-react";
+import {HashRouter as Router, Route, Routes, Link} from "react-router-dom";
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarGroupLabel, SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarProvider, SidebarTrigger,
+
+} from "@/components/ui/sidebar";
+import LoginPage from "@/LoginPage.tsx";
+import ViewFamily from "@/ViewFamily.tsx";
+import EditFamily from "@/EditFamily.tsx";
+import EditWorkspace from "@/EditWorkspace.tsx";
+import {Breadcrumb, BreadcrumbItem, BreadcrumbList} from "@/components/ui/breadcrumb.tsx";
+import type {NavItem} from "@/model/NavItem.ts";
+import {Toaster} from "sonner";
+
 
 function SideBar() {
-    const [isOpen, setIsOpen] = useState(true);
-    const [activePage, setActivePage] = useState<string>("HomePage");
-    const toggleSidebar = () => setIsOpen(!isOpen);
     const [authenticated, setAuthenticated] = useState<boolean>(false)
-    const [alerts, setAlerts] = useState<{id:number, type: "success" | "error"; message: string }[]>([])
-    const pages: Record<string, JSX.Element> = {
-        "HomePage": <HomePage setAuthenticated={setAuthenticated} setAlerts={setAlerts}/>,
-        "ViewFamily": <ViewFamily setAlerts={setAlerts}/>,
-        "EditFamily": <EditFamily setAlerts={setAlerts}/>,
-        "EditWorkspace": <EditWorkspace setAlerts={setAlerts}/>,
-    };
-    const navItems = [
-        {label: "Home Page", icon: <Home/>, page: "HomePage"},
-        {label: "View Family", icon: <User/>, page: "ViewFamily"},
-        {label: "Edit Family", icon: <Settings/>, page: "EditFamily"},
-        {label: "Edit Workspace", icon: <Settings/>, page: "EditWorkspace"},
-    ];
-
-    useEffect(() => {
-        setTimeout(function(){
-            setAlerts(prevState => prevState.filter(data => data.id>Date.now()));
-        }, 5000);
-    }, [alerts]);
-
-    useEffect(() => {
-        if(authenticated)
-        {
-            setActivePage("ViewFamily")
-        }
-    }, [authenticated]);
+    const [selectedGroup, setSelectedGroup] = useState<string>("Login")
+    const navItems = new Map<string, Array<NavItem>>([["Family Tree", [
+        {label: "View Family", icon: Network, path: "/view-family"},
+        {label: "Edit People", icon: User, path: "/edit-people"},
+        {label: "Edit Workspace", icon: Settings, path: "/edit-workspace"},
+    ]]]);
 
     return (
-        <>
-            <div className="flex">
-                <div
-                    className={`transition-all duration-300 ${
-                        isOpen ? "w-64" : "w-16"
-                    } bg-gray-900 min-h-screen text-white flex flex-col`}
-                >
-                    <div className="flex items-center justify-between p-4 border-b border-gray-700">
-                        {isOpen && <h1 className="text-xl font-bold">Family-Tree</h1>}
-                        <button onClick={toggleSidebar}>{isOpen ? <X/> : <Menu/>}</button>
-                    </div>
-                    <ul className="mt-4 flex-1">
-                        {authenticated ? (navItems.map((item) => (
-                            <li
-                                key={item.label}
-                                onClick={() => setActivePage(item.page)}
-                                className={`flex items-center gap-4 px-4 py-3 hover:bg-gray-700 cursor-pointer ${
-                                    activePage === item.page ? "bg-gray-700" : ""
-                                }`}
-                            >
-                                {item.icon}
-                                {isOpen && <span>{item.label}</span>}
-                            </li>
-                        ))) : (navItems.filter(data => data.label === "Home Page").map((item) => (
-                            <li
-                                key={item.label}
-                                onClick={() => setActivePage(item.page)}
-                                className={`flex items-center gap-4 px-4 py-3 hover:bg-gray-700 cursor-pointer ${
-                                    activePage === item.page ? "bg-gray-700" : ""
-                                }`}
-                            >
-                                {item.icon}
-                                {isOpen && <span>{item.label}</span>}
-                            </li>
-                        )))}
-                    </ul>
-                </div>
+        <Router>
+            <SidebarProvider defaultOpen>
 
+                    {/* Sidebar */}
+                    <Sidebar collapsible="icon" className="bg-navy text-light-orange shadow-lg shadow-gray-900/50">
+                        {/* Sidebar header */}
+                        <SidebarHeader className="bg-[#0a1a3c] text-white">
+                            <SidebarMenu>
+                                <SidebarMenuItem key="login">
+                                    <SidebarMenuButton asChild className="hover:bg-gray-500 hover:text-white font-oswald text-xl">
+                                        <Link to={"/"} onClick={() => setSelectedGroup("Login")} className="text-white">
+                                            <Home className="text-xl w-5 h-5"/>
+                                            Login
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            </SidebarMenu>
+                        </SidebarHeader>
 
-                <div className="flex-1 bg-gray-100 min-h-screen">
-                    {pages[activePage]}
-                </div>
-                
-                <div className="fixed bottom-4 right-4 space-y-2 z-50">
-                    {alerts.map((alert) => (
-                        <div
-                            key={alert.id}
-                            className={`px-4 py-2 rounded shadow-md text-white animate-fade-in-up transition-all duration-300 ${
-                                alert.type === 'success' ? 'bg-green-500' : 'bg-red-500'
-                            }`}
-                        >
-                            {alert.message}
+                        {/* Sidebar content */
+                        }
+                        <SidebarContent className="overflow-visible bg-[#0a1a3c] text-white text-xl">
+                            {authenticated &&
+                                Array.from(navItems).map(([group, items]) => (
+                                    <SidebarGroup key={group}>
+                                        <SidebarGroupLabel className="text-white">{group}</SidebarGroupLabel>
+                                        <SidebarGroupContent>
+                                            <SidebarMenu>
+                                                {items.map((item) => (
+                                                    <SidebarMenuItem key={item.label}>
+                                                        <SidebarMenuButton asChild
+                                                                           className="hover:bg-gray-500 hover:text-white font-oswald text-xl">
+                                                            <Link
+                                                                to={item.path}
+                                                                onClick={() => setSelectedGroup(group)}
+                                                                className="flex items-center gap-2 text-white"
+                                                            >
+                                                                <item.icon />
+                                                                {item.label}
+                                                            </Link>
+                                                        </SidebarMenuButton>
+                                                    </SidebarMenuItem>
+                                                ))}
+                                            </SidebarMenu>
+                                        </SidebarGroupContent>
+                                    </SidebarGroup>
+                                ))}
+                        </SidebarContent>
+                    </Sidebar>
+
+                    {/* Main content */
+                    }
+                    <main className="flex-1 p-2 bg-light-orange font-oswald flex flex-col">
+                        <div className="flex items-center gap-4 mb-2">
+                            <SidebarTrigger/>
+                            <Breadcrumb>
+                                <BreadcrumbList>
+                                    <BreadcrumbItem>
+                                        <span className="text-xl font-oswald text-orange-700 font-bold">{selectedGroup}</span>
+                                    </BreadcrumbItem>
+                                </BreadcrumbList>
+                            </Breadcrumb>
                         </div>
-                    ))}
-                </div>
-            </div>
-        </>
-    );
+                        {/* Scrollable content area */}
+                        <div className="flex-1 overflow-y-auto">
+                            <Routes>
+                                <Route
+                                    path="/"
+                                    element={<LoginPage setAuthenticated={setAuthenticated}/>}
+                                />
+                                <Route path="/view-family" element={<ViewFamily/>}/>
+                                <Route path="/edit-people" element={<EditFamily/>}/>
+                                <Route path="/edit-workspace" element={<EditWorkspace/>}/>
+                            </Routes>
+                        </div>
+                    </main>
+
+                    <Toaster position="top-right" richColors closeButton/>
+
+            </SidebarProvider>
+        </Router>
+    )
+        ;
 }
 
 export default SideBar

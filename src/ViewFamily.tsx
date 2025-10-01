@@ -24,9 +24,11 @@ import type {Person} from "./model/Person.ts";
 import type {EdgeData} from "./model/Edge.ts";
 import {RowState} from "./model/Constants.ts";
 import type {Workspace} from "./model/Workspace.ts";
-import type {AlertsProps} from "./model/Props.ts";
+import {Edit, HardDrive, Layout} from "lucide-react";
+import {cn} from "@/lib/utils.ts";
+import {toast} from "sonner";
 
-function ViewFamily({setAlerts}: AlertsProps) {
+function ViewFamily() {
     const peopleRelationService: PeopleRelationService = new PeopleRelationService();
     const [rowPersons, setRowPersons] = useState<Map<string, Person>>(new Map())
     const nodeTypes = {
@@ -476,21 +478,13 @@ function ViewFamily({setAlerts}: AlertsProps) {
         peopleRelationService.saveNodes(nodes, nodesState, workspace.id)
             .catch(reason => {
                 console.log(reason)
-                setAlerts(prevState => [...prevState, {
-                    id: Date.now(),
-                    type: "error",
-                    message: reason.message
-                }])
+                toast.error(reason.message)
             })
             .finally(() => console.log("Nodes saved"));
         peopleRelationService.saveEdges(edges, edgesState, workspace.id)
             .catch(reason => {
                 console.log(reason)
-                setAlerts(prevState => [...prevState, {
-                    id: Date.now(),
-                    type: "error",
-                    message: reason.message
-                }])
+                toast.error(reason.message)
             })
             .finally(() => console.log("Edges saved"));
     }
@@ -545,7 +539,6 @@ function ViewFamily({setAlerts}: AlertsProps) {
         <div className="h-dvh w-full flex flex-col">
 
             <ReactFlow
-
                 nodes={nodes}
                 edges={edges}
                 onNodesChange={handleNodesChange}
@@ -567,27 +560,50 @@ function ViewFamily({setAlerts}: AlertsProps) {
             </ReactFlow>
 
             {/* Toolbar */}
-            <div className="p-2 flex flex-wrap gap-3 bg-gray-100 border-b border-gray-300 shadow-sm justify-end">
-                <select id="workspace" name="workspace"
-                        value={workspace?.id}
-                        className="text-sm border border-gray-300 bg-white rounded-lg px-4 py-3 shadow focus:outline-none focus:ring-2 focus:ring-blue-400 transition w-50"
-                        onChange={(event) => onWorkspaceSelect(event.target.value)}>
+            <div className="p-2 flex flex-wrap gap-3 bg-gray-100 border-b border-gray-300 shadow-sm justify-end items-center">
+                <select
+                    id="workspace"
+                    name="workspace"
+                    value={workspace?.id}
+                    className="text-sm border border-gray-300 bg-white rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                    onChange={(event) => onWorkspaceSelect(event.target.value)}
+                >
                     <option value="">Pick a workspace</option>
                     {workspaces?.map((data) => (
                         <option key={data.id} value={data.id}>{data.name}</option>
                     ))}
                 </select>
 
-                <button className="px-3 py-1 text-sm rounded bg-blue-600 text-white hover:bg-blue-700"
-                        onClick={saveClicked}>
+                <button
+                    onClick={saveClicked}
+                    className={cn(
+                        "flex items-center gap-2 px-3 py-2 text-sm rounded-md",
+                        "bg-green-600 text-white hover:bg-green-700 transition shadow-sm",
+
+                    )}
+
+                >
+                    <HardDrive className="h-4 w-4" />
                     Save
                 </button>
-                <button className="px-3 py-1 text-sm rounded bg-green-600 text-white hover:bg-green-700"
-                        onClick={editClicked}>
+                <button
+                    onClick={editClicked}
+                    className={cn(
+                        "flex items-center gap-2 px-3 py-2 text-sm rounded-md",
+                        "bg-blue-600 text-white hover:bg-blue-700 transition shadow-sm",
+                    )}
+                >
+                    <Edit className="h-4 w-4" />
                     Edit
                 </button>
-                <button className="px-3 py-1 text-sm rounded bg-green-600 text-white hover:bg-green-700"
-                        onClick={formatClicked}>
+                <button
+                    onClick={formatClicked}
+                    className={cn(
+                        "flex items-center gap-2 px-3 py-2 text-sm rounded-md",
+                        "bg-gray-600 text-white hover:bg-gray-700 transition shadow-sm",
+                    )}
+                >
+                    <Layout className="h-4 w-4" />
                     Auto Format
                 </button>
             </div>

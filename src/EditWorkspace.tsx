@@ -3,9 +3,10 @@ import type {PersonRowDetail} from "./model/PersonRowDetail.ts";
 import {RowState} from "./model/Constants.ts";
 import PeopleRelationService from "./service/PeopleRelationService.ts";
 import type {Workspace} from "./model/Workspace.ts";
-import type {AlertsProps} from "./model/Props.ts";
+import {Edit, HardDrive, Plus, Save, Trash2, X} from "lucide-react";
+import {toast} from "sonner";
 
-function EditWorkspace({setAlerts}: AlertsProps): JSX.Element {
+function EditWorkspace(): JSX.Element {
 
     const peopleRelationService: PeopleRelationService = new PeopleRelationService();
     const [rowWorkspaces, setRowWorkspaces] = useState<Workspace[]>([])
@@ -45,19 +46,11 @@ function EditWorkspace({setAlerts}: AlertsProps): JSX.Element {
                         setRowDetails(response[1])
                     })
                     .catch(error => console.log(error))
-                setAlerts(prevState => [...prevState, {
-                    id: Date.now(),
-                    type: "success",
-                    message: "Saved successfully",
-                }])
+                toast.success("Saved Successfully")
             })
             .catch(reason => {
                 console.log(reason)
-                setAlerts(prevState => [...prevState, {
-                    id: Date.now(),
-                    type: "error",
-                    message: reason.message
-                }])
+                toast.error(reason.message)
             });
     };
 
@@ -131,7 +124,7 @@ function EditWorkspace({setAlerts}: AlertsProps): JSX.Element {
                 <div
                     className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 flex flex-col h-full">
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-4 shrink-0 px-6 py-2">
+                    <div className="flex items-center justify-between mb-4 shrink-0 px-6 py-4">
                         <h2 className="text-xl font-semibold text-gray-800">Editable Records</h2>
                     </div>
 
@@ -141,10 +134,11 @@ function EditWorkspace({setAlerts}: AlertsProps): JSX.Element {
                             <thead className="sticky top-0 bg-white/95 backdrop-blur shadow-sm z-10">
                             <tr className="text-left text-lg text-gray-600">
                                 <th className="px-4 py-2">Name</th>
+                                <th className="px-4 py-2 text-right">Actions</th>
                             </tr>
                             </thead>
                             <tbody>
-                            {rowWorkspaces.map((row: Workspace) => (
+                            {rowWorkspaces.map((row) => (
                                 <tr
                                     key={row.id}
                                     className="bg-neutral-50 hover:bg-neutral-100 transition rounded-lg shadow-sm"
@@ -157,66 +151,75 @@ function EditWorkspace({setAlerts}: AlertsProps): JSX.Element {
                                                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                                                     handleInputChange(row.id, "name", e.target.value)
                                                 }
-                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300"
+                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
                                             />
                                         ) : (
-                                            <span>{row.name}</span>
+                                            <span className="text-gray-800">{row.name}</span>
                                         )}
                                     </td>
-                                    <td className="px-4 py-2">
-                                        {rowDetails.get(row.id)?.editable ? (
-                                            <div className="inline-flex gap-2">
-                                                <button
-                                                    onClick={() => handleSaveRow(row.id)}
-                                                    className="text-sm bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition"
-                                                >
-                                                    ✅ Save
-                                                </button>
-                                                <button
-                                                    onClick={() => handleCancel(row.id)}
-                                                    className="text-sm bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 transition"
-                                                >
-                                                    ❌ Cancel
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className="inline-flex gap-2">
-                                                <button
-                                                    onClick={() => handleEdit(row.id)}
-                                                    className="text-sm bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 transition"
-                                                >
-                                                    ✏️ Edit
-                                                </button>
-                                                <button
-                                                    onClick={() => handleRemove(row.id)}
-                                                    className="text-sm bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 transition"
-                                                >
-                                                    ❌ Remove
-                                                </button>
-                                            </div>
-                                        )}
+                                    <td className="px-4 py-2 text-right">
+                                        <div className="inline-flex gap-2">
+                                            {rowDetails.get(row.id)?.editable ? (
+                                                <>
+                                                    {/* Save Button with Icon */}
+                                                    <button
+                                                        onClick={() => handleSaveRow(row.id)}
+                                                        className="text-sm bg-green-500 text-white p-2 rounded hover:bg-green-600 transition flex items-center justify-center"
+                                                        title="Save" // Added for accessibility
+                                                    >
+                                                        <Save className="h-4 w-4"/>
+                                                    </button>
+                                                    {/* Cancel Button with Icon */}
+                                                    <button
+                                                        onClick={() => handleCancel(row.id)}
+                                                        className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center"
+                                                        title="Cancel" // Added for accessibility
+                                                    >
+                                                        <X className="h-4 w-4"/>
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {/* Edit Button with Icon */}
+                                                    <button
+                                                        onClick={() => handleEdit(row.id)}
+                                                        className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center"
+                                                        title="Edit" // Added for accessibility
+                                                    >
+                                                        <Edit className="h-4 w-4"/>
+                                                    </button>
+                                                    {/* Remove Button with Icon */}
+                                                    <button
+                                                        onClick={() => handleRemove(row.id)}
+                                                        className="text-sm bg-red-500 text-white p-2 rounded hover:bg-red-600 transition flex items-center justify-center"
+                                                        title="Remove" // Added for accessibility
+                                                    >
+                                                        <Trash2 className="h-4 w-4"/>
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
                                     </td>
-
                                 </tr>
                             ))}
                             </tbody>
                         </table>
                     </div>
+
                     <div className="flex justify-end gap-3 mt-4 py-3 px-3">
                         <button
                             onClick={handleAddRow}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm transition"
+                            className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm transition flex items-center gap-2"
                         >
-                            ➕ Add Record
+                            <Plus className="h-4 w-4"/> Add Record
                         </button>
                         <button
                             onClick={handleSaveAll}
-                            className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 shadow-sm transition"
+                            className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 shadow-sm transition flex items-center gap-2"
                         >
-                            💾 Save All
+                            <HardDrive className="h-4 w-4"/> Save All
                         </button>
                     </div>
-
                 </div>
             </div>
         </>

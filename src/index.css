@@ -140,21 +140,3 @@
         --sidebar-ring: oklch(0.439 0 0);
     }
 }
-
-/* Example using Tailwind classes, assuming the component names */
-.sidebar-content-class .sidebar-group-content-class {
-    overflow: visible !important;
-}
-
-
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: #F4F6F8;
-    color: #1a202c;
-}
-
-h1, h2, h3, h4, .font-oswald {
-    font-family: 'Oswald', sans-serif;
-}
-
-

@@ -20,6 +20,7 @@ import EditWorkspace from "@/EditWorkspace.tsx";
 import {Breadcrumb, BreadcrumbItem, BreadcrumbList} from "@/components/ui/breadcrumb.tsx";
 import type {NavItem} from "@/model/NavItem.ts";
 import {Toaster} from "sonner";
+import './font.css'
 
 
 function SideBar() {
@@ -33,7 +34,7 @@ function SideBar() {
 
     return (
         <Router>
-            <SidebarProvider defaultOpen>
+            <SidebarProvider defaultOpen className="antialiased font-inter">
 
                     {/* Sidebar */}
                     <Sidebar collapsible="icon" className="bg-navy text-light-orange shadow-lg shadow-gray-900/50">

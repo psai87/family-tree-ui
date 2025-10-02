@@ -9,3 +9,14 @@ h1, h2, h3, h4, h5, h6 {
 body {
     font-family: 'Inter', sans-serif;
 }
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0 0.5rem;
+}
+.table th, .table td {
+    padding: 1rem;
+}
+.table tbody tr {
+    transition: all 0.2s ease-in-out;
+}

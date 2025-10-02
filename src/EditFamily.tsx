@@ -147,7 +147,7 @@ function EditFamily(): JSX.Element {
 
     return (
         <>
-            <div className="h-[calc(100dvh-4rem)] bg-neutral-300 md:p-2 overflow-hidden">
+            <div className="h-[calc(100dvh-3.3rem)] bg-neutral-300 md:p-2 overflow-hidden">
                 <div
                     className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 flex flex-col h-full">
 

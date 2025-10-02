@@ -33,16 +33,19 @@ function SideBar() {
     ]]]);
 
     return (
-        <Router>
-            <SidebarProvider defaultOpen className="antialiased font-inter">
+        <div className="flex h-dvh">
+            <Router>
+                <SidebarProvider defaultOpen>
 
                     {/* Sidebar */}
-                    <Sidebar collapsible="icon" className="bg-navy text-light-orange shadow-lg shadow-gray-900/50">
+                    <Sidebar collapsible="icon"
+                             className="bg-navy text-light-orange shadow-lg shadow-gray-900/50 h-full">
                         {/* Sidebar header */}
                         <SidebarHeader className="bg-[#0a1a3c] text-white">
                             <SidebarMenu>
                                 <SidebarMenuItem key="login">
-                                    <SidebarMenuButton asChild className="hover:bg-gray-500 hover:text-white font-oswald text-l">
+                                    <SidebarMenuButton asChild
+                                                       className="hover:bg-gray-500 hover:text-white font-oswald text-l">
                                         <Link to={"/"} onClick={() => setSelectedGroup("Login")} className="text-white">
                                             <Home className="text-xl w-5 h-5"/>
                                             Login
@@ -70,7 +73,7 @@ function SideBar() {
                                                                 onClick={() => setSelectedGroup(group)}
                                                                 className="flex items-center gap-2 text-white"
                                                             >
-                                                                <item.icon />
+                                                                <item.icon/>
                                                                 {item.label}
                                                             </Link>
                                                         </SidebarMenuButton>
@@ -91,7 +94,8 @@ function SideBar() {
                             <Breadcrumb>
                                 <BreadcrumbList>
                                     <BreadcrumbItem>
-                                        <span className="text-xl font-oswald text-orange-700 font-bold">{selectedGroup}</span>
+                                        <span
+                                            className="text-xl font-oswald text-orange-700 font-bold">{selectedGroup}</span>
                                     </BreadcrumbItem>
                                 </BreadcrumbList>
                             </Breadcrumb>
@@ -112,10 +116,10 @@ function SideBar() {
 
                     <Toaster position="top-right" richColors closeButton/>
 
-            </SidebarProvider>
-        </Router>
-    )
-        ;
+                </SidebarProvider>
+            </Router>
+        </div>
+    );
 }
 
 export default SideBar

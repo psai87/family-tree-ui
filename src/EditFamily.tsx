@@ -149,7 +149,7 @@ function EditFamily(): JSX.Element {
         <>
             <div className="h-[calc(100dvh-3.3rem)] bg-neutral-300 md:p-2 overflow-hidden">
                 <div
-                    className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 flex flex-col h-[calc(100dvh-4rem)]">
+                    className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 flex flex-col h-full">
 
                     {/* Table */}
                     <div className="flex-1 overflow-auto px-6 py-2">
@@ -157,7 +157,7 @@ function EditFamily(): JSX.Element {
                             <thead>
                             <tr className="text-left text-lg rounded-lg shadow-md bg-gray-200">
                                 <th className="px-4 py-2 font-semibold ">First Name</th>
-                                <th className="px-4 py-2 font-semibold ">Last Name</th>
+                                <th className="px-4 py-2 font-semibold whitespace-nowrap">Last Name</th>
                                 <th className="px-4 py-2 font-semibold ">Occupation</th>
                                 <th className="px-4 py-2 font-semibold ">Email</th>
                                 <th className="px-4 py-2 font-semibold ">YOB</th>

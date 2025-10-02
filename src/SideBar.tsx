@@ -45,9 +45,9 @@ function SideBar() {
                             <SidebarMenu >
                                 <SidebarMenuItem key="login" >
                                     <SidebarMenuButton asChild
-                                                       size="lg"
-                                                       className="hover:bg-gray-500 hover:text-white font-oswald text-[1.1rem] h-[2.5rem]">
-                                        <Link to={"/"} onClick={() => setSelectedGroup("Login")} className="text-white">
+
+                                                       className="hover:bg-gray-500 hover:text-white font-oswald text-[1.1rem] h-[2.5rem] [&>svg]:h-5 [&>svg]:w-5">
+                                    <Link to={"/"} onClick={() => setSelectedGroup("Login")} className="text-white">
                                             <Home />
                                             Login
                                         </Link>
@@ -68,7 +68,7 @@ function SideBar() {
                                                 {items.map((item) => (
                                                     <SidebarMenuItem key={item.label}>
                                                         <SidebarMenuButton asChild
-                                                                           className="hover:bg-gray-500 hover:text-white font-oswald text-[1.1rem] h-[2.5rem]">
+                                                                           className="hover:bg-gray-500 hover:text-white font-oswald text-[1.1rem] h-[2.5rem] [&>svg]:h-5 [&>svg]:w-5">
                                                             <Link
                                                                 to={item.path}
                                                                 onClick={() => setSelectedGroup(group)}

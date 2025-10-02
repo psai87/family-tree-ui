@@ -41,7 +41,7 @@ function SideBar() {
                         <SidebarHeader className="bg-[#0a1a3c] text-white">
                             <SidebarMenu>
                                 <SidebarMenuItem key="login">
-                                    <SidebarMenuButton asChild className="hover:bg-gray-500 hover:text-white font-oswald text-xl">
+                                    <SidebarMenuButton asChild className="hover:bg-gray-500 hover:text-white font-oswald text-l">
                                         <Link to={"/"} onClick={() => setSelectedGroup("Login")} className="text-white">
                                             <Home className="text-xl w-5 h-5"/>
                                             Login
@@ -53,7 +53,7 @@ function SideBar() {
 
                         {/* Sidebar content */
                         }
-                        <SidebarContent className="overflow-visible bg-[#0a1a3c] text-white text-xl">
+                        <SidebarContent className="overflow-visible bg-[#0a1a3c] text-white text-l">
                             {authenticated &&
                                 Array.from(navItems).map(([group, items]) => (
                                     <SidebarGroup key={group}>
@@ -63,7 +63,7 @@ function SideBar() {
                                                 {items.map((item) => (
                                                     <SidebarMenuItem key={item.label}>
                                                         <SidebarMenuButton asChild
-                                                                           className="hover:bg-gray-500 hover:text-white font-oswald text-xl">
+                                                                           className="hover:bg-gray-500 hover:text-white font-oswald text-l">
                                                             <Link
                                                                 to={item.path}
                                                                 onClick={() => setSelectedGroup(group)}

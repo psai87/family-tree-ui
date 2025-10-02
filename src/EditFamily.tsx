@@ -153,7 +153,7 @@ function EditFamily(): JSX.Element {
 
                     {/* Table */}
                     <div className="h-full overflow-auto px-6 py-2">
-                        <table className="min-w-full text-base text-gray-800 border-separate border-spacing-y-2">
+                        <table className="h-full  min-w-full text-base text-gray-800 border-separate border-spacing-y-2">
                             <thead>
                             <tr className="text-left text-lg rounded-lg shadow-md bg-gray-200">
                                 <th className="px-4 py-2 font-semibold ">First Name</th>

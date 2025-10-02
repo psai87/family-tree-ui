@@ -42,12 +42,13 @@ function SideBar() {
                              className="bg-navy text-light-orange shadow-lg shadow-gray-900/50 h-full">
                         {/* Sidebar header */}
                         <SidebarHeader className="bg-[#0a1a3c] text-white">
-                            <SidebarMenu>
-                                <SidebarMenuItem key="login">
+                            <SidebarMenu >
+                                <SidebarMenuItem key="login" >
                                     <SidebarMenuButton asChild
-                                                       className="hover:bg-gray-500 hover:text-white font-oswald text-l">
+                                                       size="lg"
+                                                       className="hover:bg-gray-500 hover:text-white font-oswald text-[1.1rem] h-[2.5rem]">
                                         <Link to={"/"} onClick={() => setSelectedGroup("Login")} className="text-white">
-                                            <Home className="text-xl w-5 h-5"/>
+                                            <Home />
                                             Login
                                         </Link>
                                     </SidebarMenuButton>
@@ -61,19 +62,19 @@ function SideBar() {
                             {authenticated &&
                                 Array.from(navItems).map(([group, items]) => (
                                     <SidebarGroup key={group}>
-                                        <SidebarGroupLabel className="text-white">{group}</SidebarGroupLabel>
+                                        <SidebarGroupLabel className="text-white text-[1rem] h-[2rem]">{group}</SidebarGroupLabel>
                                         <SidebarGroupContent>
                                             <SidebarMenu>
                                                 {items.map((item) => (
                                                     <SidebarMenuItem key={item.label}>
                                                         <SidebarMenuButton asChild
-                                                                           className="hover:bg-gray-500 hover:text-white font-oswald text-l">
+                                                                           className="hover:bg-gray-500 hover:text-white font-oswald text-[1.1rem] h-[2.5rem]">
                                                             <Link
                                                                 to={item.path}
                                                                 onClick={() => setSelectedGroup(group)}
                                                                 className="flex items-center gap-2 text-white"
                                                             >
-                                                                <item.icon/>
+                                                                <item.icon />
                                                                 {item.label}
                                                             </Link>
                                                         </SidebarMenuButton>

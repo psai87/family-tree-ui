@@ -120,21 +120,17 @@ function EditWorkspace(): JSX.Element {
 
     return (
         <>
-            <div className="h-dvh bg-neutral-100 py-6 px-6 md:px-1">
+            <div className="h-[calc(100dvh-4rem)] bg-neutral-300 md:p-2 overflow-hidden">
                 <div
                     className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 flex flex-col h-full">
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-4 shrink-0 px-6 py-4">
-                        <h2 className="text-xl font-semibold text-gray-800">Editable Records</h2>
-                    </div>
 
                     {/* Table */}
-                    <div className="flex-1 overflow-auto px-6">
-                        <table className="min-w-full border-separate border-spacing-y-2">
-                            <thead className="sticky top-0 bg-white/95 backdrop-blur shadow-sm z-10">
-                            <tr className="text-left text-lg text-gray-600">
-                                <th className="px-4 py-2">Name</th>
-                                <th className="px-4 py-2 text-right">Actions</th>
+                    <div className="flex-1 overflow-x-auto px-6 py-2 ">
+                        <table className="w-full text-base text-gray-800 border-separate border-spacing-y-2">
+                            <thead>
+                            <tr className="text-lg bg-gray-200 shadow-md">
+                                <th className="px-4 py-2 text-left font-semibold ">Name</th>
+                                <th className="px-4 py-2 text-right font-semibold ">Actions</th>
                             </tr>
                             </thead>
                             <tbody>

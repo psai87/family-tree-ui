@@ -536,8 +536,7 @@ function ViewFamily() {
 
 
     return (
-        <div className="h-dvh w-full flex flex-col">
-
+        <div className="h-[calc(100dvh-4rem)]  w-full flex flex-col overflow-hidden">
             <ReactFlow
                 nodes={nodes}
                 edges={edges}

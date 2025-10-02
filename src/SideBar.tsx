@@ -88,7 +88,7 @@ function SideBar() {
 
                     {/* Main content */
                     }
-                    <main className="flex-1 p-2 bg-light-orange font-oswald flex flex-col">
+                    <main className="flex-1 flex flex-col p-2 bg-light-orange font-oswald overflow-y-auto">
                         <div className="flex items-center gap-4 mb-2">
                             <SidebarTrigger/>
                             <Breadcrumb>

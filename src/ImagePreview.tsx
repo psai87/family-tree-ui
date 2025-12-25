@@ -1,25 +1,22 @@
-import {useEffect, useState} from "react";
-import Util from "./model/Util.ts";
+import { useEffect, useState } from "react";
 
-function ImagePreview({base64, yearOfDeath}: { base64: string | undefined, yearOfDeath: number }) {
-    const util: Util = new Util();
+function ImagePreview({ buffer, yearOfDeath }: { buffer: ArrayBuffer | undefined, yearOfDeath: number }) {
     const [url, setUrl] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!base64) {
+        if (!buffer || buffer.byteLength === 0) {
             setUrl(null);
             return
         }
 
-        const buffer = util.base64ToArrayBuffer(base64); // 👈 Ensure this returns valid ArrayBuffer
-        const blob = new Blob([buffer], {type: "image/jpeg"});
+        const blob = new Blob([buffer], { type: "image/jpeg" });
         const objectUrl = URL.createObjectURL(blob);
         setUrl(objectUrl);
 
         return () => {
-            URL.revokeObjectURL(objectUrl);
+            setTimeout(() => URL.revokeObjectURL(objectUrl), 100);
         };
-    }, [base64]);
+    }, [buffer]);
 
     if (!url) return null;
 

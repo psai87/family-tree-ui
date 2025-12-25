@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     addEdge,
     type Connection,
@@ -18,22 +18,25 @@ import '@xyflow/react/dist/base.css';
 
 import PeopleNode from './nodes/PeopleNode';
 import FamilyNode from "./nodes/FamilyNode.tsx";
-import type {NodeData} from "./model/Node.ts";
-import PeopleRelationService from "./service/PeopleRelationService.ts";
-import type {Person} from "./model/Person.ts";
-import type {EdgeData} from "./model/Edge.ts";
-import {RowState} from "./model/Constants.ts";
-import type {Workspace} from "./model/Workspace.ts";
-import {Edit, HardDrive, Layout} from "lucide-react";
-import {cn} from "@/lib/utils.ts";
-import {toast} from "sonner";
+import type { NodeData } from "./model/Node.ts";
+import type { Person } from "./model/Person.ts";
+import type { EdgeData } from "./model/Edge.ts";
+import { RowState } from "./model/Constants.ts";
+import type { Workspace } from "./model/Workspace.ts";
+import { Edit, HardDrive, Layout } from "lucide-react";
+import { cn } from "@/lib/utils.ts";
+import { toast } from "sonner";
+import ServiceFactory from "./service/ServiceFactory.ts";
+import { NODE_TYPES } from "./model/NodeTypes.ts";
+import { updateMapEntry } from "./utils/mapHelpers.ts";
 
 function ViewFamily() {
-    const peopleRelationService: PeopleRelationService = new PeopleRelationService();
+    const peopleRelationService = ServiceFactory.getPeopleRelationService();
     const [rowPersons, setRowPersons] = useState<Map<string, Person>>(new Map())
+    const [imageMap, setImageMap] = useState<Map<string, ArrayBuffer>>(new Map<string, ArrayBuffer>())
     const nodeTypes = {
-        peopleNode: PeopleNode,
-        familyNode: FamilyNode
+        [NODE_TYPES.PEOPLE]: PeopleNode,
+        [NODE_TYPES.FAMILY]: FamilyNode
     };
     const [nodesState, setNodesState] = useState<Map<string, RowState>>(new Map<string, RowState>())
     const [edgesState, setEdgesState] = useState<Map<string, RowState>>(new Map<string, RowState>())
@@ -41,15 +44,15 @@ function ViewFamily() {
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge<EdgeData>>([]);
     const [editButtonClicked, setEditableButtonClicked] = useState<boolean>(false);
     const onConnect = useCallback((params: Connection) => {
-            const idUuid: string = crypto.randomUUID();
-            setEdges((eds): Edge<EdgeData>[] => {
-                const customEdge: Edge = {...params, id: idUuid};
-                return addEdge(customEdge, eds);
-            })
-            const newEdgesStateMap = new Map(edgesState);
-            newEdgesStateMap.set(idUuid, RowState.Added)
-            setEdgesState(newEdgesStateMap)
-        },
+        const idUuid: string = crypto.randomUUID();
+        setEdges((eds): Edge<EdgeData>[] => {
+            const customEdge: Edge = { ...params, id: idUuid };
+            return addEdge(customEdge, eds);
+        })
+        const newEdgesStateMap = new Map(edgesState);
+        newEdgesStateMap.set(idUuid, RowState.Added)
+        setEdgesState(newEdgesStateMap)
+    },
         [edgesState],
     );
 
@@ -71,8 +74,13 @@ function ViewFamily() {
     useEffect(() => {
         if (rowPersons.size > 0) return;
         peopleRelationService.getPersons()
-            .then(response => {
-                setRowPersons(new Map(response[0].map(data => [data.id, data])))
+            .then(async response => {
+                const personsMap = new Map(response[0].map(data => [data.id, data]));
+                setRowPersons(personsMap);
+
+                // Load images using helper
+                const imageMap = await peopleRelationService.loadImagesForPersons(response[0]);
+                setImageMap(imageMap);
             })
             .catch(error => console.log(error))
     }, []);
@@ -100,15 +108,15 @@ function ViewFamily() {
                     ? response.map(data => ({
                         id: data.id,
                         type: data.type,
-                        data: {personId: data.personId, persons: rowPersons, editable: false},
-                        position: {x: data.position.x, y: data.position.y},
+                        data: { personId: data.personId, persons: rowPersons, images: imageMap, editable: false },
+                        position: { x: data.position.x, y: data.position.y },
                     }))
                     : [
                         {
                             id: crypto.randomUUID().toString(),
-                            type: 'peopleNode',
-                            data: {personId: '', persons: rowPersons, editable: false},
-                            position: {x: 0, y: 50},
+                            type: NODE_TYPES.PEOPLE,
+                            data: { personId: '', persons: rowPersons, images: imageMap, editable: false },
+                            position: { x: 0, y: 50 },
                         },
                     ];
                 setNodes(initNodes)
@@ -123,7 +131,7 @@ function ViewFamily() {
                 setNodesState(newNodesStateMap)
             })
             .catch(error => console.log(error))
-    }, [rowPersons, workspace]);
+    }, [rowPersons, workspace, imageMap]);
 
     useEffect(() => {
         if (!workspace || rowPersons?.size == 0) {
@@ -178,134 +186,8 @@ function ViewFamily() {
     }
 
     const formatClicked: () => void = () => {
-        // console.log("formatting started")
-        // //put node into map for easy access
-        // const parentsMap = new Map<string, WrapperTempEdge[]>();
-        // const childMapEdge = edges.reduce((map, edge) => {
-        //     if (!map.has(edge.source)) {
-        //         map.set(edge.source, []);
-        //     }
-        //     map.get(edge.source)!.push(edge);
-        //     return map;
-        // }, new Map<string, Edge<EdgeData>[]>());
-        //
-        //
-        // for (const node of nodes) {
-        //     parentsMap.set(node.id, []);
-        // }
-        //
-        // for (const edge of edges) {
-        //     const {source, target, sourceHandle} = edge;
-        //     parentsMap.get(target)?.push({id: source, handler: sourceHandle as string});
-        // }
-        //
-        //
-        // const mapVisitedNodes: Map<string, boolean> = nodes.filter(node => node.type === "peopleNode").reduce((map, node) => map.set(node.id, false), new Map<string, boolean>());
-        // const heartNodes: string[] = nodes.filter(node => node.type === "familyNode").map(node => node.id)
-        //
-        //
-        // const wrapperMap: WrapperTempNode[] = [];
-        //
-        // for (const heartNode of heartNodes) {
-        //     const parents = parentsMap.get(heartNode)
-        //     let tempNode: WrapperTempNode = {
-        //         id: crypto.randomUUID(),
-        //         node: null,
-        //         heartNode: heartNode,
-        //         spouseNode: null,
-        //         rootNode: (heartNode === "5eca3c72-1977-46c2-acf2-208eb4065cb3")
-        //     };
-        //     if (parents) {
-        //         mapVisitedNodes.set(parents[0].id, true)
-        //         mapVisitedNodes.set(parents[1].id, true)
-        //         if (parents[0].handler === "b") {
-        //             tempNode.node = parents[0].id
-        //             tempNode.spouseNode = parents[1].id
-        //         } else {
-        //             tempNode.spouseNode = parents[0].id
-        //             tempNode.node = parents[1].id
-        //         }
-        //         wrapperMap.push(tempNode)
-        //     }
-        // }
-        // Array.from(mapVisitedNodes.entries()).filter(entry => !entry[1])
-        //     .forEach((entry) => {
-        //         wrapperMap.push({
-        //             id: crypto.randomUUID(),
-        //             node: entry[0],
-        //             heartNode: null,
-        //             spouseNode: null,
-        //             rootNode: false
-        //         })
-        //     })
-        //
-        //
-        // const wrapperEdgeX: Map<string, WrapperTempNode> = new Map<string, WrapperTempNode>()
-        // wrapperMap.forEach((node) => {
-        //     wrapperEdgeX.set(node.heartNode ?? "", node)
-        //     wrapperEdgeX.set(node.node ?? "", node)
-        //     wrapperEdgeX.set(node.spouseNode ?? "", node)
-        // })
-        //
-        //
-        // const spacingX = 300;
-        // const spacingY = 300;
-        // const newchildrenMap = new Map<string, WrapperTempNode[]>();
-        // wrapperMap.filter(data => data.heartNode !== null).forEach((node) => {
-        //     newchildrenMap.set(node.id, []);
-        // })
-        //
-        // wrapperMap.filter(data => data.heartNode !== null).forEach((node) => {
-        //     const childs = childMapEdge.get(node.heartNode ?? "")?.map(data => wrapperEdgeX.get(data.target) as WrapperTempNode) ?? []
-        //     newchildrenMap.get(node.id)?.push(...childs)
-        // })
-        //
-        //
-        // const subtreeHeights = new Map();
-        //
-        // function computeSubtreeHeight(id: string) {
-        //     const children = newchildrenMap.get(id);
-        //     if (!children || children.length === 0) {
-        //         subtreeHeights.set(id, 1);
-        //         return 1;
-        //     }
-        //     const height: number = children.reduce((sum, childId) => sum + computeSubtreeHeight(childId.id), 0);
-        //     subtreeHeights.set(id, height);
-        //     return height;
-        // }
-        //
-        // computeSubtreeHeight(wrapperMap.find(data => data.rootNode)?.id as string); // root assumed as '1'
-        // console.log(subtreeHeights);
-        // const positions = new Map<string, { px: number, py: number }>();
-        //
-        // function setPositions(id: WrapperTempNode, x: number, y: number) {
-        //     const height = subtreeHeights.get(id.id);
-        //     const children = newchildrenMap.get(id.id);
-        //
-        //     let startY = y - (height * spacingY) / 2 + spacingY / 2;
-        //     positions.set(id.node as string, {px: x, py: y});
-        //     positions.set(id.heartNode as string, {px: (x + 68), py: y+(100)});
-        //     positions.set(id.spouseNode as string, {px: x, py: (y+(150))});
-        //
-        //     if (!children || children.length === 0) return;
-        //
-        //     for (const child of children) {
-        //         const childHeight = subtreeHeights.get(child.id);
-        //         const childY = startY + (childHeight * spacingY) / 2 - spacingY / 2;
-        //         setPositions(child, x + spacingX, childY);
-        //         startY += childHeight * spacingY;
-        //     }
-        // }
-        // setPositions(wrapperMap.find(data => data.rootNode) as WrapperTempNode, 200, 200);
-        //
-        // setNodes(prevState => prevState.map(node =>  {
-        //     return {
-        //     ...node,
-        //     position:{x:positions.get(node.id)?.px as number,y:positions.get(node.id)?.py as number},
-        //     }})
-        // )
 
-// === BUILD MAPS ===
+        // === BUILD MAPS ===
         const parentsMap = new Map<string, WrapperTempEdge[]>();
         const childMapEdge = new Map<string, Edge<EdgeData>[]>();
         const mapVisitedNodes = new Map<string, boolean>();
@@ -313,15 +195,15 @@ function ViewFamily() {
 
         for (const node of nodes) {
             parentsMap.set(node.id, []);
-            if (node.type === "peopleNode") {
+            if (node.type === NODE_TYPES.PEOPLE) {
                 mapVisitedNodes.set(node.id, false);
-            } else if (node.type === "familyNode") {
+            } else if (node.type === NODE_TYPES.FAMILY) {
                 heartNodes.push(node.id);
             }
         }
 
         for (const edge of edges) {
-            const {source, target, sourceHandle} = edge;
+            const { source, target, sourceHandle } = edge;
 
             // childMapEdge: maps source → all children
             if (!childMapEdge.has(source)) childMapEdge.set(source, []);
@@ -329,10 +211,10 @@ function ViewFamily() {
 
             // parentsMap: maps child (target) → its parent(s)
             if (!parentsMap.has(target)) parentsMap.set(target, []);
-            parentsMap.get(target)!.push({id: source, handler: sourceHandle!});
+            parentsMap.get(target)!.push({ id: source, handler: sourceHandle! });
         }
 
-// === WRAP HEART NODES ===
+        // === WRAP HEART NODES ===
         const wrapperMap: WrapperTempNode[] = [];
 
         for (const heartNode of heartNodes) {
@@ -350,11 +232,11 @@ function ViewFamily() {
                 mapVisitedNodes.set(node, true);
                 mapVisitedNodes.set(spouse, true);
 
-                wrapperMap.push({id: crypto.randomUUID(), node, heartNode, spouseNode: spouse, rootNode: isRoot});
+                wrapperMap.push({ id: crypto.randomUUID(), node, heartNode, spouseNode: spouse, rootNode: isRoot });
             }
         }
 
-// === ADD UNGROUPED PEOPLE ===
+        // === ADD UNGROUPED PEOPLE ===
         for (const [id, visited] of mapVisitedNodes.entries()) {
             if (!visited) {
                 wrapperMap.push({
@@ -367,7 +249,7 @@ function ViewFamily() {
             }
         }
 
-// === EDGE TO WRAPPER NODE MAPPING ===
+        // === EDGE TO WRAPPER NODE MAPPING ===
         const wrapperEdgeX = new Map<string, WrapperTempNode>();
         for (const wrapper of wrapperMap) {
             if (wrapper.heartNode) wrapperEdgeX.set(wrapper.heartNode, wrapper);
@@ -375,7 +257,7 @@ function ViewFamily() {
             if (wrapper.spouseNode) wrapperEdgeX.set(wrapper.spouseNode, wrapper);
         }
 
-// === BUILD CHILDREN MAP ===
+        // === BUILD CHILDREN MAP ===
         const newChildrenMap = new Map<string, WrapperTempNode[]>();
 
         for (const wrapper of wrapperMap) {
@@ -390,7 +272,7 @@ function ViewFamily() {
             newChildrenMap.get(wrapper.id)?.push(...children);
         }
 
-// === CALCULATE SUBTREE HEIGHTS ===
+        // === CALCULATE SUBTREE HEIGHTS ===
         const subtreeHeights = new Map<string, number>();
 
         function computeSubtreeHeight(id: string): number {
@@ -412,7 +294,7 @@ function ViewFamily() {
         const root = wrapperMap.find(w => w.rootNode);
         if (root) computeSubtreeHeight(root.id);
 
-// === SET POSITIONS ===
+        // === SET POSITIONS ===
         const positions = new Map<string, { px: number, py: number }>();
         const spacingX = 200;
         const spacingY = 250;
@@ -423,9 +305,9 @@ function ViewFamily() {
 
             let startY = y - (height * spacingY) / 2;
 
-            if (wrapper.node) positions.set(wrapper.node, {px: x, py: y});
-            if (wrapper.heartNode) positions.set(wrapper.heartNode, {px: x + 48, py: y + 90});
-            if (wrapper.spouseNode) positions.set(wrapper.spouseNode, {px: x, py: y + 135});
+            if (wrapper.node) positions.set(wrapper.node, { px: x, py: y });
+            if (wrapper.heartNode) positions.set(wrapper.heartNode, { px: x + 48, py: y + 90 });
+            if (wrapper.spouseNode) positions.set(wrapper.spouseNode, { px: x, py: y + 135 });
 
             if (!children || children.length === 0) return;
 
@@ -439,7 +321,7 @@ function ViewFamily() {
 
         if (root) setPositions(root, 200, 200);
 
-// === APPLY POSITIONS ===
+        // === APPLY POSITIONS ===
         setNodes(prev =>
             prev.map(node => ({
                 ...node,
@@ -493,23 +375,13 @@ function ViewFamily() {
         changes.forEach(change => {
             if (change.type === 'remove') {
                 console.log("node-remove", change.id)
-                setNodesState(oldMap => {
-                    const newNodesStateMap = new Map(oldMap);
-                    newNodesStateMap.set(change.id, RowState.Deleted)
-                    return newNodesStateMap;
-                })
+                setNodesState(oldMap => updateMapEntry(oldMap, change.id, RowState.Deleted))
             } else if (change.type === 'add') {
-                setNodesState(oldMap => {
-                    const newNodesStateMap = new Map(oldMap);
-                    newNodesStateMap.set(change.item.id, RowState.Added)
-                    return newNodesStateMap;
-                })
+                setNodesState(oldMap => updateMapEntry(oldMap, change.item.id, RowState.Added))
             } else if (change.type === 'position' || change.type === 'replace') {
                 setNodesState(oldMap => {
-                    const newNodesStateMap = new Map(oldMap);
-                    const state: RowState = (newNodesStateMap.get(change.id) && newNodesStateMap.get(change.id) == RowState.Added) ? RowState.Added : RowState.Edited
-                    newNodesStateMap.set(change.id, state)
-                    return newNodesStateMap;
+                    const state: RowState = (oldMap.get(change.id) && oldMap.get(change.id) == RowState.Added) ? RowState.Added : RowState.Edited
+                    return updateMapEntry(oldMap, change.id, state);
                 })
             } else {
                 console.log("should not happen", change.type)
@@ -522,11 +394,7 @@ function ViewFamily() {
         changes.forEach(change => {
             if (change.type === 'remove') {
                 console.log("edge-remove", change.id)
-                setEdgesState(oldMap => {
-                    const newEdgesStateMap = new Map(oldMap);
-                    newEdgesStateMap.set(change.id, RowState.Deleted)
-                    return newEdgesStateMap
-                })
+                setEdgesState(oldMap => updateMapEntry(oldMap, change.id, RowState.Deleted))
             } else {
                 console.log("should not happen", change.type)
             }
@@ -554,8 +422,8 @@ function ViewFamily() {
                 draggable={!editButtonClicked}
                 elementsSelectable={editButtonClicked}
             >
-                <MiniMap/>
-                <Controls/>
+                <MiniMap />
+                <Controls />
             </ReactFlow>
 
             {/* Toolbar */}

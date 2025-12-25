@@ -1,51 +1,79 @@
-import type {Person} from "../model/Person.ts";
-import type {PersonRowDetail} from "../model/PersonRowDetail.ts";
-import type {Node, NodeData} from "../model/Node.ts";
-import PeopleClient from "../client/PeopleClient.ts";
-import {RowState} from "../model/Constants.ts";
-import RelationClient from "../client/RelationClient.ts";
-import type {Edge, EdgeData} from "../model/Edge.ts";
+import type { Person } from "../model/Person.ts";
+import type { PersonRowDetail } from "../model/PersonRowDetail.ts";
+import type { Node, NodeData } from "../model/Node.ts";
+import { RowState } from "../model/Constants.ts";
+import type { Edge, EdgeData } from "../model/Edge.ts";
 import {
     type Edge as REdge,
     type Node as RNode,
 } from '@xyflow/react';
-import type {Workspace} from "../model/Workspace.ts";
-import WorkspaceClient from "../client/WorkspaceClient.ts";
-import AuthenticateClient from "../client/AuthenticateClient.ts";
+import type { Workspace } from "../model/Workspace.ts";
 import type AuthenticateResponse from "../model/AuthenticateResponse.ts";
+import ServiceFactory from "./ServiceFactory.ts";
+import type { Otp, OtpRequest, OtpResponse } from "@/model/Otp.ts";
 
 
 export default class PeopleRelationService {
 
-    peopleClient: PeopleClient = new PeopleClient();
-    relationClient: RelationClient = new RelationClient();
-    workspaceClient: WorkspaceClient = new WorkspaceClient();
-    authenticateClient: AuthenticateClient = new AuthenticateClient();
+    async loadImagesForPersons(persons: Person[]): Promise<Map<string, ArrayBuffer>> {
+        const imagePromises = persons.map(person =>
+            ServiceFactory.getImageClient().getImage(person.id)
+                .then(imageData => (imageData))
+                .catch(() => ({ personId: person.id, imageData: new ArrayBuffer(0) }))
+        );
 
-    async savePersons(persons: Person[], personRowDetails: Map<string, PersonRowDetail>): Promise<void> {
+        const results = await Promise.all(imagePromises);
+        const imageMap = new Map<string, ArrayBuffer>();
+
+        results.forEach(result => {
+            if (result.imageData) {
+                imageMap.set(result.personId, result.imageData);
+            }
+        });
+
+        return imageMap;
+    }
+
+    async savePersons(persons: Person[], personRowDetails: Map<string, PersonRowDetail>, imageMap: Map<string, ArrayBuffer>): Promise<void> {
         const added: Person[] = persons.filter(data => RowState.Added === personRowDetails.get(data.id)?.state)
         const updated: Person[] = persons.filter(data => RowState.Edited === personRowDetails.get(data.id)?.state)
         const deleted: string[] = [...personRowDetails.entries()]
             .filter(([_, item]) => RowState.Deleted === item.state)
             .map(([key, _]) => key)
         let promiseArray: Promise<void>[] = []
+        let imagePromiseArray: Promise<void>[] = [];
         if (added?.length > 0) {
             console.log("added persons [size=" + added.length + "]");
-            promiseArray.push(this.peopleClient.createPersons(added));
+            promiseArray.push(ServiceFactory.getPeopleClient().createPersons(added));
+            added.forEach((person) => {
+                const imageData = imageMap.get(person.id);
+                if (imageData) {
+                    imagePromiseArray.push(ServiceFactory.getImageClient().createImage(person.id, imageData));
+                }
+            });
         }
         if (updated?.length > 0) {
             console.log("updates persons [size=" + updated.length + "]")
-            promiseArray.push(this.peopleClient.updatePersons(updated));
+            promiseArray.push(ServiceFactory.getPeopleClient().updatePersons(updated));
+            updated.forEach((person) => {
+                const imageData = imageMap.get(person.id);
+                if (imageData) {
+                    imagePromiseArray.push(ServiceFactory.getImageClient().updateImage(person.id, imageData));
+                }
+            });
         }
         if (deleted?.length > 0) {
             console.log("deleted persons [size=" + deleted.length + "]");
-            promiseArray.push(this.peopleClient.deletePersons(deleted));
+            promiseArray.push(ServiceFactory.getPeopleClient().deletePersons(deleted));
+            deleted.forEach((personId) => {
+                imagePromiseArray.push(ServiceFactory.getImageClient().deleteImage(personId));
+            });
         }
-        await Promise.all(promiseArray)
+        await Promise.all([...promiseArray, ...imagePromiseArray])
     }
 
     async getPersons(): Promise<[Person[], Map<string, PersonRowDetail>]> {
-        return await this.peopleClient
+        return await ServiceFactory.getPeopleClient()
             .getPersons()
             .then((persons: Person[]) =>
                 [persons, new Map(persons.map(data => [data.id as string, {
@@ -55,11 +83,11 @@ export default class PeopleRelationService {
     }
 
     async getNodes(workspaceId: string): Promise<Node[]> {
-        return await this.relationClient.getNodes(workspaceId);
+        return await ServiceFactory.getRelationClient().getNodes(workspaceId);
     }
 
     async getEdges(workspaceId: string): Promise<Edge[]> {
-        return await this.relationClient.getEdges(workspaceId);
+        return await ServiceFactory.getRelationClient().getEdges(workspaceId);
     }
 
     async saveNodes(nodes: RNode<NodeData>[], nodesState: Map<string, RowState>, workspaceId: string): Promise<void> {
@@ -69,7 +97,7 @@ export default class PeopleRelationService {
                     id: data.id,
                     type: data.type,
                     personId: data.data.personId,
-                    position: {x: data.position.x, y: data.position.y},
+                    position: { x: data.position.x, y: data.position.y },
                     workspaceId: workspaceId,
                 } as Node
             })
@@ -79,7 +107,7 @@ export default class PeopleRelationService {
                     id: data.id,
                     type: data.type,
                     personId: data.data.personId,
-                    position: {x: data.position.x, y: data.position.y},
+                    position: { x: data.position.x, y: data.position.y },
                     workspaceId: workspaceId,
                 } as Node
             })
@@ -90,15 +118,15 @@ export default class PeopleRelationService {
         let promiseArray: Promise<void>[] = []
         if (added?.length > 0) {
             console.log("added nodes [size=" + added.length + "]");
-            promiseArray.push(this.relationClient.createNodes(added));
+            promiseArray.push(ServiceFactory.getRelationClient().createNodes(added));
         }
         if (updated?.length > 0) {
             console.log("updates nodes [size=" + updated.length + "]")
-            promiseArray.push(this.relationClient.updateNodes(updated));
+            promiseArray.push(ServiceFactory.getRelationClient().updateNodes(updated));
         }
         if (deleted?.length > 0) {
             console.log("deleted nodes [size=" + deleted.length + "]");
-            promiseArray.push(this.relationClient.deleteNodes(deleted));
+            promiseArray.push(ServiceFactory.getRelationClient().deleteNodes(deleted));
         }
         await Promise.all(promiseArray)
     }
@@ -132,21 +160,21 @@ export default class PeopleRelationService {
         let promiseArray: Promise<void>[] = []
         if (added?.length > 0) {
             console.log("added edges [size=" + added.length + "]");
-            promiseArray.push(this.relationClient.createEdges(added));
+            promiseArray.push(ServiceFactory.getRelationClient().createEdges(added));
         }
         if (updated?.length > 0) {
             console.log("updates edges [size=" + updated.length + "]")
-            promiseArray.push(this.relationClient.updateEdges(updated));
+            promiseArray.push(ServiceFactory.getRelationClient().updateEdges(updated));
         }
         if (deleted?.length > 0) {
             console.log("deleted edges [size=" + deleted.length + "]");
-            promiseArray.push(this.relationClient.deleteEdges(deleted));
+            promiseArray.push(ServiceFactory.getRelationClient().deleteEdges(deleted));
         }
         await Promise.all(promiseArray)
     }
 
     async getWorkspaces(): Promise<[Workspace[], Map<string, PersonRowDetail>]> {
-        return await this.workspaceClient.getWorkspaces()
+        return await ServiceFactory.getWorkspaceClient().getWorkspaces()
             .then((workspaces: Workspace[]) =>
                 [workspaces, new Map(workspaces.map(data => [data.id as string, {
                     editable: false,
@@ -155,7 +183,15 @@ export default class PeopleRelationService {
     }
 
     async authenticate(): Promise<AuthenticateResponse> {
-        return await this.authenticateClient.authenticate();
+        return await ServiceFactory.getAuthenticateClient().authenticate();
+    }
+
+    async generateOTP(email: string): Promise<void> {
+        return await ServiceFactory.getAuthenticateClient().generateOTP(email);
+    }
+
+    async verifyOTP(otpRequest: OtpRequest): Promise<OtpResponse> {
+        return await ServiceFactory.getAuthenticateClient().verifyOTP(otpRequest);
     }
 
     async saveWorkspaces(workspaces: Workspace[], personRowDetails: Map<string, PersonRowDetail>): Promise<void> {
@@ -167,15 +203,15 @@ export default class PeopleRelationService {
         let promiseArray: Promise<void>[] = []
         if (added?.length > 0) {
             console.log("added workspaces [size=" + added.length + "]");
-            promiseArray.push(this.workspaceClient.createWorkspaces(added));
+            promiseArray.push(ServiceFactory.getWorkspaceClient().createWorkspaces(added));
         }
         if (updated?.length > 0) {
             console.log("updates workspaces [size=" + updated.length + "]")
-            promiseArray.push(this.workspaceClient.updateWorkspaces(updated));
+            promiseArray.push(ServiceFactory.getWorkspaceClient().updateWorkspaces(updated));
         }
         if (deleted?.length > 0) {
             console.log("deleted workspaces [size=" + deleted.length + "]");
-            promiseArray.push(this.workspaceClient.deleteWorkspaces(deleted));
+            promiseArray.push(ServiceFactory.getWorkspaceClient().deleteWorkspaces(deleted));
         }
         await Promise.all(promiseArray)
     }

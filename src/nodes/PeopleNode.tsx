@@ -1,15 +1,15 @@
-import {memo, useState} from 'react';
-import {Handle, type NodeProps, type Node, NodeToolbar, Position, useReactFlow} from '@xyflow/react';
-import type {NodeData} from "../model/Node.ts";
+import { memo, useState } from 'react';
+import { Handle, type NodeProps, type Node, NodeToolbar, Position, useReactFlow } from '@xyflow/react';
+import type { NodeData } from "../model/Node.ts";
 import ImagePreview from "../ImagePreview.tsx";
-import {AutocompleteSelect} from "../AutocompleteSelect.tsx";
-import {Heart, Users} from "lucide-react";
-import {HoverCard, HoverCardContent, HoverCardPortal, HoverCardTrigger} from "@radix-ui/react-hover-card";
+import { AutocompleteSelect } from "../AutocompleteSelect.tsx";
+import { Heart, Users } from "lucide-react";
+import { HoverCard, HoverCardContent, HoverCardPortal, HoverCardTrigger } from "@radix-ui/react-hover-card";
 
 
-function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
+function PeopleNode({ id, data }: NodeProps<Node<NodeData>>) {
 
-    const {setNodes, getNode} = useReactFlow();
+    const { setNodes, getNode } = useReactFlow();
     const [showDropdown, setShowDropdown] = useState<boolean>(false);
     const handleAddHeart: () => void = (): void => {
         const node = getNode(id);
@@ -17,8 +17,8 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
             const newNode = {
                 id: crypto.randomUUID(),
                 type: 'familyNode',
-                position: {x: node.position.x + 200, y: node.position.y},
-                data: {editable: false},
+                position: { x: node.position.x + 200, y: node.position.y },
+                data: { editable: false },
             };
             setNodes((nds) => nds.concat(newNode));
         }
@@ -30,8 +30,8 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
             const newNode = {
                 id: crypto.randomUUID(),
                 type: 'peopleNode',
-                position: {x: node.position.x, y: node.position.y + 200},
-                data: {persons: node.data.persons, editable: data.editable},
+                position: { x: node.position.x, y: node.position.y + 200 },
+                data: { persons: node.data.persons, editable: data.editable },
             };
             setNodes((nds) => nds.concat(newNode));
         }
@@ -41,7 +41,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
         const currentNode: Node = getNode(id) as Node
         let newNode: Node = {
             ...currentNode,
-            data: {personId: pId, persons: currentNode.data.persons, editable: data.editable},
+            data: { personId: pId, persons: currentNode.data.persons, editable: data.editable },
         };
         setNodes((nodes) => {
             return nodes.filter(data => data.id !== id)
@@ -60,14 +60,14 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                                 className="p-2 text-xs text-white bg-red-500 hover:bg-red-600 rounded-full transition-colors"
                                 title="Add partner"
                             >
-                                <Heart className="h-4 w-4"/>
+                                <Heart className="h-4 w-4" />
                             </button>
                             <button
                                 onClick={handleAddPeople}
                                 className="p-2 text-xs text-white bg-teal-500 hover:bg-teal-600 rounded-full transition-colors"
                                 title="Add children"
                             >
-                                <Users className="h-4 w-4"/>
+                                <Users className="h-4 w-4" />
                             </button>
                         </div>
                     </NodeToolbar>
@@ -75,22 +75,22 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                 <div className="px-2 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 w-32 h-20">
                     <div className="flex">
                         <HoverCardTrigger>
-                        <div
-                            className="pointer-events-auto text-xs rounded-full w-11 h-15 flex justify-center items-center bg-gray-100">
+                            <div
+                                className="pointer-events-auto text-xs rounded-full w-11 h-15 flex justify-center items-center bg-gray-100">
 
-                                <ImagePreview base64={data.persons?.get(data.personId)?.image}
-                                              yearOfDeath={data.persons?.get(data.personId)?.yearOfDeath ?? -1}/>
-                        </div>
+                                <ImagePreview buffer={data.images?.get(data.personId)}
+                                    yearOfDeath={data.persons?.get(data.personId)?.yearOfDeath ?? -1} />
+                            </div>
                         </HoverCardTrigger>
                         <div className="ml-2">
                             {data.editable &&
                                 <AutocompleteSelect
                                     options={Array.from(data.persons?.entries() ?? []).map(([_, val]) => {
-                                        return {id: val.id, value: val.firstName + " " + val.lastName};
+                                        return { id: val.id, value: val.firstName + " " + val.lastName };
                                     })}
                                     value={{
                                         id: data.personId,
-                                        value: data.persons?.get(data.personId)?.firstName ?? '' + " " + data.persons?.get(data.personId)?.lastName ?? ''
+                                        value: data.persons?.get(data.personId)?.firstName + " " + data.persons?.get(data.personId)?.lastName
                                     }}
                                     onChange={onPersonSelect}
                                     setShowDropdown={setShowDropdown}
@@ -129,7 +129,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                             {/* Top - image */}
                             <div className="w-55 h-55">
                                 <ImagePreview
-                                    base64={data.persons?.get(data.personId)?.image}
+                                    buffer={data.images?.get(data.personId)}
                                     yearOfDeath={data.persons?.get(data.personId)?.yearOfDeath ?? -1}
                                 />
                             </div>
@@ -144,7 +144,7 @@ function PeopleNode({id, data}: NodeProps<Node<NodeData>>) {
                                 <p className="text-sm text-gray-600">
                                     Born: {data.persons?.get(data.personId)?.yearOfBirth}
                                 </p>
-                                {data.persons?.get(data.personId)?.yearOfDeath!=-1 && <p className="text-sm text-gray-600">
+                                {data.persons?.get(data.personId)?.yearOfDeath != -1 && <p className="text-sm text-gray-600">
                                     Died: {data.persons?.get(data.personId)?.yearOfDeath}
                                 </p>}
                             </div>

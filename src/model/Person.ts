@@ -5,6 +5,5 @@ export interface Person {
     occupation: string,
     email: string | undefined,
     yearOfBirth: number,
-    yearOfDeath: number,
-    image: string
+    yearOfDeath: number
 }

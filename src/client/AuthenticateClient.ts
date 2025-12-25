@@ -1,18 +1,20 @@
-import {AuthState, host} from "../model/Constants.ts";
+import { host } from "../model/Constants.ts";
 import type AuthenticateResponse from "../model/AuthenticateResponse.ts";
+import BaseClient from "./BaseClient.ts";
+import type { OtpRequest, OtpResponse } from "@/model/Otp.ts";
 
-export default class AuthenticateClient {
-    authUrl: string = host + "/family/authenticate";
+export default class AuthenticateClient extends BaseClient {
+    private authUrl: string = host + "/family/authenticate";
 
     async authenticate(): Promise<AuthenticateResponse> {
-        const requestOptions: RequestInit = {
-            method: 'GET',
-            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${AuthState.token}`}
-        };
-        const response: Response = await fetch(this.authUrl, requestOptions);
-        if (!response.ok) {
-            throw new Error(`getWorkspaces HTTP error! status: ${response.status}`);
-        }
-        return await response.json() as AuthenticateResponse;
+        return await this.get<AuthenticateResponse>(this.authUrl);
+    }
+
+    async generateOTP(email: string): Promise<void> {
+        return await this.post<void>(`${this.authUrl}/otp/generate`, { email }, true);
+    }
+
+    async verifyOTP(otpRequest: OtpRequest): Promise<OtpResponse> {
+        return await this.post<OtpResponse>(`${this.authUrl}/otp/validate`, otpRequest, true);
     }
 }

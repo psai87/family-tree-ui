@@ -1,4 +1,4 @@
-import type {Person} from "./Person.ts";
+import type { Person } from "./Person.ts";
 
 export interface Node {
     id: string,
@@ -15,6 +15,7 @@ export interface Position {
 
 export type NodeData = {
     personId: string,
-    persons: Map<string, Person>
+    persons: Map<string, Person>,
+    images: Map<string, ArrayBuffer>,
     editable: boolean
 }

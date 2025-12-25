@@ -1,111 +1,45 @@
-import {AuthState, host} from "../model/Constants.ts";
-import type {Edge} from "../model/Edge.ts";
-import type {Node} from "../model/Node.ts";
+import { host } from "../model/Constants.ts";
+import type { Edge } from "../model/Edge.ts";
+import type { Node } from "../model/Node.ts";
+import BaseClient from "./BaseClient.ts";
 
-export default class RelationClient {
-    nodeUrl: string = host + "/family/workspaces/node";
-    getNodeUrl: string = host + "/family/workspaces/{workspace_id}/node";
-    edgeUrl: string = host + "/family/workspaces/edge";
-    getEdgeUrl: string = host + "/family/workspaces/{workspace_id}/edge";
-
+export default class RelationClient extends BaseClient {
+    private nodeUrl: string = host + "/family/workspaces/node";
+    private getNodeUrl: string = host + "/family/workspaces/{workspace_id}/node";
+    private edgeUrl: string = host + "/family/workspaces/edge";
+    private getEdgeUrl: string = host + "/family/workspaces/{workspace_id}/edge";
 
     async getNodes(workspaceId: string): Promise<Node[]> {
-        const requestOptions: RequestInit = {
-            method: 'GET',
-            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${AuthState.token}`}
-        };
-        const url: string = this.getNodeUrl.replace("{workspace_id}", workspaceId);
-        const response: Response = await fetch(url, requestOptions);
-        if (!response.ok) {
-            throw new Error(`getNodes HTTP error! status: ${response.status}`);
-        }
-        return await response.json() as Node[];
+        const url = this.getNodeUrl.replace("{workspace_id}", workspaceId);
+        return await this.get<Node[]>(url);
     }
 
     async createNodes(nodes: Node[]): Promise<void> {
-        const requestOptions: RequestInit = {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${AuthState.token}`},
-            body: JSON.stringify(nodes)
-        };
-        const response: Response = await fetch(this.nodeUrl, requestOptions);
-        if (!response.ok) {
-            throw new Error(`createNodes HTTP error! status: ${response.status}`);
-        }
+        await this.post(this.nodeUrl, nodes);
     }
 
     async updateNodes(nodes: Node[]): Promise<void> {
-        const requestOptions: RequestInit = {
-            method: 'PUT',
-            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${AuthState.token}`},
-            body: JSON.stringify(nodes)
-        };
-        const response: Response = await fetch(this.nodeUrl, requestOptions);
-        if (!response.ok) {
-            throw new Error(`updateNodes HTTP error! status: ${response.status}`);
-        }
+        await this.put(this.nodeUrl, nodes);
     }
 
     async deleteNodes(nodes: string[]): Promise<void> {
-        const requestOptions: RequestInit = {
-            method: 'DELETE',
-            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${AuthState.token}`},
-            body: JSON.stringify(nodes)
-        };
-        const response: Response = await fetch(this.nodeUrl, requestOptions);
-        if (!response.ok) {
-            throw new Error(`deleteNodes HTTP error! status: ${response.status}`);
-        }
+        await this.delete(this.nodeUrl, nodes);
     }
 
     async getEdges(workspaceId: string): Promise<Edge[]> {
-        const requestOptions: RequestInit = {
-            method: 'GET',
-            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${AuthState.token}`}
-        };
-        const url: string = this.getEdgeUrl.replace("{workspace_id}", workspaceId);
-
-        const response: Response = await fetch(url, requestOptions);
-        if (!response.ok) {
-            throw new Error(`getEdges HTTP error! status: ${response.status}`);
-        }
-        return await response.json() as Edge[];
+        const url = this.getEdgeUrl.replace("{workspace_id}", workspaceId);
+        return await this.get<Edge[]>(url);
     }
 
     async createEdges(edges: Edge[]): Promise<void> {
-        const requestOptions: RequestInit = {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${AuthState.token}`},
-            body: JSON.stringify(edges)
-        };
-        const response: Response = await fetch(this.edgeUrl, requestOptions);
-        if (!response.ok) {
-            throw new Error(`createEdges HTTP error! status: ${response.status}`);
-        }
+        await this.post(this.edgeUrl, edges);
     }
 
     async updateEdges(edges: Edge[]): Promise<void> {
-        const requestOptions: RequestInit = {
-            method: 'PUT',
-            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${AuthState.token}`},
-            body: JSON.stringify(edges)
-        };
-        const response: Response = await fetch(this.edgeUrl, requestOptions);
-        if (!response.ok) {
-            throw new Error(`updateEdges HTTP error! status: ${response.status}`);
-        }
+        await this.put(this.edgeUrl, edges);
     }
 
     async deleteEdges(edges: string[]): Promise<void> {
-        const requestOptions: RequestInit = {
-            method: 'DELETE',
-            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${AuthState.token}`},
-            body: JSON.stringify(edges)
-        };
-        const response: Response = await fetch(this.edgeUrl, requestOptions);
-        if (!response.ok) {
-            throw new Error(`deleteEdges HTTP error! status: ${response.status}`);
-        }
+        await this.delete(this.edgeUrl, edges);
     }
-
 }

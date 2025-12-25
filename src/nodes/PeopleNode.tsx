@@ -31,7 +31,7 @@ function PeopleNode({ id, data }: NodeProps<Node<NodeData>>) {
                 id: crypto.randomUUID(),
                 type: 'peopleNode',
                 position: { x: node.position.x, y: node.position.y + 200 },
-                data: { persons: node.data.persons, editable: data.editable },
+                data: { persons: node.data.persons, images: node.data.images, editable: data.editable },
             };
             setNodes((nds) => nds.concat(newNode));
         }
@@ -41,7 +41,7 @@ function PeopleNode({ id, data }: NodeProps<Node<NodeData>>) {
         const currentNode: Node = getNode(id) as Node
         let newNode: Node = {
             ...currentNode,
-            data: { personId: pId, persons: currentNode.data.persons, editable: data.editable },
+            data: { personId: pId, persons: currentNode.data.persons, images: currentNode.data.images, editable: data.editable },
         };
         setNodes((nodes) => {
             return nodes.filter(data => data.id !== id)

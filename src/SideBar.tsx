@@ -35,7 +35,7 @@ function SideBar() {
     return (
         <div className="flex h-dvh">
             <Router>
-                <SidebarProvider defaultOpen={false}>
+                <SidebarProvider defaultOpen={true}>
 
                     {/* Sidebar */}
                     <Sidebar variant="floating" collapsible="offcanvas"

@@ -1,6 +1,6 @@
-import {useState} from "react";
-import {Home, User, Settings, Network} from "lucide-react";
-import {HashRouter as Router, Route, Routes, Link} from "react-router-dom";
+import { useState } from "react";
+import { Home, User, Settings, Network } from "lucide-react";
+import { HashRouter as Router, Route, Routes, Link } from "react-router-dom";
 import {
     Sidebar,
     SidebarContent,
@@ -13,13 +13,14 @@ import {
     SidebarProvider, SidebarTrigger,
 
 } from "@/components/ui/sidebar";
+import { ReactFlowProvider } from "@xyflow/react";
 import LoginPage from "@/LoginPage.tsx";
 import ViewFamily from "@/ViewFamily.tsx";
 import EditFamily from "@/EditFamily.tsx";
 import EditWorkspace from "@/EditWorkspace.tsx";
-import {Breadcrumb, BreadcrumbItem, BreadcrumbList} from "@/components/ui/breadcrumb.tsx";
-import type {NavItem} from "@/model/NavItem.ts";
-import {Toaster} from "sonner";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList } from "@/components/ui/breadcrumb.tsx";
+import type { NavItem } from "@/model/NavItem.ts";
+import { Toaster } from "sonner";
 import './font.css'
 
 
@@ -27,9 +28,9 @@ function SideBar() {
     const [authenticated, setAuthenticated] = useState<boolean>(false)
     const [selectedGroup, setSelectedGroup] = useState<string>("Login")
     const navItems = new Map<string, Array<NavItem>>([["Family Tree", [
-        {label: "View Family", icon: Network, path: "/view-family"},
-        {label: "Edit People", icon: User, path: "/edit-people"},
-        {label: "Edit Workspace", icon: Settings, path: "/edit-workspace"},
+        { label: "View Family", icon: Network, path: "/view-family" },
+        { label: "Edit People", icon: User, path: "/edit-people" },
+        { label: "Edit Workspace", icon: Settings, path: "/edit-workspace" },
     ]]]);
 
     return (
@@ -39,15 +40,15 @@ function SideBar() {
 
                     {/* Sidebar */}
                     <Sidebar collapsible="icon"
-                             className="bg-navy text-light-orange shadow-lg shadow-gray-900/50 h-full">
+                        className="bg-navy text-light-orange shadow-lg shadow-gray-900/50 h-full">
                         {/* Sidebar header */}
                         <SidebarHeader className="bg-[#0a1a3c] text-white">
                             <SidebarMenu >
                                 <SidebarMenuItem key="login" >
                                     <SidebarMenuButton asChild
 
-                                                       className="hover:bg-gray-500 hover:text-white font-oswald text-[1.1rem] h-[2.5rem] [&>svg]:h-5 [&>svg]:w-5">
-                                    <Link to={"/"} onClick={() => setSelectedGroup("Login")} className="text-white">
+                                        className="hover:bg-gray-500 hover:text-white font-oswald text-[1.1rem] h-[2.5rem] [&>svg]:h-5 [&>svg]:w-5">
+                                        <Link to={"/"} onClick={() => setSelectedGroup("Login")} className="text-white">
                                             <Home />
                                             Login
                                         </Link>
@@ -68,7 +69,7 @@ function SideBar() {
                                                 {items.map((item) => (
                                                     <SidebarMenuItem key={item.label}>
                                                         <SidebarMenuButton asChild
-                                                                           className="hover:bg-gray-500 hover:text-white font-oswald text-[1.1rem] h-[2.5rem] [&>svg]:h-5 [&>svg]:w-5">
+                                                            className="hover:bg-gray-500 hover:text-white font-oswald text-[1.1rem] h-[2.5rem] [&>svg]:h-5 [&>svg]:w-5">
                                                             <Link
                                                                 to={item.path}
                                                                 onClick={() => setSelectedGroup(group)}
@@ -91,7 +92,7 @@ function SideBar() {
                     }
                     <main className="flex-1 flex flex-col p-2 bg-light-orange font-oswald overflow-y-auto">
                         <div className="flex items-center gap-4 mb-2">
-                            <SidebarTrigger/>
+                            <SidebarTrigger />
                             <Breadcrumb>
                                 <BreadcrumbList>
                                     <BreadcrumbItem>
@@ -106,16 +107,20 @@ function SideBar() {
                             <Routes>
                                 <Route
                                     path="/"
-                                    element={<LoginPage setAuthenticated={setAuthenticated}/>}
+                                    element={<LoginPage setAuthenticated={setAuthenticated} />}
                                 />
-                                <Route path="/view-family" element={<ViewFamily/>}/>
-                                <Route path="/edit-people" element={<EditFamily/>}/>
-                                <Route path="/edit-workspace" element={<EditWorkspace/>}/>
+                                <Route path="/view-family" element={
+                                    <ReactFlowProvider>
+                                        <ViewFamily />
+                                    </ReactFlowProvider>
+                                } />
+                                <Route path="/edit-people" element={<EditFamily />} />
+                                <Route path="/edit-workspace" element={<EditWorkspace />} />
                             </Routes>
                         </div>
                     </main>
 
-                    <Toaster position="top-right" richColors closeButton/>
+                    <Toaster position="top-right" richColors closeButton />
 
                 </SidebarProvider>
             </Router>

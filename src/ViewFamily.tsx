@@ -12,7 +12,11 @@ import {
     ReactFlow,
     useEdgesState,
     useNodesState,
+    useReactFlow,
+    getNodesBounds,
+    getViewportForBounds,
 } from '@xyflow/react';
+import { toPng } from 'html-to-image';
 
 import '@xyflow/react/dist/base.css';
 
@@ -23,7 +27,7 @@ import type { Person } from "./model/Person.ts";
 import type { EdgeData } from "./model/Edge.ts";
 import { RowState } from "./model/Constants.ts";
 import type { Workspace } from "./model/Workspace.ts";
-import { Edit, HardDrive, Layout } from "lucide-react";
+import { Download, Edit, HardDrive, Layout } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
 import { toast } from "sonner";
 import ServiceFactory from "./service/ServiceFactory.ts";
@@ -371,6 +375,38 @@ function ViewFamily() {
             .finally(() => console.log("Edges saved"));
     }
 
+    const { getNodes } = useReactFlow();
+    const onDownload = () => {
+        const nodes = getNodes();
+        if (nodes.length === 0) return;
+
+        const nodesBounds = getNodesBounds(nodes);
+
+        // Add padding to the bounds
+        const padding = 50;
+        const imageWidth = nodesBounds.width + padding * 2;
+        const imageHeight = nodesBounds.height + padding * 2;
+
+        const viewport = getViewportForBounds(nodesBounds, imageWidth, imageHeight, 1, 2, 0);
+
+        toPng(document.querySelector('.react-flow__viewport') as HTMLElement, {
+            backgroundColor: '#f0fdfa', // Match bg-teal-50
+            width: imageWidth,
+            height: imageHeight,
+            style: {
+                width: `${imageWidth}px`,
+                height: `${imageHeight}px`,
+                transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
+            },
+            pixelRatio: 3, // High-definition output
+        }).then((dataUrl) => {
+            const link = document.createElement('a');
+            link.download = `family-tree-${workspace?.name || 'export'}.png`;
+            link.href = dataUrl;
+            link.click();
+        });
+    };
+
     const handleNodesChange = useCallback((changes: NodeChange<Node<NodeData>>[]) => {
         changes.forEach(change => {
             if (change.type === 'remove') {
@@ -400,7 +436,7 @@ function ViewFamily() {
             }
         });
         onEdgesChange(changes);
-    }, [nodesState, onEdgesChange]);
+    }, [edgesState, onEdgesChange]);
 
 
     return (
@@ -473,9 +509,19 @@ function ViewFamily() {
                     <Layout className="h-4 w-4" />
                     Auto Format
                 </button>
+                <button
+                    onClick={onDownload}
+                    className={cn(
+                        "flex items-center gap-2 px-3 py-2 text-sm rounded-md",
+                        "bg-orange-600 text-white hover:bg-orange-700 transition shadow-sm",
+                    )}
+                >
+                    <Download className="h-4 w-4" />
+                    Download Image
+                </button>
             </div>
         </div>
     );
 }
 
-export default ViewFamily
+export default ViewFamily;

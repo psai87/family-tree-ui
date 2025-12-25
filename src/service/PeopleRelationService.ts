@@ -10,7 +10,7 @@ import {
 import type { Workspace } from "../model/Workspace.ts";
 import type AuthenticateResponse from "../model/AuthenticateResponse.ts";
 import ServiceFactory from "./ServiceFactory.ts";
-import type { Otp, OtpRequest, OtpResponse } from "@/model/Otp.ts";
+import type { OtpRequest, OtpResponse } from "../model/Otp.ts";
 
 
 export default class PeopleRelationService {

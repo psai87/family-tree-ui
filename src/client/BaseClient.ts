@@ -13,12 +13,10 @@ export default class BaseClient {
             'Authorization': `Bearer ${AuthState.token}`
         };
 
-        if (method === 'POST' || method === 'PUT') {
-            if (isBinary) {
-                headers['Content-Type'] = 'application/octet-stream';
-            } else {
-                headers['Content-Type'] = 'application/json';
-            }
+        if (isBinary) {
+            headers['Content-Type'] = 'application/octet-stream';
+        } else {
+            headers['Content-Type'] = 'application/json';
         }
 
         const options: RequestInit = {

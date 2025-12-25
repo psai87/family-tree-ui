@@ -48,13 +48,13 @@ function LoginPage({ setAuthenticated }: HomePageProps) {
     }
 
     return (
-        <div className="flex items-center justify-center h-full bg-gradient-to-br from-background to-accent/20 p-6">
-            <div className="bg-card shadow-2xl rounded-3xl p-12 max-w-xl w-full text-center animate-fade-in border border-border">
-                <h1 className="text-5xl font-extrabold text-primary mb-2 whitespace-nowrap text-ellipsis tracking-tight">
+        <div className="flex items-center justify-center h-full bg-gradient-to-br from-background to-accent/20 p-4 sm:p-6">
+            <div className="bg-card shadow-2xl rounded-3xl p-6 sm:p-12 max-w-xl w-full text-center animate-fade-in border border-border">
+                <h1 className="text-3xl sm:text-5xl font-extrabold text-primary mb-2 tracking-tight">
                     👋 Welcome to Family Tree!
                 </h1>
 
-                <p className="text-muted-foreground text-xl mb-8">
+                <p className="text-muted-foreground text-lg sm:text-xl mb-8">
                     Explore your family lineage. This feature is in <span
                         className="font-bold text-primary italic">beta</span>.
                 </p>
@@ -87,7 +87,7 @@ function LoginPage({ setAuthenticated }: HomePageProps) {
                 <div className="flex flex-col sm:flex-row justify-between items-center mt-10 gap-4">
                     <button
                         onClick={handleGenerateOTP}
-                        className="text-primary font-bold hover:opacity-80 transition-all flex items-center gap-2 text-lg"
+                        className="text-primary font-bold hover:opacity-80 transition-all flex items-center gap-2 text-lg w-full sm:w-auto justify-center"
                     >
                         <Mail className="h-6 w-6" />
                         Generate OTP

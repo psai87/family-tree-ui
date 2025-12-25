@@ -35,10 +35,10 @@ function SideBar() {
     return (
         <div className="flex h-dvh">
             <Router>
-                <SidebarProvider defaultOpen>
+                <SidebarProvider>
 
                     {/* Sidebar */}
-                    <Sidebar collapsible="icon"
+                    <Sidebar variant="floating" collapsible="offcanvas"
                         className="bg-sidebar text-sidebar-foreground shadow-lg shadow-black/20 h-full border-r border-sidebar-border">
                         {/* Sidebar header */}
                         <SidebarHeader className="bg-sidebar text-sidebar-foreground border-b border-sidebar-border/50">

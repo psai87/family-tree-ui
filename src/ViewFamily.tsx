@@ -440,83 +440,85 @@ function ViewFamily() {
 
 
     return (
-        <div className="h-full w-full flex flex-col">
-            <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={handleNodesChange}
-                onEdgesChange={handleEdgesChange}
-                onConnect={onConnect}
-                nodeTypes={nodeTypes}
-                fitView
-                defaultEdgeOptions={defaultEdgeOptions}
-                className="bg-[oklch(0.99_0.005_45)] flex-1"
-                minZoom={1}
-                maxZoom={1.5}
-                nodesDraggable={editButtonClicked}
-                nodesConnectable={editButtonClicked}
-                draggable={!editButtonClicked}
-                elementsSelectable={editButtonClicked}
-            >
-                <MiniMap />
-                <Controls />
-            </ReactFlow>
+        <div className="h-full bg-muted md:p-4 overflow-hidden">
+            <div className="max-w-full mx-auto bg-card shadow-2xl rounded-2xl border border-border flex flex-col h-full overflow-hidden">
+                <ReactFlow
+                    nodes={nodes}
+                    edges={edges}
+                    onNodesChange={handleNodesChange}
+                    onEdgesChange={handleEdgesChange}
+                    onConnect={onConnect}
+                    nodeTypes={nodeTypes}
+                    fitView
+                    defaultEdgeOptions={defaultEdgeOptions}
+                    className="bg-[oklch(0.99_0.005_45)] flex-1"
+                    minZoom={1}
+                    maxZoom={1.5}
+                    nodesDraggable={editButtonClicked}
+                    nodesConnectable={editButtonClicked}
+                    draggable={!editButtonClicked}
+                    elementsSelectable={editButtonClicked}
+                >
+                    <MiniMap />
+                    <Controls />
+                </ReactFlow>
 
-            {/* Toolbar */}
-            <div className="p-3 flex flex-wrap gap-3 bg-muted/40 border-t border-border shadow-sm justify-end items-center">
-                <select
-                    id="workspace"
-                    name="workspace"
-                    value={workspace?.id}
-                    className="text-sm border border-border bg-card rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
-                    onChange={(event) => onWorkspaceSelect(event.target.value)}
-                >
-                    <option value="">Pick a workspace</option>
-                    {workspaces?.map((data) => (
-                        <option key={data.id} value={data.id}>{data.name}</option>
-                    ))}
-                </select>
+                {/* Toolbar */}
+                <div className="p-3 flex flex-wrap gap-3 bg-muted/40 border-t border-border shadow-sm justify-end items-center">
+                    <select
+                        id="workspace"
+                        name="workspace"
+                        value={workspace?.id}
+                        className="text-sm border border-border bg-card rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+                        onChange={(event) => onWorkspaceSelect(event.target.value)}
+                    >
+                        <option value="">Pick a workspace</option>
+                        {workspaces?.map((data) => (
+                            <option key={data.id} value={data.id}>{data.name}</option>
+                        ))}
+                    </select>
 
-                <button
-                    onClick={saveClicked}
-                    className={cn(
-                        "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
-                        "bg-green-600 text-white hover:bg-green-700 transition-all shadow-md active:scale-95",
-                    )}
-                >
-                    <HardDrive className="h-4 w-4" />
-                    Save
-                </button>
-                <button
-                    onClick={editClicked}
-                    className={cn(
-                        "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
-                        "bg-primary text-white hover:opacity-90 transition-all shadow-md active:scale-95",
-                    )}
-                >
-                    <Edit className="h-4 w-4" />
-                    Edit
-                </button>
-                <button
-                    onClick={formatClicked}
-                    className={cn(
-                        "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
-                        "bg-secondary text-white hover:opacity-90 transition-all shadow-md active:scale-95",
-                    )}
-                >
-                    <Layout className="h-4 w-4" />
-                    Auto Format
-                </button>
-                <button
-                    onClick={onDownload}
-                    className={cn(
-                        "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
-                        "bg-orange-600 text-white hover:bg-orange-700 transition-all shadow-md active:scale-95",
-                    )}
-                >
-                    <Download className="h-4 w-4" />
-                    Download Image
-                </button>
+                    <button
+                        onClick={saveClicked}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
+                            "bg-green-600 text-white hover:bg-green-700 transition-all shadow-md active:scale-95",
+                        )}
+                    >
+                        <HardDrive className="h-4 w-4" />
+                        Save
+                    </button>
+                    <button
+                        onClick={editClicked}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
+                            "bg-primary text-white hover:opacity-90 transition-all shadow-md active:scale-95",
+                        )}
+                    >
+                        <Edit className="h-4 w-4" />
+                        Edit
+                    </button>
+                    <button
+                        onClick={formatClicked}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
+                            "bg-secondary text-white hover:opacity-90 transition-all shadow-md active:scale-95",
+                        )}
+                    >
+                        <Layout className="h-4 w-4" />
+                        Auto Format
+                    </button>
+                    <button
+                        onClick={onDownload}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
+                            "bg-orange-600 text-white hover:bg-orange-700 transition-all shadow-md active:scale-95",
+                        )}
+                    >
+                        <Download className="h-4 w-4" />
+                        Download Image
+                    </button>
+                </div>
             </div>
         </div>
     );

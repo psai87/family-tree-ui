@@ -1,10 +1,10 @@
-import {type ChangeEvent, type JSX, useEffect, useState} from "react";
-import type {PersonRowDetail} from "./model/PersonRowDetail.ts";
-import {RowState} from "./model/Constants.ts";
+import { type ChangeEvent, type JSX, useEffect, useState } from "react";
+import type { PersonRowDetail } from "./model/PersonRowDetail.ts";
+import { RowState } from "./model/Constants.ts";
 import PeopleRelationService from "./service/PeopleRelationService.ts";
-import type {Workspace} from "./model/Workspace.ts";
-import {Edit, HardDrive, Plus, Save, Trash2, X} from "lucide-react";
-import {toast} from "sonner";
+import type { Workspace } from "./model/Workspace.ts";
+import { Edit, HardDrive, Plus, Save, Trash2, X } from "lucide-react";
+import { toast } from "sonner";
 
 function EditWorkspace(): JSX.Element {
 
@@ -56,14 +56,14 @@ function EditWorkspace(): JSX.Element {
 
     const handleEdit = (id: string): void => {
         setRowDetails(prevMap =>
-            new Map(prevMap).set(id, {...prevMap.get(id) as PersonRowDetail, editable: true}));
+            new Map(prevMap).set(id, { ...prevMap.get(id) as PersonRowDetail, editable: true }));
         setTempRowWorkspaces(prevMap =>
             new Map(prevMap).set(id, rowWorkspaces.find(data => data.id === id) as Workspace));
     };
 
     const handleCancel = (id: string): void => {
         setRowDetails(prevMap =>
-            new Map(prevMap).set(id, {...prevMap.get(id) as PersonRowDetail, editable: false}));
+            new Map(prevMap).set(id, { ...prevMap.get(id) as PersonRowDetail, editable: false }));
         setRowWorkspaces(prevMap => prevMap.filter(person => person.id !== id)
             .concat(tempRowWorkspaces.get(id) as Workspace));
         setTempRowWorkspaces(prevMap => {
@@ -79,7 +79,7 @@ function EditWorkspace(): JSX.Element {
             if (newMap.get(id)?.state == RowState.Added) {
                 newMap.delete(id)
             } else {
-                newMap.set(id, {...newMap.get(id) as PersonRowDetail, state: RowState.Deleted});
+                newMap.set(id, { ...newMap.get(id) as PersonRowDetail, state: RowState.Deleted });
             }
             return newMap;
         })
@@ -98,7 +98,7 @@ function EditWorkspace(): JSX.Element {
     ): void => {
         setRowWorkspaces((prev) =>
             prev.map((row: Workspace) =>
-                row.id === id ? {...row, [field]: value} : row
+                row.id === id ? { ...row, [field]: value } : row
             ));
     }
 
@@ -120,100 +120,96 @@ function EditWorkspace(): JSX.Element {
 
     return (
         <>
-            <div className="h-[calc(100dvh-3.3rem)] bg-neutral-300 md:p-2 overflow-hidden">
+            <div className="h-full bg-muted md:p-4 overflow-hidden">
                 <div
-                    className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 flex flex-col h-full">
+                    className="max-w-full mx-auto bg-card shadow-2xl rounded-2xl border border-border flex flex-col h-full">
 
                     {/* Table */}
-                    <div className="flex-1 overflow-x-auto px-6 py-2 ">
-                        <table className="w-full text-base text-gray-800 border-separate border-spacing-y-2">
+                    <div className="flex-1 overflow-auto px-6 py-4 ">
+                        <table className="w-full text-base text-foreground border-separate border-spacing-y-3">
                             <thead>
-                            <tr className="text-lg bg-gray-200 shadow-md">
-                                <th className="px-4 py-2 text-left font-semibold ">Name</th>
-                                <th className="px-4 py-2 text-right font-semibold ">Actions</th>
-                            </tr>
+                                <tr className="text-left text-lg rounded-xl shadow-lg bg-secondary/90 text-white backdrop-blur-sm">
+                                    <th className="px-4 py-2 font-semibold ">Name</th>
+                                    <th className="px-4 py-2 text-right font-semibold ">Actions</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            {rowWorkspaces.map((row) => (
-                                <tr
-                                    key={row.id}
-                                    className="bg-neutral-50 hover:bg-neutral-100 transition rounded-lg shadow-sm"
-                                >
-                                    <td className="px-4 py-2">
-                                        {rowDetails.get(row.id)?.editable ? (
-                                            <input
-                                                type="text"
-                                                value={row.name}
-                                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                    handleInputChange(row.id, "name", e.target.value)
-                                                }
-                                                className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
-                                            />
-                                        ) : (
-                                            <span className="text-gray-800">{row.name}</span>
-                                        )}
-                                    </td>
-                                    <td className="px-4 py-2 text-right">
-                                        <div className="inline-flex gap-2">
+                                {rowWorkspaces.map((row) => (
+                                    <tr
+                                        key={row.id}
+                                        className="bg-card hover:bg-accent/30 transition-all duration-200 rounded-xl shadow-sm border border-border"
+                                    >
+                                        <td className="px-4 py-2">
                                             {rowDetails.get(row.id)?.editable ? (
-                                                <>
-                                                    {/* Save Button with Icon */}
-                                                    <button
-                                                        onClick={() => handleSaveRow(row.id)}
-                                                        className="text-sm bg-green-500 text-white p-2 rounded hover:bg-green-600 transition flex items-center justify-center"
-                                                        title="Save" // Added for accessibility
-                                                    >
-                                                        <Save className="h-4 w-4"/>
-                                                    </button>
-                                                    {/* Cancel Button with Icon */}
-                                                    <button
-                                                        onClick={() => handleCancel(row.id)}
-                                                        className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center"
-                                                        title="Cancel" // Added for accessibility
-                                                    >
-                                                        <X className="h-4 w-4"/>
-                                                    </button>
-                                                </>
+                                                <input
+                                                    type="text"
+                                                    value={row.name}
+                                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                                        handleInputChange(row.id, "name", e.target.value)
+                                                    }
+                                                    className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none"
+                                                />
                                             ) : (
-                                                <>
-                                                    {/* Edit Button with Icon */}
-                                                    <button
-                                                        onClick={() => handleEdit(row.id)}
-                                                        className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center"
-                                                        title="Edit" // Added for accessibility
-                                                    >
-                                                        <Edit className="h-4 w-4"/>
-                                                    </button>
-                                                    {/* Remove Button with Icon */}
-                                                    <button
-                                                        onClick={() => handleRemove(row.id)}
-                                                        className="text-sm bg-red-500 text-white p-2 rounded hover:bg-red-600 transition flex items-center justify-center"
-                                                        title="Remove" // Added for accessibility
-                                                    >
-                                                        <Trash2 className="h-4 w-4"/>
-                                                    </button>
-                                                </>
+                                                <span className="text-foreground">{row.name}</span>
                                             )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                                        </td>
+                                        <td className="px-4 py-2 text-right">
+                                            <div className="inline-flex gap-2">
+                                                {rowDetails.get(row.id)?.editable ? (
+                                                    <>
+                                                        <button
+                                                            onClick={() => handleSaveRow(row.id)}
+                                                            className="text-sm bg-green-500 text-white p-2 rounded hover:bg-green-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                            title="Save"
+                                                        >
+                                                            <Save className="h-4 w-4" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleCancel(row.id)}
+                                                            className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                            title="Cancel"
+                                                        >
+                                                            <X className="h-4 w-4" />
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button
+                                                            onClick={() => handleEdit(row.id)}
+                                                            className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                            title="Edit"
+                                                        >
+                                                            <Edit className="h-4 w-4" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleRemove(row.id)}
+                                                            className="text-sm bg-red-500 text-white p-2 rounded hover:bg-red-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                            title="Remove"
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
 
-                    <div className="flex justify-end gap-3 mt-4 py-3 px-3">
+                    <div className="flex justify-end gap-4 mt-auto py-6 px-6 bg-muted/20 border-t border-border">
                         <button
                             onClick={handleAddRow}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm transition flex items-center gap-2"
+                            className="bg-primary text-white px-6 py-3 rounded-xl text-sm font-bold hover:opacity-90 shadow-lg active:scale-95 transition-all flex items-center gap-2"
                         >
-                            <Plus className="h-4 w-4"/> Add Record
+                            <Plus className="h-5 w-5" /> Add Record
                         </button>
                         <button
                             onClick={handleSaveAll}
-                            className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 shadow-sm transition flex items-center gap-2"
+                            className="bg-green-600 text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-green-700 shadow-lg active:scale-95 transition-all flex items-center gap-2"
                         >
-                            <HardDrive className="h-4 w-4"/> Save All
+                            <HardDrive className="h-5 w-5" /> Save All
                         </button>
                     </div>
                 </div>

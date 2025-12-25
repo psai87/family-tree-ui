@@ -131,15 +131,15 @@ function EditFamily(): JSX.Element {
 
     return (
         <>
-            <div className="h-[calc(100dvh-3.3rem)] bg-neutral-300 md:p-2 overflow-hidden">
+            <div className="h-full bg-muted md:p-4 overflow-hidden">
                 <div
-                    className="max-w-full mx-auto bg-white shadow-xl rounded-xl border border-neutral-200 flex flex-col h-full">
+                    className="max-w-full mx-auto bg-card shadow-2xl rounded-2xl border border-border flex flex-col h-full">
 
                     {/* Table */}
-                    <div className="h-full overflow-auto px-6 py-2">
-                        <table className="h-full  min-w-full text-base text-gray-800 border-separate border-spacing-y-2">
+                    <div className="h-full overflow-auto px-6 py-4">
+                        <table className="h-full min-w-full text-base text-foreground border-separate border-spacing-y-3">
                             <thead>
-                                <tr className="text-left text-lg rounded-lg shadow-md bg-gray-200">
+                                <tr className="text-left text-lg rounded-xl shadow-lg bg-secondary/90 text-white backdrop-blur-sm">
                                     <th className="px-4 py-2 font-semibold ">First Name</th>
                                     <th className="px-4 py-2 font-semibold whitespace-nowrap">Last Name</th>
                                     <th className="px-4 py-2 font-semibold ">Occupation</th>
@@ -154,7 +154,7 @@ function EditFamily(): JSX.Element {
                                 {rowPersons.map((row) => (
                                     <tr
                                         key={row.id}
-                                        className="bg-neutral-50 hover:bg-neutral-100 transition rounded-lg shadow-sm"
+                                        className="bg-card hover:bg-accent/30 transition-all duration-200 rounded-xl shadow-sm border border-border"
                                     >
                                         <td className="px-4 py-2">
                                             {rowDetails.get(row.id)?.editable ? (
@@ -162,7 +162,7 @@ function EditFamily(): JSX.Element {
                                                     type="text"
                                                     value={row.firstName}
                                                     onChange={(e) => handleInputChange(row.id, "firstName", e.target.value)}
-                                                    className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                                                    className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none"
                                                 />
                                             ) : (
                                                 <span>{row.firstName}</span>
@@ -174,7 +174,7 @@ function EditFamily(): JSX.Element {
                                                     type="text"
                                                     value={row.lastName}
                                                     onChange={(e) => handleInputChange(row.id, "lastName", e.target.value)}
-                                                    className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                                                    className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none"
                                                 />
                                             ) : (
                                                 <span>{row.lastName}</span>
@@ -186,7 +186,7 @@ function EditFamily(): JSX.Element {
                                                     type="text"
                                                     value={row.occupation}
                                                     onChange={(e) => handleInputChange(row.id, "occupation", e.target.value)}
-                                                    className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                                                    className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none"
                                                 />
                                             ) : (
                                                 <span>{row.occupation}</span>
@@ -198,7 +198,7 @@ function EditFamily(): JSX.Element {
                                                     type="text"
                                                     value={row.email}
                                                     onChange={(e) => handleInputChange(row.id, "email", e.target.value)}
-                                                    className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                                                    className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none"
                                                 />
                                             ) : (
                                                 <span>{row.email}</span>
@@ -210,7 +210,7 @@ function EditFamily(): JSX.Element {
                                                     type="text"
                                                     value={row.yearOfBirth}
                                                     onChange={(e) => handleInputChange(row.id, "yearOfBirth", e.target.value)}
-                                                    className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                                                    className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none"
                                                 />
                                             ) : (
                                                 <span>{row.yearOfBirth}</span>
@@ -222,7 +222,7 @@ function EditFamily(): JSX.Element {
                                                     type="text"
                                                     value={row.yearOfDeath}
                                                     onChange={(e) => handleInputChange(row.id, "yearOfDeath", e.target.value)}
-                                                    className="w-full border border-gray-300 px-3 py-1 rounded-md focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                                                    className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none"
                                                 />
                                             ) : (
                                                 <span>{row.yearOfDeath}</span>
@@ -234,11 +234,11 @@ function EditFamily(): JSX.Element {
                                                     type="file"
                                                     accept="image/*"
                                                     onChange={(e) => handleFileInputChange(row.id, e.target.files)}
-                                                    className="w-full text-xs file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300 transition-colors"
+                                                    className="w-full text-xs file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-primary/20 file:text-primary hover:file:bg-primary/30 transition-colors cursor-pointer"
                                                 />
                                             ) : (
                                                 <div
-                                                    className="text-xs rounded w-11 h-11 flex justify-center items-center bg-gray-100 overflow-hidden">
+                                                    className="text-xs rounded-lg w-12 h-12 flex justify-center items-center bg-muted overflow-hidden shadow-inner border border-border">
                                                     <ImagePreview buffer={imageMap.get(row.id)} yearOfDeath={row.yearOfDeath} />
                                                 </div>
                                             )}
@@ -288,18 +288,18 @@ function EditFamily(): JSX.Element {
                         </table>
                     </div>
 
-                    <div className="flex justify-end gap-3 mt-4 py-3 px-3">
+                    <div className="flex justify-end gap-4 mt-auto py-6 px-6 bg-muted/20 border-t border-border">
                         <button
                             onClick={handleAddRow}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 shadow-sm transition flex items-center gap-2"
+                            className="bg-primary text-white px-6 py-3 rounded-xl text-sm font-bold hover:opacity-90 shadow-lg active:scale-95 transition-all flex items-center gap-2"
                         >
-                            <Plus className="h-4 w-4" /> Add Record
+                            <Plus className="h-5 w-5" /> Add Record
                         </button>
                         <button
                             onClick={handleSaveAll}
-                            className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 shadow-sm transition flex items-center gap-2"
+                            className="bg-green-600 text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-green-700 shadow-lg active:scale-95 transition-all flex items-center gap-2"
                         >
-                            <HardDrive className="h-4 w-4" /> Save All
+                            <HardDrive className="h-5 w-5" /> Save All
                         </button>
                     </div>
                 </div>

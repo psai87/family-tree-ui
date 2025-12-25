@@ -48,15 +48,15 @@ function LoginPage({ setAuthenticated }: HomePageProps) {
     }
 
     return (
-        <div className="flex items-center justify-center h-full bg-gradient-to-br from-white to-blue-100 p-6">
-            <div className="bg-white shadow-xl rounded-2xl p-10 max-w-xl w-full text-center animate-fade-in">
-                <h1 className="text-4xl font-extrabold text-orange-700 whitespace-nowrap text-ellipsis">
+        <div className="flex items-center justify-center h-full bg-gradient-to-br from-background to-accent/20 p-6">
+            <div className="bg-card shadow-2xl rounded-3xl p-12 max-w-xl w-full text-center animate-fade-in border border-border">
+                <h1 className="text-5xl font-extrabold text-primary mb-2 whitespace-nowrap text-ellipsis tracking-tight">
                     👋 Welcome to Family Tree!
                 </h1>
 
-                <p className="text-gray-600 text-lg">
+                <p className="text-muted-foreground text-xl mb-8">
                     Explore your family lineage. This feature is in <span
-                        className="font-semibold text-orange-500">beta</span>.
+                        className="font-bold text-primary italic">beta</span>.
                 </p>
 
                 <div className="space-y-4 py-3">
@@ -68,9 +68,9 @@ function LoginPage({ setAuthenticated }: HomePageProps) {
                             onChange={(e: ChangeEvent<HTMLInputElement>) =>
                                 setEmail(e.target.value)
                             }
-                            className="w-full border border-gray-300 rounded-lg pr-12 pl-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                            className="w-full border border-border rounded-xl pr-12 pl-5 py-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all bg-muted/20"
                         />
-                        <Mail className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+                        <Mail className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground h-6 w-6" />
                     </div>
                     <div className="relative">
                         <input
@@ -79,24 +79,24 @@ function LoginPage({ setAuthenticated }: HomePageProps) {
                             onChange={(e: ChangeEvent<HTMLInputElement>) =>
                                 setOtp(e.target.value)
                             }
-                            className="w-full border border-gray-300 rounded-lg pr-12 pl-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                            className="w-full border border-border rounded-xl pr-12 pl-5 py-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all bg-muted/20"
                         />
-                        <LockKeyhole className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+                        <LockKeyhole className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground h-6 w-6" />
                     </div>
                 </div>
-                <div className="flex justify-between items-center mt-6">
+                <div className="flex flex-col sm:flex-row justify-between items-center mt-10 gap-4">
                     <button
                         onClick={handleGenerateOTP}
-                        className="text-orange-600 font-semibold hover:text-orange-700 transition flex items-center gap-2"
+                        className="text-primary font-bold hover:opacity-80 transition-all flex items-center gap-2 text-lg"
                     >
-                        <Mail className="h-5 w-5" />
+                        <Mail className="h-6 w-6" />
                         Generate OTP
                     </button>
                     <button
                         onClick={handleAuthenticate}
-                        className="bg-orange-600 text-white px-5 py-2 rounded-lg shadow hover:bg-orange-700 transition flex items-center gap-2"
+                        className="bg-primary text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:opacity-90 transition-all active:scale-95 flex items-center gap-2 text-lg w-full sm:w-auto justify-center"
                     >
-                        <LockKeyhole className="h-5 w-5" />
+                        <LockKeyhole className="h-6 w-6" />
                         Authenticate
                     </button>
                 </div>

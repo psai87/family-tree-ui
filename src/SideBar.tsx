@@ -40,17 +40,17 @@ function SideBar() {
 
                     {/* Sidebar */}
                     <Sidebar collapsible="icon"
-                        className="bg-navy text-light-orange shadow-lg shadow-gray-900/50 h-full">
+                        className="bg-sidebar text-sidebar-foreground shadow-lg shadow-black/20 h-full border-r border-sidebar-border">
                         {/* Sidebar header */}
-                        <SidebarHeader className="bg-[#0a1a3c] text-white">
+                        <SidebarHeader className="bg-sidebar text-sidebar-foreground border-b border-sidebar-border/50">
                             <SidebarMenu >
                                 <SidebarMenuItem key="login" >
                                     <SidebarMenuButton asChild
 
-                                        className="hover:bg-gray-500 hover:text-white font-oswald text-[1.1rem] h-[2.5rem] [&>svg]:h-5 [&>svg]:w-5">
-                                        <Link to={"/"} onClick={() => setSelectedGroup("Login")} className="text-white">
-                                            <Home />
-                                            Login
+                                        className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground font-oswald text-[1.1rem] h-[3rem] [&>svg]:h-5 [&>svg]:w-5 transition-colors duration-200">
+                                        <Link to={"/"} onClick={() => setSelectedGroup("Login")} className="flex items-center gap-3">
+                                            <Home className="text-primary" />
+                                            <span>Login</span>
                                         </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
@@ -59,24 +59,24 @@ function SideBar() {
 
                         {/* Sidebar content */
                         }
-                        <SidebarContent className="overflow-visible bg-[#0a1a3c] text-white text-l">
+                        <SidebarContent className="overflow-visible bg-sidebar text-sidebar-foreground">
                             {authenticated &&
                                 Array.from(navItems).map(([group, items]) => (
                                     <SidebarGroup key={group}>
-                                        <SidebarGroupLabel className="text-white text-[1rem] h-[2rem]">{group}</SidebarGroupLabel>
+                                        <SidebarGroupLabel className="text-sidebar-foreground/70 text-[0.8rem] uppercase tracking-wider h-[2rem] px-4">{group}</SidebarGroupLabel>
                                         <SidebarGroupContent>
                                             <SidebarMenu>
                                                 {items.map((item) => (
                                                     <SidebarMenuItem key={item.label}>
                                                         <SidebarMenuButton asChild
-                                                            className="hover:bg-gray-500 hover:text-white font-oswald text-[1.1rem] h-[2.5rem] [&>svg]:h-5 [&>svg]:w-5">
+                                                            className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground font-oswald text-[1.1rem] h-[3rem] [&>svg]:h-5 [&>svg]:w-5 transition-colors duration-200">
                                                             <Link
                                                                 to={item.path}
                                                                 onClick={() => setSelectedGroup(group)}
-                                                                className="flex items-center gap-2 text-white"
+                                                                className="flex items-center gap-3"
                                                             >
-                                                                <item.icon />
-                                                                {item.label}
+                                                                <item.icon className="text-primary" />
+                                                                <span>{item.label}</span>
                                                             </Link>
                                                         </SidebarMenuButton>
                                                     </SidebarMenuItem>
@@ -90,20 +90,20 @@ function SideBar() {
 
                     {/* Main content */
                     }
-                    <main className="flex-1 flex flex-col p-2 bg-light-orange font-oswald overflow-y-auto">
-                        <div className="flex items-center gap-4 mb-2">
-                            <SidebarTrigger />
+                    <main className="flex-1 flex flex-col p-4 bg-background font-oswald overflow-hidden h-screen">
+                        <div className="flex items-center gap-4 mb-4 flex-none">
+                            <SidebarTrigger className="text-primary hover:bg-accent" />
                             <Breadcrumb>
                                 <BreadcrumbList>
                                     <BreadcrumbItem>
                                         <span
-                                            className="text-xl font-oswald text-orange-700 font-bold">{selectedGroup}</span>
+                                            className="text-2xl font-oswald text-primary font-extrabold uppercase tracking-tight">{selectedGroup}</span>
                                     </BreadcrumbItem>
                                 </BreadcrumbList>
                             </Breadcrumb>
                         </div>
-                        {/* Scrollable content area */}
-                        <div className="flex-1 overflow-y-auto">
+                        {/* Content area - child components handle their own scrolling */}
+                        <div className="flex-1 min-h-0 w-full relative">
                             <Routes>
                                 <Route
                                     path="/"

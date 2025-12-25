@@ -390,7 +390,7 @@ function ViewFamily() {
         const viewport = getViewportForBounds(nodesBounds, imageWidth, imageHeight, 1, 2, 0);
 
         toPng(document.querySelector('.react-flow__viewport') as HTMLElement, {
-            backgroundColor: '#f0fdfa', // Match bg-teal-50
+            backgroundColor: 'oklch(0.99 0.005 45)', // Match new background
             width: imageWidth,
             height: imageHeight,
             style: {
@@ -440,7 +440,7 @@ function ViewFamily() {
 
 
     return (
-        <div className="h-[calc(100dvh-3.3rem)]  w-full flex flex-col">
+        <div className="h-full w-full flex flex-col">
             <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -450,7 +450,7 @@ function ViewFamily() {
                 nodeTypes={nodeTypes}
                 fitView
                 defaultEdgeOptions={defaultEdgeOptions}
-                className="bg-teal-50"
+                className="bg-[oklch(0.99_0.005_45)] flex-1"
                 minZoom={1}
                 maxZoom={1.5}
                 nodesDraggable={editButtonClicked}
@@ -463,12 +463,12 @@ function ViewFamily() {
             </ReactFlow>
 
             {/* Toolbar */}
-            <div className="p-2 flex flex-wrap gap-3 bg-gray-100 border-b border-gray-300 shadow-sm justify-end items-center">
+            <div className="p-3 flex flex-wrap gap-3 bg-muted/40 border-t border-border shadow-sm justify-end items-center">
                 <select
                     id="workspace"
                     name="workspace"
                     value={workspace?.id}
-                    className="text-sm border border-gray-300 bg-white rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                    className="text-sm border border-border bg-card rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
                     onChange={(event) => onWorkspaceSelect(event.target.value)}
                 >
                     <option value="">Pick a workspace</option>
@@ -480,11 +480,9 @@ function ViewFamily() {
                 <button
                     onClick={saveClicked}
                     className={cn(
-                        "flex items-center gap-2 px-3 py-2 text-sm rounded-md",
-                        "bg-green-600 text-white hover:bg-green-700 transition shadow-sm",
-
+                        "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
+                        "bg-green-600 text-white hover:bg-green-700 transition-all shadow-md active:scale-95",
                     )}
-
                 >
                     <HardDrive className="h-4 w-4" />
                     Save
@@ -492,8 +490,8 @@ function ViewFamily() {
                 <button
                     onClick={editClicked}
                     className={cn(
-                        "flex items-center gap-2 px-3 py-2 text-sm rounded-md",
-                        "bg-blue-600 text-white hover:bg-blue-700 transition shadow-sm",
+                        "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
+                        "bg-primary text-white hover:opacity-90 transition-all shadow-md active:scale-95",
                     )}
                 >
                     <Edit className="h-4 w-4" />
@@ -502,8 +500,8 @@ function ViewFamily() {
                 <button
                     onClick={formatClicked}
                     className={cn(
-                        "flex items-center gap-2 px-3 py-2 text-sm rounded-md",
-                        "bg-gray-600 text-white hover:bg-gray-700 transition shadow-sm",
+                        "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
+                        "bg-secondary text-white hover:opacity-90 transition-all shadow-md active:scale-95",
                     )}
                 >
                     <Layout className="h-4 w-4" />
@@ -512,8 +510,8 @@ function ViewFamily() {
                 <button
                     onClick={onDownload}
                     className={cn(
-                        "flex items-center gap-2 px-3 py-2 text-sm rounded-md",
-                        "bg-orange-600 text-white hover:bg-orange-700 transition shadow-sm",
+                        "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
+                        "bg-orange-600 text-white hover:bg-orange-700 transition-all shadow-md active:scale-95",
                     )}
                 >
                     <Download className="h-4 w-4" />

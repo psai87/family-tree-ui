@@ -23,7 +23,6 @@ import type { NavItem } from "@/model/NavItem.ts";
 import { Toaster } from "sonner";
 import './font.css'
 
-
 function SideBar() {
     const [authenticated, setAuthenticated] = useState<boolean>(false)
     const [selectedGroup, setSelectedGroup] = useState<string>("Login")

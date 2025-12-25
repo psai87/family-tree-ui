@@ -28,7 +28,6 @@ function EditFamily(): JSX.Element {
             .catch(error => console.log(error))
     }, []);
 
-
     const handleAddRow = () => {
         const newPerson: Person = {
             id: crypto.randomUUID(),

@@ -22,7 +22,6 @@ function EditWorkspace(): JSX.Element {
             .catch(error => console.log(error))
     }, []);
 
-
     const handleAddRow = () => {
         const newWorkspace: Workspace = {
             id: crypto.randomUUID(),

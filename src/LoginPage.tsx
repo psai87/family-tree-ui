@@ -12,14 +12,10 @@ function LoginPage({ setAuthenticated }: HomePageProps) {
     const [otp, setOtp] = useState("");
     const peopleRelationService: PeopleRelationService = new PeopleRelationService();
 
-    function handleTokenChange(value: string) {
-        AuthState.token = value;
-    }
-
     function handleAuthenticate() {
         peopleRelationService.verifyOTP({ email, otp })
             .then(data => {
-                handleTokenChange(data.token)
+                AuthState.token = data.token
                 setAuthenticated(true)
                 navigate("/view-family")
                 console.log("Authentication Successful")
@@ -29,6 +25,7 @@ function LoginPage({ setAuthenticated }: HomePageProps) {
                 console.log(err)
                 setAuthenticated(false)
                 navigate("/")
+                toast.error("Authentication failed")
             });
     }
 

@@ -1,4 +1,6 @@
 import { type ChangeEvent, type JSX, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import type { AuthProps } from "./model/Props.ts";
 import type { PersonRowDetail } from "./model/PersonRowDetail.ts";
 import { RowState } from "./model/Constants.ts";
 import PeopleRelationService from "./service/PeopleRelationService.ts";
@@ -6,7 +8,8 @@ import type { Workspace } from "./model/Workspace.ts";
 import { Edit, HardDrive, Plus, Save, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
-function EditWorkspace(): JSX.Element {
+function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
+    const navigate = useNavigate();
 
     const peopleRelationService: PeopleRelationService = new PeopleRelationService();
     const [rowWorkspaces, setRowWorkspaces] = useState<Workspace[]>([])
@@ -19,7 +22,14 @@ function EditWorkspace(): JSX.Element {
                 setRowWorkspaces(response[0])
                 setRowDetails(response[1])
             })
-            .catch(error => console.log(error))
+            .catch(error => {
+                console.log(error)
+                if (error.message === "Unauthorized") {
+                    setAuthenticated(false);
+                    navigate("/");
+                }
+                toast.error("Failed to load workspaces")
+            })
     }, []);
 
     const handleAddRow = () => {
@@ -44,11 +54,22 @@ function EditWorkspace(): JSX.Element {
                         setRowWorkspaces(response[0])
                         setRowDetails(response[1])
                     })
-                    .catch(error => console.log(error))
+                    .catch(error => {
+                        console.log(error)
+                        if (error.message === "Unauthorized") {
+                            setAuthenticated(false);
+                            navigate("/");
+                        }
+                        toast.error("Failed to refresh workspaces")
+                    })
                 toast.success("Saved Successfully")
             })
             .catch(reason => {
                 console.log(reason)
+                if (reason.message === "Unauthorized") {
+                    setAuthenticated(false);
+                    navigate("/");
+                }
                 toast.error(reason.message)
             });
     };

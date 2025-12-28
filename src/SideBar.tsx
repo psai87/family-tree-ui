@@ -22,10 +22,12 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbList } from "@/components/ui/brea
 import type { NavItem } from "@/model/NavItem.ts";
 import { Toaster } from "sonner";
 import './font.css'
+import { AuthState } from "@/model/Constants.ts";
 
 function SideBar() {
-    const [authenticated, setAuthenticated] = useState<boolean>(false)
+    const [authenticated, setAuthenticated] = useState<boolean>(!!AuthState.token)
     const [selectedGroup, setSelectedGroup] = useState<string>("Login")
+
     const navItems = new Map<string, Array<NavItem>>([["Family Tree", [
         { label: "View Family", icon: Network, path: "/view-family" },
         { label: "Edit People", icon: User, path: "/edit-people" },
@@ -110,11 +112,11 @@ function SideBar() {
                                 />
                                 <Route path="/view-family" element={
                                     <ReactFlowProvider>
-                                        <ViewFamily />
+                                        <ViewFamily setAuthenticated={setAuthenticated} />
                                     </ReactFlowProvider>
                                 } />
-                                <Route path="/edit-people" element={<EditFamily />} />
-                                <Route path="/edit-workspace" element={<EditWorkspace />} />
+                                <Route path="/edit-people" element={<EditFamily setAuthenticated={setAuthenticated} />} />
+                                <Route path="/edit-workspace" element={<EditWorkspace setAuthenticated={setAuthenticated} />} />
                             </Routes>
                         </div>
                     </main>

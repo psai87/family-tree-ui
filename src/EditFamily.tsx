@@ -1,4 +1,6 @@
 import { type JSX, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import type { AuthProps } from "./model/Props.ts";
 import type { Person } from "./model/Person.ts";
 import type { PersonRowDetail } from "./model/PersonRowDetail.ts";
 import { RowState } from "./model/Constants.ts";
@@ -9,7 +11,8 @@ import ServiceFactory from "./service/ServiceFactory.ts";
 import { updateMapEntry, deleteMapEntry } from "./utils/mapHelpers.ts";
 
 
-function EditFamily(): JSX.Element {
+function EditFamily({ setAuthenticated }: AuthProps): JSX.Element {
+    const navigate = useNavigate();
     const peopleRelationService = ServiceFactory.getPeopleRelationService();
     const [rowPersons, setRowPersons] = useState<Person[]>([])
     const [rowDetails, setRowDetails] = useState<Map<string, PersonRowDetail>>(new Map<string, PersonRowDetail>())
@@ -25,7 +28,14 @@ function EditFamily(): JSX.Element {
                 const imageMap = await peopleRelationService.loadImagesForPersons(response[0]);
                 setImageMap(imageMap);
             })
-            .catch(error => console.log(error))
+            .catch(error => {
+                console.log(error)
+                if (error.message === "Unauthorized") {
+                    setAuthenticated(false);
+                    navigate("/");
+                }
+                toast.error("Failed to load persons");
+            })
     }, []);
 
     const handleAddRow = () => {
@@ -60,6 +70,10 @@ function EditFamily(): JSX.Element {
             })
             .catch(reason => {
                 console.log(reason)
+                if (reason.message === "Unauthorized") {
+                    setAuthenticated(false);
+                    navigate("/");
+                }
                 toast.error(reason.message)
             });
     };

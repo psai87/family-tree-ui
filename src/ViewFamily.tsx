@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import type { AuthProps } from "./model/Props.ts";
 import {
     addEdge,
     type Connection,
@@ -17,6 +18,7 @@ import {
     getViewportForBounds,
 } from '@xyflow/react';
 import { toPng } from 'html-to-image';
+import { useNavigate } from "react-router-dom";
 
 import '@xyflow/react/dist/base.css';
 
@@ -34,7 +36,8 @@ import ServiceFactory from "./service/ServiceFactory.ts";
 import { NODE_TYPES } from "./model/NodeTypes.ts";
 import { updateMapEntry } from "./utils/mapHelpers.ts";
 
-function ViewFamily() {
+function ViewFamily({ setAuthenticated }: AuthProps) {
+    const navigate = useNavigate();
     const peopleRelationService = ServiceFactory.getPeopleRelationService();
     const [rowPersons, setRowPersons] = useState<Map<string, Person>>(new Map())
     const [imageMap, setImageMap] = useState<Map<string, ArrayBuffer>>(new Map<string, ArrayBuffer>())
@@ -86,7 +89,14 @@ function ViewFamily() {
                 const imageMap = await peopleRelationService.loadImagesForPersons(response[0]);
                 setImageMap(imageMap);
             })
-            .catch(error => console.log(error))
+            .catch(error => {
+                console.log(error)
+                if (error.message === "Unauthorized") {
+                    setAuthenticated(false);
+                    navigate("/");
+                }
+                toast.error("Failed to load persons")
+            })
     }, []);
 
     useEffect(() => {
@@ -96,7 +106,14 @@ function ViewFamily() {
                 setWorkspaces(response[0])
                 setWorkspace(response[0][0])
             })
-            .catch(error => console.log(error))
+            .catch(error => {
+                console.log(error)
+                if (error.message === "Unauthorized") {
+                    setAuthenticated(false);
+                    navigate("/");
+                }
+                toast.error("Failed to load workspaces")
+            })
     }, []);
 
     useEffect(() => {
@@ -134,7 +151,14 @@ function ViewFamily() {
                 );
                 setNodesState(newNodesStateMap)
             })
-            .catch(error => console.log(error))
+            .catch(error => {
+                console.log(error)
+                if (error.message === "Unauthorized") {
+                    setAuthenticated(false);
+                    navigate("/");
+                }
+                toast.error("Failed to load nodes")
+            })
     }, [rowPersons, workspace, imageMap]);
 
     useEffect(() => {
@@ -159,7 +183,14 @@ function ViewFamily() {
                 );
                 setEdgesState(newEdgesStateMap)
             })
-            .catch(error => console.log(error))
+            .catch(error => {
+                console.log(error)
+                if (error.message === "Unauthorized") {
+                    setAuthenticated(false);
+                    navigate("/");
+                }
+                toast.error("Failed to load edges")
+            })
     }, [rowPersons, workspace]);
 
     const editClicked: () => void = () => {
@@ -364,12 +395,20 @@ function ViewFamily() {
         peopleRelationService.saveNodes(nodes, nodesState, workspace.id)
             .catch(reason => {
                 console.log(reason)
+                if (reason.message === "Unauthorized") {
+                    setAuthenticated(false);
+                    navigate("/");
+                }
                 toast.error(reason.message)
             })
             .finally(() => console.log("Nodes saved"));
         peopleRelationService.saveEdges(edges, edgesState, workspace.id)
             .catch(reason => {
                 console.log(reason)
+                if (reason.message === "Unauthorized") {
+                    setAuthenticated(false);
+                    navigate("/");
+                }
                 toast.error(reason.message)
             })
             .finally(() => console.log("Edges saved"));
@@ -404,6 +443,10 @@ function ViewFamily() {
             link.download = `family-tree-${workspace?.name || 'export'}.png`;
             link.href = dataUrl;
             link.click();
+            toast.success("Download started")
+        }).catch(err => {
+            console.error(err);
+            toast.error("Failed to download image");
         });
     };
 

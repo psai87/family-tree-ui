@@ -30,6 +30,11 @@ export default class BaseClient {
 
         const response = await fetch(url, options);
 
+        if (response.status === 401) {
+            AuthState.token = undefined;
+            throw new Error("Unauthorized");
+        }
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

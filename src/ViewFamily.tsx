@@ -332,7 +332,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
 
         // === SET POSITIONS ===
         const positions = new Map<string, { px: number, py: number }>();
-        const spacingX = 200;
+        const spacingX = 250;
         const spacingY = 250;
 
         function setPositions(wrapper: WrapperTempNode, x: number, y: number) {
@@ -342,7 +342,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
             let startY = y - (height * spacingY) / 2;
 
             if (wrapper.node) positions.set(wrapper.node, { px: x, py: y });
-            if (wrapper.heartNode) positions.set(wrapper.heartNode, { px: x + 48, py: y + 90 });
+            if (wrapper.heartNode) positions.set(wrapper.heartNode, { px: x + 64, py: y + 90 });
             if (wrapper.spouseNode) positions.set(wrapper.spouseNode, { px: x, py: y + 135 });
 
             if (!children || children.length === 0) return;

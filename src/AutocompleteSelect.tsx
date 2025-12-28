@@ -83,7 +83,7 @@ export class AutocompleteSelect extends Component<AutocompleteSelectProps, Autoc
                             variant="outline"
                             role="combobox"
                             aria-expanded={open}
-                            className="w-[60px] h-5 justify-between border border-border text-xs px-2 py-1 truncate focus:ring-2 focus:ring-primary/50 focus:outline-none bg-card hover:bg-accent"
+                            className="w-[90px] h-5 justify-between border border-border text-xs px-2 py-1 truncate focus:ring-2 focus:ring-primary/50 focus:outline-none bg-card hover:bg-accent"
                         >
                             {value.value}
                         </Button>

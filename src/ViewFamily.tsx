@@ -36,6 +36,7 @@ import ServiceFactory from "./service/ServiceFactory.ts";
 import { NODE_TYPES } from "./model/NodeTypes.ts";
 import { updateMapEntry } from "./utils/mapHelpers.ts";
 
+
 function ViewFamily({ setAuthenticated }: AuthProps) {
     const navigate = useNavigate();
     const peopleRelationService = ServiceFactory.getPeopleRelationService();
@@ -422,14 +423,14 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
         const nodesBounds = getNodesBounds(nodes);
 
         // Add padding to the bounds
-        const padding = 50;
+        const padding = 5;
         const imageWidth = nodesBounds.width + padding * 2;
         const imageHeight = nodesBounds.height + padding * 2;
 
-        const viewport = getViewportForBounds(nodesBounds, imageWidth, imageHeight, 1, 2, 0);
+        const viewport = getViewportForBounds(nodesBounds, imageWidth, imageHeight, 1, 2, 0.5);
 
         toPng(document.querySelector('.react-flow__viewport') as HTMLElement, {
-            backgroundColor: 'oklch(0.99 0.005 45)', // Match new background
+            backgroundColor: 'oklch(0.99 0.005 45)',
             width: imageWidth,
             height: imageHeight,
             style: {
@@ -437,7 +438,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                 height: `${imageHeight}px`,
                 transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
             },
-            pixelRatio: 3, // High-definition output
+            pixelRatio: 3,
         }).then((dataUrl) => {
             const link = document.createElement('a');
             link.download = `family-tree-${workspace?.name || 'export'}.png`;
@@ -496,7 +497,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                     defaultEdgeOptions={defaultEdgeOptions}
                     className="bg-[oklch(0.99_0.005_45)] flex-1"
                     minZoom={1}
-                    maxZoom={1.5}
+                    maxZoom={2}
                     nodesDraggable={editButtonClicked}
                     nodesConnectable={editButtonClicked}
                     draggable={!editButtonClicked}

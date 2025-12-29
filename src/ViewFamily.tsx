@@ -207,11 +207,15 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
         );
     }
 
+    type SpouseData = {
+        heartNode: string;
+        spouseNode: string;
+    };
+
     type WrapperTempNode = {
         id: string;
         node: string | null;
-        heartNode: string | null;
-        spouseNode: string | null;
+        spouses: SpouseData[];
         rootNode: boolean
     };
 
@@ -252,76 +256,111 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
 
         // === WRAP HEART NODES ===
         const wrapperMap: WrapperTempNode[] = [];
+        const nodeToWrapperMap = new Map<string, WrapperTempNode>();
 
         for (const heartNode of heartNodes) {
             const parents = parentsMap.get(heartNode);
             if (parents && parents.length === 2) {
-                //const isRoot = heartNode === "5eca3c72-1977-46c2-acf2-208eb4065cb3";
-
                 const [p1, p2] = parents;
                 const node = p1.handler === "b" ? p1.id : p2.id;
                 const spouse = p1.handler === "b" ? p2.id : p1.id;
                 const isRoot = parentsMap.get(node)?.length == 0
-                if (isRoot) {
-                    console.log("root", heartNode)
-                }
+
                 mapVisitedNodes.set(node, true);
                 mapVisitedNodes.set(spouse, true);
 
-                wrapperMap.push({ id: crypto.randomUUID(), node, heartNode, spouseNode: spouse, rootNode: isRoot });
+                let wrapper = nodeToWrapperMap.get(node);
+                if (!wrapper) {
+                    wrapper = {
+                        id: crypto.randomUUID(),
+                        node: node,
+                        spouses: [],
+                        rootNode: isRoot
+                    };
+                    wrapperMap.push(wrapper);
+                    nodeToWrapperMap.set(node, wrapper);
+                }
+
+                wrapper.spouses.push({ heartNode, spouseNode: spouse });
             }
         }
 
         // === ADD UNGROUPED PEOPLE ===
         for (const [id, visited] of mapVisitedNodes.entries()) {
             if (!visited) {
-                wrapperMap.push({
+                const wrapper = {
                     id: crypto.randomUUID(),
                     node: id,
-                    heartNode: null,
-                    spouseNode: null,
+                    spouses: [],
                     rootNode: false
-                });
+                };
+                wrapperMap.push(wrapper);
+                nodeToWrapperMap.set(id, wrapper)
             }
         }
 
         // === EDGE TO WRAPPER NODE MAPPING ===
         const wrapperEdgeX = new Map<string, WrapperTempNode>();
         for (const wrapper of wrapperMap) {
-            if (wrapper.heartNode) wrapperEdgeX.set(wrapper.heartNode, wrapper);
             if (wrapper.node) wrapperEdgeX.set(wrapper.node, wrapper);
-            if (wrapper.spouseNode) wrapperEdgeX.set(wrapper.spouseNode, wrapper);
+            for (const spouseData of wrapper.spouses) {
+                if (spouseData.heartNode) wrapperEdgeX.set(spouseData.heartNode, wrapper);
+                if (spouseData.spouseNode) wrapperEdgeX.set(spouseData.spouseNode, wrapper);
+            }
         }
 
         // === BUILD CHILDREN MAP ===
         const newChildrenMap = new Map<string, WrapperTempNode[]>();
 
         for (const wrapper of wrapperMap) {
-            if (wrapper.heartNode) newChildrenMap.set(wrapper.id, []);
+            newChildrenMap.set(wrapper.id, []);
         }
 
         for (const wrapper of wrapperMap) {
-            if (!wrapper.heartNode) continue;
+            const childrenSet = new Set<WrapperTempNode>();
 
-            const childEdges = childMapEdge.get(wrapper.heartNode) || [];
-            const children = childEdges.map(edge => wrapperEdgeX.get(edge.target)!).filter(Boolean);
-            newChildrenMap.get(wrapper.id)?.push(...children);
+            for (const spouseData of wrapper.spouses) {
+                if (!spouseData.heartNode) continue;
+                const childEdges = childMapEdge.get(spouseData.heartNode) || [];
+                const children = childEdges.map(edge => wrapperEdgeX.get(edge.target)!).filter(Boolean);
+                children.forEach(c => childrenSet.add(c));
+            }
+
+            if (childrenSet.size > 0) {
+                newChildrenMap.get(wrapper.id)?.push(...Array.from(childrenSet));
+            }
         }
 
         // === CALCULATE SUBTREE HEIGHTS ===
         const subtreeHeights = new Map<string, number>();
 
         function computeSubtreeHeight(id: string): number {
+            const wrapper = wrapperMap.find(w => w.id === id);
             const children = newChildrenMap.get(id);
+
+            // Base height calculation: 1 unit + extra space for multiple spouses
+            // Each additional spouse adds vertical space. 
+            // We can approximate this by saying the node itself occupies space proportional to spouse count.
+            // However, the recursive height is usually determined by the max height of children subtrees.
+            // But if we stack spouses, this node ITSELF is taller efficiently.
+
+            // Let's say each spouse adds 0.6 height unit (stacked vertically).
+            const spousesCount = wrapper?.spouses.length || 0;
+            const nodeSelfHeight = Math.max(1, 1 + (spousesCount - 1) * 0.6);
+
             if (!children || children.length === 0) {
-                subtreeHeights.set(id, 1);
-                return 1;
+                subtreeHeights.set(id, nodeSelfHeight);
+                return nodeSelfHeight;
             }
 
-            let total = 0;
+            let totalChildrenHeight = 0;
             for (const child of children) {
-                total += computeSubtreeHeight(child.id);
+                totalChildrenHeight += computeSubtreeHeight(child.id);
             }
+
+            // The height is the max of (node's own vertical footprint) and (children's total height)
+            // Actually usually it's the children's total height that dominates, unless children are few and spouses are many.
+            const total = Math.max(nodeSelfHeight, totalChildrenHeight);
 
             subtreeHeights.set(id, total);
             return total;
@@ -339,16 +378,38 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
             const height = subtreeHeights.get(wrapper.id) || 1;
             const children = newChildrenMap.get(wrapper.id);
 
-            let startY = y - (height * spacingY) / 2;
-
+            // Provide positions for the main node and its spouses
             if (wrapper.node) positions.set(wrapper.node, { px: x, py: y });
-            if (wrapper.heartNode) positions.set(wrapper.heartNode, { px: x + 64, py: y + 90 });
-            if (wrapper.spouseNode) positions.set(wrapper.spouseNode, { px: x, py: y + 135 });
+
+            // Spacing between main node and first spouse/heart
+            const initialHeartOffset = 90;
+            const initialSpouseOffset = 135;
+
+            // For subsequent spouses, we just add to the offset.
+            // e.g. Spouse 1 at y+135. Spouse 2 at y + 135 + 150?
+            const multiSpouseGap = 150;
+
+            wrapper.spouses.forEach((spouseData, index) => {
+                const currentYBase = y + (index * multiSpouseGap);
+
+                if (spouseData.heartNode) {
+                    positions.set(spouseData.heartNode, { px: x + 64, py: currentYBase + initialHeartOffset });
+                }
+                if (spouseData.spouseNode) {
+                    positions.set(spouseData.spouseNode, { px: x, py: currentYBase + initialSpouseOffset });
+                }
+            });
 
             if (!children || children.length === 0) return;
 
+            let startY = y - (height * spacingY) / 2;
+            // Center the children block relative to the parent? 
+            // Or just start from top. Usually tree algos center parent relative to children.
+            // here startY is the top-left corner of the children bounding box.
+
             for (const child of children) {
                 const childHeight = subtreeHeights.get(child.id) || 1;
+                // Center this child within its allocated height slot
                 const childY = startY + (childHeight * spacingY) / 2;
                 setPositions(child, x + spacingX, childY);
                 startY += childHeight * spacingY;

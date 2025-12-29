@@ -348,7 +348,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
 
             // Let's say each spouse adds 0.6 height unit (stacked vertically).
             const spousesCount = wrapper?.spouses.length || 0;
-            const nodeSelfHeight = Math.max(1, 1 + (spousesCount - 1) * 0.6);
+            const nodeSelfHeight = Math.max(1, 1 + (spousesCount - 1) * 135 / 250);
 
             if (!children || children.length === 0) {
                 subtreeHeights.set(id, nodeSelfHeight);

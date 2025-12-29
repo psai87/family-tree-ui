@@ -265,7 +265,9 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                 const node = p1.handler === "b" ? p1.id : p2.id;
                 const spouse = p1.handler === "b" ? p2.id : p1.id;
                 const isRoot = parentsMap.get(node)?.length == 0
-
+                if (isRoot) {
+                    console.log("root", heartNode)
+                }
                 mapVisitedNodes.set(node, true);
                 mapVisitedNodes.set(spouse, true);
 
@@ -387,7 +389,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
 
             // For subsequent spouses, we just add to the offset.
             // e.g. Spouse 1 at y+135. Spouse 2 at y + 135 + 150?
-            const multiSpouseGap = 150;
+            const multiSpouseGap = 135;
 
             wrapper.spouses.forEach((spouseData, index) => {
                 const currentYBase = y + (index * multiSpouseGap);

@@ -556,17 +556,15 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                     onEdgesChange={handleEdgesChange}
                     onConnect={onConnect}
                     nodeTypes={nodeTypes}
-                    fitView
                     defaultEdgeOptions={defaultEdgeOptions}
                     className="bg-[oklch(0.99_0.005_45)] flex-1"
-                    minZoom={1}
+                    minZoom={0.5}
                     maxZoom={2}
                     nodesDraggable={editButtonClicked}
                     nodesConnectable={editButtonClicked}
                     draggable={!editButtonClicked}
                     elementsSelectable={editButtonClicked}
                 >
-                    <MiniMap />
                     <Controls />
                 </ReactFlow>
 

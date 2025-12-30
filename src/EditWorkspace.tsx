@@ -148,7 +148,7 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
 
                     <div className="flex flex-col md:flex-row md:flex-wrap gap-6 overflow-y-auto px-6 py-4 content-start">
                         {rowWorkspaces.map((row) => (
-                            <Card key={row.id} className="w-full max-w-sm min-w-sm">
+                            <Card key={row.id} className="w-full max-w-xs">
                                 <CardHeader>
                                     <Label className="font-bold">workspace</Label>
                                     {rowDetails.get(row.id)?.editable ? (

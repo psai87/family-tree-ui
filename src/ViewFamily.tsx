@@ -632,6 +632,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
         <div className="h-full bg-muted md:p-4 overflow-hidden">
             <div className="max-w-full mx-auto bg-card shadow-2xl rounded-2xl border border-border flex flex-col h-full overflow-hidden">
                 <ReactFlow
+                    fitView={true}
                     nodes={nodes}
                     edges={edges}
                     onNodesChange={handleNodesChange}
@@ -646,6 +647,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                     nodesConnectable={editButtonClicked}
                     draggable={!editButtonClicked}
                     elementsSelectable={editButtonClicked}
+                    connectOnClick={true}
                 >
                     <Controls />
                 </ReactFlow>

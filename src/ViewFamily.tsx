@@ -28,7 +28,7 @@ import type { Person } from "./model/Person.ts";
 import type { EdgeData } from "./model/Edge.ts";
 import { RowState } from "./model/Constants.ts";
 import type { Workspace } from "./model/Workspace.ts";
-import { Download, Edit, HardDrive, Layout } from "lucide-react";
+import { Download, Edit, HardDrive, Layout, X } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
 import { toast } from "sonner";
 import ServiceFactory from "./service/ServiceFactory.ts";
@@ -439,13 +439,10 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
 
     }
 
-    const saveClicked: () => void = () => {
-        setEditableButtonClicked(false)
-        if (!workspace) {
-            return
-        } else {
-            console.log("selected workspace", workspace.name)
-        }
+    const [isSaving, setIsSaving] = useState(false);
+
+    const cancelClicked: () => void = () => {
+        setEditableButtonClicked(false);
         setNodes((prevNodes) =>
             prevNodes.map((node) => ({
                 ...node,
@@ -455,7 +452,100 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                 },
             }))
         );
-        peopleRelationService.saveNodes(nodes, nodesState, workspace.id)
+        // Re-fetch to discard changes
+        if (workspace) {
+            peopleRelationService.getNodes(workspace.id).then(response => {
+                const initNodes = response.map(data => ({
+                    id: data.id,
+                    type: data.type,
+                    data: { personId: data.personId, persons: rowPersons, images: imageMap, editable: false },
+                    position: { x: data.position.x, y: data.position.y },
+                }));
+                setNodes(initNodes);
+            });
+            peopleRelationService.getEdges(workspace.id).then(response => {
+                const initEdges = response.map(data => ({
+                    id: data.id,
+                    source: data.source,
+                    sourceHandle: data.sourceHandler,
+                    target: data.target,
+                    targetHandle: data.targetHandler
+                }));
+                setEdges(initEdges);
+            });
+        }
+    };
+
+    const saveClicked: () => void = () => {
+        if (!workspace || isSaving) return;
+
+        setIsSaving(true);
+        console.log("selected workspace", workspace.name)
+
+        setNodes((prevNodes) =>
+            prevNodes.map((node) => ({
+                ...node,
+                data: {
+                    ...node.data,
+                    editable: false
+                },
+            }))
+        );
+
+        Promise.all([
+            peopleRelationService.saveNodes(nodes, nodesState, workspace.id),
+            peopleRelationService.saveEdges(edges, edgesState, workspace.id)
+        ])
+            .then(() => {
+                setEditableButtonClicked(false);
+                toast.success("Saved successfully");
+
+                // Refetch nodes to clear stale data
+                peopleRelationService.getNodes(workspace.id)
+                    .then(response => {
+                        const initNodes = response.length > 0
+                            ? response.map(data => ({
+                                id: data.id,
+                                type: data.type,
+                                data: { personId: data.personId, persons: rowPersons, images: imageMap, editable: false },
+                                position: { x: data.position.x, y: data.position.y },
+                            }))
+                            : [{
+                                id: crypto.randomUUID().toString(),
+                                type: NODE_TYPES.PEOPLE,
+                                data: { personId: '', persons: rowPersons, images: imageMap, editable: false },
+                                position: { x: 0, y: 50 },
+                            }];
+                        setNodes(initNodes);
+                        const newNodesStateMap = initNodes.reduce(
+                            (map, node) => {
+                                const state = response.length > 0 ? RowState.Original : RowState.Added;
+                                map.set(node.id, state);
+                                return map;
+                            },
+                            new Map<string, RowState>()
+                        );
+                        setNodesState(newNodesStateMap);
+                    });
+
+                // Refetch edges to clear stale data
+                peopleRelationService.getEdges(workspace.id)
+                    .then(response => {
+                        const initEdges = response.map(data => ({
+                            id: data.id,
+                            source: data.source,
+                            sourceHandle: data.sourceHandler,
+                            target: data.target,
+                            targetHandle: data.targetHandler
+                        }));
+                        setEdges(initEdges);
+                        const newEdgesStateMap = initEdges.reduce(
+                            (map, edge) => map.set(edge.id, RowState.Original),
+                            new Map<string, RowState>()
+                        );
+                        setEdgesState(newEdgesStateMap);
+                    });
+            })
             .catch(reason => {
                 console.log(reason)
                 if (reason.message === "Unauthorized") {
@@ -464,17 +554,10 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                 }
                 toast.error(reason.message)
             })
-            .finally(() => console.log("Nodes saved"));
-        peopleRelationService.saveEdges(edges, edgesState, workspace.id)
-            .catch(reason => {
-                console.log(reason)
-                if (reason.message === "Unauthorized") {
-                    setAuthenticated(false);
-                    navigate("/");
-                }
-                toast.error(reason.message)
-            })
-            .finally(() => console.log("Edges saved"));
+            .finally(() => {
+                console.log("Save operation completed");
+                setIsSaving(false);
+            });
     }
 
     const { getNodes } = useReactFlow();
@@ -573,7 +656,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                         id="workspace"
                         name="workspace"
                         value={workspace?.id}
-                        className="text-sm border border-border bg-card rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+                        className="text-sm border border-border bg-card rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition mr-auto"
                         onChange={(event) => onWorkspaceSelect(event.target.value)}
                     >
                         <option value="">Pick a workspace</option>
@@ -582,46 +665,71 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                         ))}
                     </select>
 
-                    <button
-                        onClick={saveClicked}
-                        className={cn(
-                            "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
-                            "bg-green-600 text-white hover:bg-green-700 transition-all shadow-md active:scale-95",
+                    <div className="flex items-center gap-2 bg-card border border-border rounded-lg p-1 shadow-sm">
+                        {editButtonClicked ? (
+                            <>
+                                <button
+                                    onClick={formatClicked}
+                                    className={cn(
+                                        "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md",
+                                        "text-foreground hover:bg-muted transition-all"
+                                    )}
+                                    title="Auto Format"
+                                >
+                                    <Layout className="h-4 w-4" />
+                                    <span className="hidden sm:inline">Format</span>
+                                </button>
+                                <div className="w-[1px] h-4 bg-border mx-1" />
+                                <button
+                                    onClick={saveClicked}
+                                    disabled={isSaving}
+                                    className={cn(
+                                        "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md",
+                                        "bg-green-600 text-white hover:bg-green-700 transition-all shadow-sm active:scale-95",
+                                        isSaving && "opacity-50 cursor-not-allowed"
+                                    )}
+                                >
+                                    <HardDrive className="h-4 w-4" />
+                                    {isSaving ? "Saving..." : "Save"}
+                                </button>
+                                <button
+                                    onClick={cancelClicked}
+                                    disabled={isSaving}
+                                    className={cn(
+                                        "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md",
+                                        "hover:bg-destructive/10 hover:text-destructive text-muted-foreground transition-all"
+                                    )}
+                                >
+                                    <X className="h-4 w-4" />
+                                    Cancel
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <button
+                                    onClick={editClicked}
+                                    className={cn(
+                                        "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md",
+                                        "bg-primary text-white hover:opacity-90 transition-all shadow-sm active:scale-95"
+                                    )}
+                                >
+                                    <Edit className="h-4 w-4" />
+                                    Edit
+                                </button>
+                                <div className="w-[1px] h-4 bg-border mx-1" />
+                                <button
+                                    onClick={onDownload}
+                                    className={cn(
+                                        "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md",
+                                        "hover:bg-muted text-foreground transition-all"
+                                    )}
+                                >
+                                    <Download className="h-4 w-4" />
+                                    Download
+                                </button>
+                            </>
                         )}
-                    >
-                        <HardDrive className="h-4 w-4" />
-                        Save
-                    </button>
-                    <button
-                        onClick={editClicked}
-                        className={cn(
-                            "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
-                            "bg-primary text-white hover:opacity-90 transition-all shadow-md active:scale-95",
-                        )}
-                    >
-                        <Edit className="h-4 w-4" />
-                        Edit
-                    </button>
-                    <button
-                        onClick={formatClicked}
-                        className={cn(
-                            "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
-                            "bg-secondary text-white hover:opacity-90 transition-all shadow-md active:scale-95",
-                        )}
-                    >
-                        <Layout className="h-4 w-4" />
-                        Auto Format
-                    </button>
-                    <button
-                        onClick={onDownload}
-                        className={cn(
-                            "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg",
-                            "bg-orange-600 text-white hover:bg-orange-700 transition-all shadow-md active:scale-95",
-                        )}
-                    >
-                        <Download className="h-4 w-4" />
-                        Download Image
-                    </button>
+                    </div>
                 </div>
             </div>
         </div>

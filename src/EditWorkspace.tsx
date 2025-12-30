@@ -1,4 +1,4 @@
-import { type ChangeEvent, type JSX, useEffect, useState } from "react";
+import { type ChangeEvent, type JSX, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import type { AuthProps } from "./model/Props.ts";
 import type { PersonRowDetail } from "./model/PersonRowDetail.ts";
@@ -12,6 +12,8 @@ import { Label } from "./components/ui/label.tsx";
 
 function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
     const navigate = useNavigate();
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [shouldScroll, setShouldScroll] = useState(false);
 
     const peopleRelationService: PeopleRelationService = new PeopleRelationService();
     const [rowWorkspaces, setRowWorkspaces] = useState<Workspace[]>([])
@@ -34,6 +36,13 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
             })
     }, []);
 
+    useEffect(() => {
+        if (shouldScroll && containerRef.current) {
+            containerRef.current.scrollTo({ top: containerRef.current.scrollHeight, behavior: 'smooth' });
+            setShouldScroll(false);
+        }
+    }, [rowWorkspaces, shouldScroll]);
+
     const handleAddRow = () => {
         const newWorkspace: Workspace = {
             id: crypto.randomUUID(),
@@ -45,6 +54,7 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
         }
         setRowWorkspaces([...rowWorkspaces, newWorkspace]);
         setRowDetails(prevMap => new Map(prevMap).set(newWorkspace.id, newPersonRowDetail));
+        setShouldScroll(true);
     };
 
     const handleSaveAll = (): void => {
@@ -146,7 +156,9 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                 <div
                     className="max-w-full mx-auto bg-card shadow-2xl rounded-2xl border border-border flex flex-col h-full">
 
-                    <div className="flex flex-col md:flex-row md:flex-wrap gap-6 overflow-y-auto px-6 py-4 content-start">
+                    <div
+                        ref={containerRef}
+                        className="flex flex-col md:flex-row md:flex-wrap gap-6 overflow-y-auto px-6 py-4 content-start">
                         {rowWorkspaces.map((row) => (
                             <Card key={row.id} className="w-full max-w-xs">
                                 <CardHeader>

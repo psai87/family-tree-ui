@@ -655,12 +655,12 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                 </ReactFlow>
 
                 {/* Toolbar */}
-                <div className="p-3 flex gap-3 bg-muted/40 border-t border-border shadow-sm justify-end items-center">
+                <div className="p-6 flex flex-wrap gap-4 bg-muted/40 border-t border-border shadow-sm justify-end items-center">
                     <select
                         id="workspace"
                         name="workspace"
                         value={workspace?.id}
-                        className="text-sm border border-border bg-card rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition mr-auto w-full md:w-auto"
+                        className="text-sm border border-border bg-card rounded-lg px-6 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition mr-auto w-full md:w-auto"
                         onChange={(event) => onWorkspaceSelect(event.target.value)}
                     >
                         <option value="">Pick a workspace</option>
@@ -671,17 +671,17 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
 
                     <Popover>
                         <PopoverTrigger asChild>
-                            <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg bg-primary text-white hover:opacity-90 transition-all shadow-md active:scale-95 shrink-0">
+                            <button className="flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-lg bg-primary text-white hover:opacity-90 transition-all shadow-md active:scale-95 shrink-0">
                                 Actions <ChevronUp className="h-4 w-4" />
                             </button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-56 p-2" align="end" side="top">
+                        <PopoverContent className="w-64 p-2" align="end" side="top">
                             <div className="flex flex-col gap-1">
                                 {editButtonClicked ? (
                                     <>
                                         <button
                                             onClick={formatClicked}
-                                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md w-full text-foreground hover:bg-muted transition-all text-left"
+                                            className="flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-md w-full text-foreground hover:bg-muted transition-all text-left"
                                         >
                                             <Layout className="h-4 w-4" />
                                             Auto Format
@@ -690,7 +690,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                                             onClick={saveClicked}
                                             disabled={isSaving}
                                             className={cn(
-                                                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md w-full text-left transition-all",
+                                                "flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-md w-full text-left transition-all",
                                                 "text-green-600 hover:bg-green-50",
                                                 isSaving && "opacity-50 cursor-not-allowed"
                                             )}
@@ -701,7 +701,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                                         <button
                                             onClick={cancelClicked}
                                             disabled={isSaving}
-                                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md w-full text-destructive hover:bg-destructive/10 transition-all text-left"
+                                            className="flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-md w-full text-destructive hover:bg-destructive/10 transition-all text-left"
                                         >
                                             <X className="h-4 w-4" />
                                             Cancel Editing
@@ -711,7 +711,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                                     <>
                                         <button
                                             onClick={editClicked}
-                                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md w-full text-primary hover:bg-primary/10 transition-all text-left"
+                                            className="flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-md w-full text-primary hover:bg-primary/10 transition-all text-left"
                                         >
                                             <Edit className="h-4 w-4" />
                                             Edit Family
@@ -719,7 +719,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                                         <div className="my-1 h-[1px] bg-border" />
                                         <button
                                             onClick={onDownload}
-                                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md w-full text-foreground hover:bg-muted transition-all text-left"
+                                            className="flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-md w-full text-foreground hover:bg-muted transition-all text-left"
                                         >
                                             <Download className="h-4 w-4" />
                                             Download Image

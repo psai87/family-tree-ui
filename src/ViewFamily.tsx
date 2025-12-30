@@ -655,12 +655,12 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                 </ReactFlow>
 
                 {/* Toolbar */}
-                <div className="p-6 flex flex-wrap gap-4 bg-muted/40 border-t border-border shadow-sm justify-end items-center">
+                <div className="p-2 md:p-6 flex flex-nowrap gap-2 md:gap-4 bg-muted/40 border-t border-border shadow-sm justify-between items-center">
                     <select
                         id="workspace"
                         name="workspace"
                         value={workspace?.id}
-                        className="text-sm border border-border bg-card rounded-lg px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition mr-auto"
+                        className="text-sm border border-border bg-card rounded-lg px-2 md:px-4 py-2 md:py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition max-w-[140px] md:max-w-xs truncate"
                         onChange={(event) => onWorkspaceSelect(event.target.value)}
                     >
                         <option value="">Pick a workspace</option>
@@ -671,7 +671,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
 
                     <Popover>
                         <PopoverTrigger asChild>
-                            <button className="flex items-center gap-2 px-6 py-3 text-sm font-semibold rounded-lg bg-primary text-white hover:opacity-90 transition-all shadow-md active:scale-95 shrink-0">
+                            <button className="flex items-center gap-2 px-3 md:px-6 py-2 md:py-3 text-sm font-semibold rounded-lg bg-primary text-white hover:opacity-90 transition-all shadow-md active:scale-95 shrink-0">
                                 Actions <ChevronUp className="h-4 w-4" />
                             </button>
                         </PopoverTrigger>

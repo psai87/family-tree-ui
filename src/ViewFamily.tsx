@@ -74,6 +74,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
 
     const [workspaces, setWorkspaces] = useState<Workspace[]>([])
     const [workspace, setWorkspace] = useState<Workspace>()
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     const onWorkspaceSelect: (selectedId: string) => void = (selectedId): void => {
         const selectedWorkspace: Workspace | undefined = workspaces?.find(data => data.id === selectedId)
         setWorkspace(selectedWorkspace)
@@ -669,7 +670,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                         ))}
                     </select>
 
-                    <Popover>
+                    <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                         <PopoverTrigger asChild>
                             <button className="flex items-center gap-2 px-3 md:px-6 py-3 text-sm font-semibold rounded-lg bg-primary text-white hover:opacity-90 transition-all shadow-md active:scale-95 shrink-0">
                                 Actions <ChevronUp className="h-4 w-4" />
@@ -680,14 +681,14 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                                 {editButtonClicked ? (
                                     <>
                                         <button
-                                            onClick={formatClicked}
+                                            onClick={() => { formatClicked(); setIsPopoverOpen(false); }}
                                             className="flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-md w-full text-foreground hover:bg-muted transition-all text-left"
                                         >
                                             <Layout className="h-4 w-4" />
                                             Auto Format
                                         </button>
                                         <button
-                                            onClick={saveClicked}
+                                            onClick={() => { saveClicked(); setIsPopoverOpen(false); }}
                                             disabled={isSaving}
                                             className={cn(
                                                 "flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-md w-full text-left transition-all",
@@ -699,7 +700,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                                             {isSaving ? "Saving..." : "Save Changes"}
                                         </button>
                                         <button
-                                            onClick={cancelClicked}
+                                            onClick={() => { cancelClicked(); setIsPopoverOpen(false); }}
                                             disabled={isSaving}
                                             className="flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-md w-full text-destructive hover:bg-destructive/10 transition-all text-left"
                                         >
@@ -710,7 +711,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                                 ) : (
                                     <>
                                         <button
-                                            onClick={editClicked}
+                                            onClick={() => { editClicked(); setIsPopoverOpen(false); }}
                                             className="flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-md w-full text-primary hover:bg-primary/10 transition-all text-left"
                                         >
                                             <Edit className="h-4 w-4" />
@@ -718,7 +719,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                                         </button>
                                         <div className="my-1 h-[1px] bg-border" />
                                         <button
-                                            onClick={onDownload}
+                                            onClick={() => { onDownload(); setIsPopoverOpen(false); }}
                                             className="flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-md w-full text-foreground hover:bg-muted transition-all text-left"
                                         >
                                             <Download className="h-4 w-4" />

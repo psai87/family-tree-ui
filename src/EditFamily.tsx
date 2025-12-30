@@ -163,9 +163,9 @@ function EditFamily({ setAuthenticated }: AuthProps): JSX.Element {
 
                     <div
                         ref={containerRef}
-                        className="flex flex-col md:flex-row md:flex-wrap gap-6 overflow-y-auto px-6 py-4 content-start">
+                        className="flex flex-col md:flex-row md:flex-wrap gap-6 overflow-y-auto px-6 py-4 content-start flex-1 min-h-0">
                         {rowPersons.map((row) => (
-                            <Card key={row.id} className="w-full max-w-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl rounded-2xl border-border/60 overflow-hidden group">
+                            <Card key={row.id} className="w-full max-w-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl rounded-2xl border-border/60 overflow-hidden group shrink-0">
                                 <CardHeader className="p-0 relative">
                                     <div className="w-full h-48 bg-muted relative overflow-hidden">
                                         {rowDetails.get(row.id)?.editable ? (

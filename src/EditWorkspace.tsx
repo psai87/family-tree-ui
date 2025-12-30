@@ -158,9 +158,9 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
 
                     <div
                         ref={containerRef}
-                        className="flex flex-col md:flex-row md:flex-wrap gap-6 overflow-y-auto px-6 py-4 content-start">
+                        className="flex flex-col md:flex-row md:flex-wrap gap-6 overflow-y-auto px-6 py-4 content-start flex-1 min-h-0">
                         {rowWorkspaces.map((row) => (
-                            <Card key={row.id} className="w-full max-w-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl rounded-2xl border-border/60 overflow-hidden group">
+                            <Card key={row.id} className="w-full max-w-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl rounded-2xl border-border/60 overflow-hidden group shrink-0">
                                 <CardHeader className="p-0 relative">
                                     <div className="w-full h-32 bg-gradient-to-br from-primary/10 to-primary/5 relative overflow-hidden flex items-center justify-center">
                                         <div className="h-16 w-16 text-primary/20 group-hover:text-primary/30 transition-colors duration-500">

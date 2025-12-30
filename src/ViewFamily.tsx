@@ -655,7 +655,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                 </ReactFlow>
 
                 {/* Toolbar */}
-                <div className="p-2 md:p-6 flex flex-nowrap gap-2 md:gap-4 bg-muted/40 border-t border-border shadow-sm justify-between items-center">
+                <div className="flex justify-end gap-4 mt-auto py-6 px-6 bg-muted/20 border-t border-border">
                     <select
                         id="workspace"
                         name="workspace"

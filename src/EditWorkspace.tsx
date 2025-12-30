@@ -162,7 +162,7 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                         {rowWorkspaces.map((row) => (
                             <Card key={row.id} className="w-full max-w-xs">
                                 <CardHeader>
-                                    <Label className="font-bold">workspace</Label>
+                                    <Label className="font-bold text-muted-foreground">workspace</Label>
                                     {rowDetails.get(row.id)?.editable ? (
                                         <input
                                             type="text"

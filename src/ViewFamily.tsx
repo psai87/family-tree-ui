@@ -660,7 +660,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                         id="workspace"
                         name="workspace"
                         value={workspace?.id}
-                        className="text-sm border border-border bg-card rounded-lg px-6 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition mr-auto"
+                        className="text-sm border border-border bg-card rounded-lg px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition mr-auto"
                         onChange={(event) => onWorkspaceSelect(event.target.value)}
                     >
                         <option value="">Pick a workspace</option>

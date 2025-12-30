@@ -5,7 +5,7 @@ import type { Person } from "./model/Person.ts";
 import type { PersonRowDetail } from "./model/PersonRowDetail.ts";
 import { RowState } from "./model/Constants.ts";
 import ImagePreview from "./ImagePreview.tsx";
-import { Edit, HardDrive, Plus, Save, Trash2, X } from "lucide-react";
+import { Edit, HardDrive, Plus, Save, Trash2, X, User, Briefcase, Mail, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import ServiceFactory from "./service/ServiceFactory.ts";
 import { updateMapEntry, deleteMapEntry } from "./utils/mapHelpers.ts";
@@ -165,16 +165,16 @@ function EditFamily({ setAuthenticated }: AuthProps): JSX.Element {
                         ref={containerRef}
                         className="flex flex-col md:flex-row md:flex-wrap gap-6 overflow-y-auto px-6 py-4 content-start">
                         {rowPersons.map((row) => (
-                            <Card key={row.id} className="w-full max-w-xs">
+                            <Card key={row.id} className="w-full max-w-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl rounded-2xl border-border/60 overflow-hidden group">
                                 <CardHeader className="p-0 relative">
-                                    <div className="col-span-1 w-full h-48 relative bg-muted overflow-hidden flex items-center justify-center">
+                                    <div className="w-full h-48 bg-muted relative overflow-hidden">
                                         {rowDetails.get(row.id)?.editable ? (
-                                            <div className="w-full h-full flex items-center justify-center bg-muted/50">
+                                            <div className="w-full h-full flex items-center justify-center bg-black/5 backdrop-blur-sm">
                                                 <input
                                                     type="file"
                                                     accept="image/*"
                                                     onChange={(e) => handleFileInputChange(row.id, e.target.files)}
-                                                    className="text-xs file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-primary/20 file:text-primary hover:file:bg-primary/30 transition-colors cursor-pointer"
+                                                    className="w-3/4 text-xs file:mr-2 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 transition-all cursor-pointer bg-white/50 rounded-lg p-2 shadow-sm backdrop-blur-md"
                                                 />
                                             </div>
                                         ) : (
@@ -183,12 +183,12 @@ function EditFamily({ setAuthenticated }: AuthProps): JSX.Element {
                                             </div>
                                         )}
 
-                                        <div className="absolute top-2 right-2 flex gap-2">
+                                        <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                             {rowDetails.get(row.id)?.editable ? (
                                                 <>
                                                     <button
                                                         onClick={() => handleSaveRow(row.id)}
-                                                        className="text-sm bg-green-500 text-white p-2 rounded hover:bg-green-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                        className="h-8 w-8 bg-green-500/90 hover:bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm transition-transform active:scale-95"
                                                         title="Save"
                                                         aria-label="Save person"
                                                     >
@@ -196,7 +196,7 @@ function EditFamily({ setAuthenticated }: AuthProps): JSX.Element {
                                                     </button>
                                                     <button
                                                         onClick={() => handleCancel(row.id)}
-                                                        className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                        className="h-8 w-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm transition-transform active:scale-95"
                                                         title="Cancel"
                                                         aria-label="Cancel edit"
                                                     >
@@ -207,7 +207,7 @@ function EditFamily({ setAuthenticated }: AuthProps): JSX.Element {
                                                 <>
                                                     <button
                                                         onClick={() => handleEdit(row.id)}
-                                                        className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                        className="h-8 w-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm transition-transform active:scale-95"
                                                         title="Edit"
                                                         aria-label="Edit person"
                                                     >
@@ -215,7 +215,7 @@ function EditFamily({ setAuthenticated }: AuthProps): JSX.Element {
                                                     </button>
                                                     <button
                                                         onClick={() => handleRemove(row.id)}
-                                                        className="text-sm bg-red-500 text-white p-2 rounded hover:bg-red-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                        className="h-8 w-8 bg-red-500/90 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm transition-transform active:scale-95"
                                                         title="Remove"
                                                         aria-label="Remove person"
                                                     >
@@ -226,97 +226,118 @@ function EditFamily({ setAuthenticated }: AuthProps): JSX.Element {
                                         </div>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="grid gap-2">
-                                    <div>
-                                        <Label className="text-muted-foreground font-bold"> First Name </Label>
-                                        {rowDetails.get(row.id)?.editable ? (
-                                            <input
-                                                type="text"
-                                                value={row.firstName}
-                                                onChange={(e) => handleInputChange(row.id, "firstName", e.target.value)}
-                                                className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none h-9"
-                                            />
-                                        ) : (
-                                            <div className="flex items-center h-9 w-full px-3 border border-transparent">
-                                                <span className="text-foreground break-all">{row.firstName}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <Label className="text-muted-foreground font-bold"> Last Name </Label>
-                                        {rowDetails.get(row.id)?.editable ? (
-                                            <input
-                                                type="text"
-                                                value={row.lastName}
-                                                onChange={(e) => handleInputChange(row.id, "lastName", e.target.value)}
-                                                className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none h-9"
-                                            />
-                                        ) : (
-                                            <div className="flex items-center h-9 w-full px-3 border border-transparent">
-                                                <span className="text-foreground break-all">{row.lastName}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <Label className="text-muted-foreground font-bold"> Occupation </Label>
-                                        {rowDetails.get(row.id)?.editable ? (
-                                            <input
-                                                type="text"
-                                                value={row.occupation}
-                                                onChange={(e) => handleInputChange(row.id, "occupation", e.target.value)}
-                                                className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none h-9"
-                                            />
-                                        ) : (
-                                            <div className="flex items-center h-9 w-full px-3 border border-transparent">
-                                                <span className="text-foreground break-all">{row.occupation}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <Label className="text-muted-foreground font-bold"> Email </Label>
-                                        {rowDetails.get(row.id)?.editable ? (
-                                            <input
-                                                type="text"
-                                                value={row.email}
-                                                onChange={(e) => handleInputChange(row.id, "email", e.target.value)}
-                                                className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none h-9"
-                                            />
-                                        ) : (
-                                            <div className="flex items-center h-9 w-full px-3 border border-transparent">
-                                                <span className="text-foreground break-all">{row.email}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <div>
-                                            <Label className="text-muted-foreground font-bold"> YOB </Label>
+                                <CardContent className="grid gap-3 p-5">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                                            <User className="h-4 w-4" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <Label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">First Name</Label>
                                             {rowDetails.get(row.id)?.editable ? (
                                                 <input
                                                     type="text"
-                                                    value={row.yearOfBirth}
-                                                    onChange={(e) => handleInputChange(row.id, "yob", e.target.value)}
-                                                    className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none h-9"
+                                                    value={row.firstName}
+                                                    onChange={(e) => handleInputChange(row.id, "firstName", e.target.value)}
+                                                    className="w-full bg-muted/30 border-b border-primary/20 focus:border-primary px-0 py-1 text-sm focus:outline-none transition-colors"
+                                                    placeholder="First Name"
                                                 />
                                             ) : (
-                                                <div className="flex items-center h-9 w-full px-3 border border-transparent">
-                                                    <span>{row.yearOfBirth}</span>
-                                                </div>
+                                                <p className="font-semibold text-sm truncate">{row.firstName}</p>
                                             )}
                                         </div>
-                                        <div>
-                                            <Label className="text-muted-foreground font-bold"> YOD </Label>
+                                    </div>
+
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 opacity-0"></div>
+                                        <div className="flex-1 min-w-0">
+                                            <Label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Last Name</Label>
                                             {rowDetails.get(row.id)?.editable ? (
                                                 <input
                                                     type="text"
-                                                    value={row.yearOfDeath}
-                                                    onChange={(e) => handleInputChange(row.id, "yod", e.target.value)}
-                                                    className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none h-9"
+                                                    value={row.lastName}
+                                                    onChange={(e) => handleInputChange(row.id, "lastName", e.target.value)}
+                                                    className="w-full bg-muted/30 border-b border-primary/20 focus:border-primary px-0 py-1 text-sm focus:outline-none transition-colors"
+                                                    placeholder="Last Name"
                                                 />
                                             ) : (
-                                                <div className="flex items-center h-9 w-full px-3 border border-transparent">
-                                                    <span>{row.yearOfDeath}</span>
-                                                </div>
+                                                <p className="font-semibold text-sm truncate">{row.lastName}</p>
                                             )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-8 w-8 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-600 shrink-0">
+                                            <Briefcase className="h-4 w-4" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <Label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Occupation</Label>
+                                            {rowDetails.get(row.id)?.editable ? (
+                                                <input
+                                                    type="text"
+                                                    value={row.occupation}
+                                                    onChange={(e) => handleInputChange(row.id, "occupation", e.target.value)}
+                                                    className="w-full bg-muted/30 border-b border-primary/20 focus:border-primary px-0 py-1 text-sm focus:outline-none transition-colors"
+                                                    placeholder="Occupation"
+                                                />
+                                            ) : (
+                                                <p className="font-medium text-sm truncate">{row.occupation}</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-8 w-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-600 shrink-0">
+                                            <Mail className="h-4 w-4" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <Label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Email</Label>
+                                            {rowDetails.get(row.id)?.editable ? (
+                                                <input
+                                                    type="text"
+                                                    value={row.email}
+                                                    onChange={(e) => handleInputChange(row.id, "email", e.target.value)}
+                                                    className="w-full bg-muted/30 border-b border-primary/20 focus:border-primary px-0 py-1 text-sm focus:outline-none transition-colors"
+                                                    placeholder="Email"
+                                                />
+                                            ) : (
+                                                <p className="font-medium text-sm truncate">{row.email}</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-3 pt-2 border-t border-border/50 mt-1">
+                                        <div className="h-8 w-8 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-600 shrink-0">
+                                            <Calendar className="h-4 w-4" />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4 flex-1">
+                                            <div>
+                                                <Label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Born</Label>
+                                                {rowDetails.get(row.id)?.editable ? (
+                                                    <input
+                                                        type="text"
+                                                        value={row.yearOfBirth}
+                                                        onChange={(e) => handleInputChange(row.id, "yob", e.target.value)}
+                                                        className="w-full bg-muted/30 border-b border-primary/20 focus:border-primary px-0 py-1 text-sm focus:outline-none transition-colors"
+                                                        placeholder="Year"
+                                                    />
+                                                ) : (
+                                                    <p className="font-medium text-sm">{row.yearOfBirth}</p>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <Label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Died</Label>
+                                                {rowDetails.get(row.id)?.editable ? (
+                                                    <input
+                                                        type="text"
+                                                        value={row.yearOfDeath}
+                                                        onChange={(e) => handleInputChange(row.id, "yod", e.target.value)}
+                                                        className="w-full bg-muted/30 border-b border-primary/20 focus:border-primary px-0 py-1 text-sm focus:outline-none transition-colors"
+                                                        placeholder="Year"
+                                                    />
+                                                ) : (
+                                                    <p className="font-medium text-sm">{row.yearOfDeath}</p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </CardContent>

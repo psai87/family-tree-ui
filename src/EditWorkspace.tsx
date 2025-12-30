@@ -5,9 +5,9 @@ import type { PersonRowDetail } from "./model/PersonRowDetail.ts";
 import { RowState } from "./model/Constants.ts";
 import PeopleRelationService from "./service/PeopleRelationService.ts";
 import type { Workspace } from "./model/Workspace.ts";
-import { Edit, HardDrive, Plus, Save, Trash2, X } from "lucide-react";
+import { Edit, HardDrive, Plus, Save, Trash2, X, FolderKanban } from "lucide-react";
 import { toast } from "sonner";
-import { Card, CardHeader, CardAction } from "./components/ui/card.tsx";
+import { Card, CardHeader } from "./components/ui/card.tsx";
 import { Label } from "./components/ui/label.tsx";
 
 function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
@@ -160,28 +160,19 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                         ref={containerRef}
                         className="flex flex-col md:flex-row md:flex-wrap gap-6 overflow-y-auto px-6 py-4 content-start">
                         {rowWorkspaces.map((row) => (
-                            <Card key={row.id} className="w-full max-w-xs">
-                                <CardHeader>
-                                    <Label className="font-bold text-muted-foreground">workspace</Label>
-                                    {rowDetails.get(row.id)?.editable ? (
-                                        <input
-                                            type="text"
-                                            value={row.name}
-                                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                handleInputChange(row.id, "name", e.target.value)
-                                            }
-                                            className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none"
-                                        />
-                                    ) : (
-                                        <span className="text-foreground break-all">{row.name}</span>
-                                    )}
-                                    <CardAction>
-                                        <div className="inline-flex gap-2">
+                            <Card key={row.id} className="w-full max-w-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl rounded-2xl border-border/60 overflow-hidden group">
+                                <CardHeader className="p-0 relative">
+                                    <div className="w-full h-32 bg-gradient-to-br from-primary/10 to-primary/5 relative overflow-hidden flex items-center justify-center">
+                                        <div className="h-16 w-16 text-primary/20 group-hover:text-primary/30 transition-colors duration-500">
+                                            <FolderKanban className="w-full h-full" />
+                                        </div>
+
+                                        <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                             {rowDetails.get(row.id)?.editable ? (
                                                 <>
                                                     <button
                                                         onClick={() => handleSaveRow(row.id)}
-                                                        className="text-sm bg-green-500 text-white p-2 rounded hover:bg-green-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                        className="h-8 w-8 bg-green-500/90 hover:bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm transition-transform active:scale-95"
                                                         title="Save"
                                                         aria-label="Save workspace"
                                                     >
@@ -189,7 +180,7 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                                                     </button>
                                                     <button
                                                         onClick={() => handleCancel(row.id)}
-                                                        className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                        className="h-8 w-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm transition-transform active:scale-95"
                                                         title="Cancel"
                                                         aria-label="Cancel edit"
                                                     >
@@ -200,7 +191,7 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                                                 <>
                                                     <button
                                                         onClick={() => handleEdit(row.id)}
-                                                        className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                        className="h-8 w-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm transition-transform active:scale-95"
                                                         title="Edit"
                                                         aria-label="Edit workspace"
                                                     >
@@ -208,7 +199,7 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                                                     </button>
                                                     <button
                                                         onClick={() => handleRemove(row.id)}
-                                                        className="text-sm bg-red-500 text-white p-2 rounded hover:bg-red-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                        className="h-8 w-8 bg-red-500/90 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg backdrop-blur-sm transition-transform active:scale-95"
                                                         title="Remove"
                                                         aria-label="Remove workspace"
                                                     >
@@ -217,8 +208,31 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                                                 </>
                                             )}
                                         </div>
-                                    </CardAction>
+                                    </div>
                                 </CardHeader>
+                                <div className="p-5">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                                            <FolderKanban className="h-4 w-4" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <Label className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold">Workspace Name</Label>
+                                            {rowDetails.get(row.id)?.editable ? (
+                                                <input
+                                                    type="text"
+                                                    value={row.name}
+                                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                                        handleInputChange(row.id, "name", e.target.value)
+                                                    }
+                                                    className="w-full bg-muted/30 border-b border-primary/20 focus:border-primary px-0 py-1 text-sm focus:outline-none transition-colors"
+                                                    placeholder="Workspace Name"
+                                                />
+                                            ) : (
+                                                <p className="font-semibold text-lg truncate text-foreground">{row.name}</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
                             </Card>
                         ))}
                     </div>

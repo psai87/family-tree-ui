@@ -161,7 +161,7 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                                             className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none"
                                         />
                                     ) : (
-                                        <span className="text-foreground">{row.name}</span>
+                                        <span className="text-foreground break-all">{row.name}</span>
                                     )}
                                     <CardAction>
                                         <div className="inline-flex gap-2">
@@ -171,6 +171,7 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                                                         onClick={() => handleSaveRow(row.id)}
                                                         className="text-sm bg-green-500 text-white p-2 rounded hover:bg-green-600 transition flex items-center justify-center shadow-md active:scale-95"
                                                         title="Save"
+                                                        aria-label="Save workspace"
                                                     >
                                                         <Save className="h-4 w-4" />
                                                     </button>
@@ -178,6 +179,7 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                                                         onClick={() => handleCancel(row.id)}
                                                         className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center shadow-md active:scale-95"
                                                         title="Cancel"
+                                                        aria-label="Cancel edit"
                                                     >
                                                         <X className="h-4 w-4" />
                                                     </button>
@@ -188,6 +190,7 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                                                         onClick={() => handleEdit(row.id)}
                                                         className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center shadow-md active:scale-95"
                                                         title="Edit"
+                                                        aria-label="Edit workspace"
                                                     >
                                                         <Edit className="h-4 w-4" />
                                                     </button>
@@ -195,6 +198,7 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                                                         onClick={() => handleRemove(row.id)}
                                                         className="text-sm bg-red-500 text-white p-2 rounded hover:bg-red-600 transition flex items-center justify-center shadow-md active:scale-95"
                                                         title="Remove"
+                                                        aria-label="Remove workspace"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </button>
@@ -211,12 +215,14 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                         <button
                             onClick={handleAddRow}
                             className="bg-primary text-white px-6 py-3 rounded-xl text-sm font-bold hover:opacity-90 shadow-lg active:scale-95 transition-all flex items-center gap-2"
+                            aria-label="Add new record"
                         >
                             <Plus className="h-5 w-5" /> Add Record
                         </button>
                         <button
                             onClick={handleSaveAll}
                             className="bg-green-600 text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-green-700 shadow-lg active:scale-95 transition-all flex items-center gap-2"
+                            aria-label="Save all changes"
                         >
                             <HardDrive className="h-5 w-5" /> Save All
                         </button>

@@ -7,7 +7,6 @@ import {
     type Edge,
     type EdgeChange,
     MarkerType,
-    MiniMap,
     type Node,
     type NodeChange,
     ReactFlow,

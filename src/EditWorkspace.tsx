@@ -7,6 +7,9 @@ import PeopleRelationService from "./service/PeopleRelationService.ts";
 import type { Workspace } from "./model/Workspace.ts";
 import { Edit, HardDrive, Plus, Save, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "./components/ui/button.tsx";
+import { Card, CardHeader, CardTitle, CardDescription, CardAction } from "./components/ui/card.tsx";
+import { Label } from "./components/ui/label.tsx";
 
 function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
     const navigate = useNavigate();
@@ -144,78 +147,65 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                 <div
                     className="max-w-full mx-auto bg-card shadow-2xl rounded-2xl border border-border flex flex-col h-full">
 
-                    {/* Table */}
-                    <div className="flex-1 overflow-auto px-6 py-4 ">
-                        <table className="w-full text-base text-foreground border-separate border-spacing-y-3">
-                            <thead>
-                                <tr className="text-left text-lg rounded-xl shadow-lg bg-secondary/90 text-white backdrop-blur-sm">
-                                    <th className="px-4 py-2 font-semibold ">Name</th>
-                                    <th className="px-4 py-2 text-right font-semibold ">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {rowWorkspaces.map((row) => (
-                                    <tr
-                                        key={row.id}
-                                        className="bg-card hover:bg-accent/30 transition-all duration-200 rounded-xl shadow-sm border border-border"
-                                    >
-                                        <td className="px-4 py-2">
+                    <div className="flex flex-col md:flex-row md:flex-wrap gap-6 overflow-y-auto px-6 py-4 content-start">
+                        {rowWorkspaces.map((row) => (
+                            <Card key={row.id} className="w-full max-w-sm min-w-sm">
+                                <CardHeader>
+                                    <Label className="font-bold">workspace</Label>
+                                    {rowDetails.get(row.id)?.editable ? (
+                                        <input
+                                            type="text"
+                                            value={row.name}
+                                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                                handleInputChange(row.id, "name", e.target.value)
+                                            }
+                                            className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none"
+                                        />
+                                    ) : (
+                                        <span className="text-foreground">{row.name}</span>
+                                    )}
+                                    <CardAction>
+                                        <div className="inline-flex gap-2">
                                             {rowDetails.get(row.id)?.editable ? (
-                                                <input
-                                                    type="text"
-                                                    value={row.name}
-                                                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                        handleInputChange(row.id, "name", e.target.value)
-                                                    }
-                                                    className="w-full border border-border px-3 py-1 rounded-md focus:ring-2 focus:ring-primary/50 focus:outline-none"
-                                                />
+                                                <>
+                                                    <button
+                                                        onClick={() => handleSaveRow(row.id)}
+                                                        className="text-sm bg-green-500 text-white p-2 rounded hover:bg-green-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                        title="Save"
+                                                    >
+                                                        <Save className="h-4 w-4" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleCancel(row.id)}
+                                                        className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                        title="Cancel"
+                                                    >
+                                                        <X className="h-4 w-4" />
+                                                    </button>
+                                                </>
                                             ) : (
-                                                <span className="text-foreground">{row.name}</span>
+                                                <>
+                                                    <button
+                                                        onClick={() => handleEdit(row.id)}
+                                                        className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                        title="Edit"
+                                                    >
+                                                        <Edit className="h-4 w-4" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleRemove(row.id)}
+                                                        className="text-sm bg-red-500 text-white p-2 rounded hover:bg-red-600 transition flex items-center justify-center shadow-md active:scale-95"
+                                                        title="Remove"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </button>
+                                                </>
                                             )}
-                                        </td>
-                                        <td className="px-4 py-2 text-right">
-                                            <div className="inline-flex gap-2">
-                                                {rowDetails.get(row.id)?.editable ? (
-                                                    <>
-                                                        <button
-                                                            onClick={() => handleSaveRow(row.id)}
-                                                            className="text-sm bg-green-500 text-white p-2 rounded hover:bg-green-600 transition flex items-center justify-center shadow-md active:scale-95"
-                                                            title="Save"
-                                                        >
-                                                            <Save className="h-4 w-4" />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleCancel(row.id)}
-                                                            className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center shadow-md active:scale-95"
-                                                            title="Cancel"
-                                                        >
-                                                            <X className="h-4 w-4" />
-                                                        </button>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <button
-                                                            onClick={() => handleEdit(row.id)}
-                                                            className="text-sm bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition flex items-center justify-center shadow-md active:scale-95"
-                                                            title="Edit"
-                                                        >
-                                                            <Edit className="h-4 w-4" />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleRemove(row.id)}
-                                                            className="text-sm bg-red-500 text-white p-2 rounded hover:bg-red-600 transition flex items-center justify-center shadow-md active:scale-95"
-                                                            title="Remove"
-                                                        >
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </button>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                        </div>
+                                    </CardAction>
+                                </CardHeader>
+                            </Card>
+                        ))}
                     </div>
 
                     <div className="flex justify-end gap-4 mt-auto py-6 px-6 bg-muted/20 border-t border-border">
@@ -233,7 +223,7 @@ function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {
                         </button>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     );
 }

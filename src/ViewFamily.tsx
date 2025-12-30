@@ -28,15 +28,17 @@ import type { Person } from "./model/Person.ts";
 import type { EdgeData } from "./model/Edge.ts";
 import { RowState } from "./model/Constants.ts";
 import type { Workspace } from "./model/Workspace.ts";
-import { Download, Edit, HardDrive, Layout, X } from "lucide-react";
+import { Download, Edit, HardDrive, Layout, X, ChevronUp, ChevronDown, Menu } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
 import { toast } from "sonner";
 import ServiceFactory from "./service/ServiceFactory.ts";
 import { NODE_TYPES } from "./model/NodeTypes.ts";
 import { updateMapEntry } from "./utils/mapHelpers.ts";
+import { Popover, PopoverContent, PopoverTrigger } from "./components/ui/popover";
 
 
 function ViewFamily({ setAuthenticated }: AuthProps) {
+
     const navigate = useNavigate();
     const peopleRelationService = ServiceFactory.getPeopleRelationService();
     const [rowPersons, setRowPersons] = useState<Map<string, Person>>(new Map())
@@ -653,12 +655,12 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                 </ReactFlow>
 
                 {/* Toolbar */}
-                <div className="p-3 flex flex-wrap gap-3 bg-muted/40 border-t border-border shadow-sm justify-end items-center">
+                <div className="p-3 flex gap-3 bg-muted/40 border-t border-border shadow-sm justify-end items-center">
                     <select
                         id="workspace"
                         name="workspace"
                         value={workspace?.id}
-                        className="text-sm border border-border bg-card rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition mr-auto"
+                        className="text-sm border border-border bg-card rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition mr-auto w-full md:w-auto"
                         onChange={(event) => onWorkspaceSelect(event.target.value)}
                     >
                         <option value="">Pick a workspace</option>
@@ -667,71 +669,66 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                         ))}
                     </select>
 
-                    <div className="flex items-center gap-2 bg-card border border-border rounded-lg p-1 shadow-sm">
-                        {editButtonClicked ? (
-                            <>
-                                <button
-                                    onClick={formatClicked}
-                                    className={cn(
-                                        "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md",
-                                        "text-foreground hover:bg-muted transition-all"
-                                    )}
-                                    title="Auto Format"
-                                >
-                                    <Layout className="h-4 w-4" />
-                                    <span className="hidden sm:inline">Format</span>
-                                </button>
-                                <div className="w-[1px] h-4 bg-border mx-1" />
-                                <button
-                                    onClick={saveClicked}
-                                    disabled={isSaving}
-                                    className={cn(
-                                        "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md",
-                                        "bg-green-600 text-white hover:bg-green-700 transition-all shadow-sm active:scale-95",
-                                        isSaving && "opacity-50 cursor-not-allowed"
-                                    )}
-                                >
-                                    <HardDrive className="h-4 w-4" />
-                                    {isSaving ? "Saving..." : "Save"}
-                                </button>
-                                <button
-                                    onClick={cancelClicked}
-                                    disabled={isSaving}
-                                    className={cn(
-                                        "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md",
-                                        "hover:bg-destructive/10 hover:text-destructive text-muted-foreground transition-all"
-                                    )}
-                                >
-                                    <X className="h-4 w-4" />
-                                    Cancel
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <button
-                                    onClick={editClicked}
-                                    className={cn(
-                                        "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md",
-                                        "bg-primary text-white hover:opacity-90 transition-all shadow-sm active:scale-95"
-                                    )}
-                                >
-                                    <Edit className="h-4 w-4" />
-                                    Edit
-                                </button>
-                                <div className="w-[1px] h-4 bg-border mx-1" />
-                                <button
-                                    onClick={onDownload}
-                                    className={cn(
-                                        "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md",
-                                        "hover:bg-muted text-foreground transition-all"
-                                    )}
-                                >
-                                    <Download className="h-4 w-4" />
-                                    Download
-                                </button>
-                            </>
-                        )}
-                    </div>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg bg-primary text-white hover:opacity-90 transition-all shadow-md active:scale-95 shrink-0">
+                                Actions <ChevronUp className="h-4 w-4" />
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-56 p-2" align="end" side="top">
+                            <div className="flex flex-col gap-1">
+                                {editButtonClicked ? (
+                                    <>
+                                        <button
+                                            onClick={formatClicked}
+                                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md w-full text-foreground hover:bg-muted transition-all text-left"
+                                        >
+                                            <Layout className="h-4 w-4" />
+                                            Auto Format
+                                        </button>
+                                        <button
+                                            onClick={saveClicked}
+                                            disabled={isSaving}
+                                            className={cn(
+                                                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md w-full text-left transition-all",
+                                                "text-green-600 hover:bg-green-50",
+                                                isSaving && "opacity-50 cursor-not-allowed"
+                                            )}
+                                        >
+                                            <HardDrive className="h-4 w-4" />
+                                            {isSaving ? "Saving..." : "Save Changes"}
+                                        </button>
+                                        <button
+                                            onClick={cancelClicked}
+                                            disabled={isSaving}
+                                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md w-full text-destructive hover:bg-destructive/10 transition-all text-left"
+                                        >
+                                            <X className="h-4 w-4" />
+                                            Cancel Editing
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={editClicked}
+                                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md w-full text-primary hover:bg-primary/10 transition-all text-left"
+                                        >
+                                            <Edit className="h-4 w-4" />
+                                            Edit Family
+                                        </button>
+                                        <div className="my-1 h-[1px] bg-border" />
+                                        <button
+                                            onClick={onDownload}
+                                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md w-full text-foreground hover:bg-muted transition-all text-left"
+                                        >
+                                            <Download className="h-4 w-4" />
+                                            Download Image
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        </PopoverContent>
+                    </Popover>
                 </div>
             </div>
         </div>

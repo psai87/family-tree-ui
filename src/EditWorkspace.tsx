@@ -7,8 +7,7 @@ import PeopleRelationService from "./service/PeopleRelationService.ts";
 import type { Workspace } from "./model/Workspace.ts";
 import { Edit, HardDrive, Plus, Save, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "./components/ui/button.tsx";
-import { Card, CardHeader, CardTitle, CardDescription, CardAction } from "./components/ui/card.tsx";
+import { Card, CardHeader, CardAction } from "./components/ui/card.tsx";
 import { Label } from "./components/ui/label.tsx";
 
 function EditWorkspace({ setAuthenticated }: AuthProps): JSX.Element {

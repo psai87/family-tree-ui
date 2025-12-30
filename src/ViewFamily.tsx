@@ -651,12 +651,12 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                 </ReactFlow>
 
                 {/* Toolbar */}
-                <div className="p-3 flex flex-wrap gap-3 bg-muted/40 border-t border-border shadow-sm justify-end items-center">
+                <div className="p-3 flex gap-3 bg-muted/40 border-t border-border shadow-sm items-center overflow-x-auto whitespace-nowrap">
                     <select
                         id="workspace"
                         name="workspace"
                         value={workspace?.id}
-                        className="text-sm border border-border bg-card rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition mr-auto"
+                        className="text-sm border border-border bg-card rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition mr-auto shrink-0"
                         onChange={(event) => onWorkspaceSelect(event.target.value)}
                     >
                         <option value="">Pick a workspace</option>
@@ -665,7 +665,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
                         ))}
                     </select>
 
-                    <div className="flex items-center gap-2 bg-card border border-border rounded-lg p-1 shadow-sm">
+                    <div className="flex items-center gap-2 bg-card border border-border rounded-lg p-1 shadow-sm shrink-0 ml-auto">
                         {editButtonClicked ? (
                             <>
                                 <button

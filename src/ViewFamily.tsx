@@ -28,7 +28,7 @@ import type { Person } from "./model/Person.ts";
 import type { EdgeData } from "./model/Edge.ts";
 import { RowState } from "./model/Constants.ts";
 import type { Workspace } from "./model/Workspace.ts";
-import { Download, Edit, HardDrive, Layout, X, ChevronUp, ChevronDown, Menu } from "lucide-react";
+import { Download, Edit, HardDrive, Layout, X, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
 import { toast } from "sonner";
 import ServiceFactory from "./service/ServiceFactory.ts";

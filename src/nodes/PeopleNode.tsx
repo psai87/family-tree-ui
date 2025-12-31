@@ -5,6 +5,7 @@ import ImagePreview from "../ImagePreview.tsx";
 import { AutocompleteSelect } from "../AutocompleteSelect.tsx";
 import { Heart, Users } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardPortal, HoverCardTrigger } from "@radix-ui/react-hover-card";
+import { cn } from "@/lib/utils.ts";
 
 
 function PeopleNode({ id, data }: NodeProps<Node<NodeData>>) {
@@ -72,7 +73,7 @@ function PeopleNode({ id, data }: NodeProps<Node<NodeData>>) {
                         </div>
                     </NodeToolbar>
                 )}
-                <div className="px-2 py-2 shadow-md rounded-md bg-white border-2 border-stone-400 w-40 h-20">
+                <div className={cn("px-2 py-2 shadow-md rounded-md bg-white w-40 h-20", data.isBold ? "border-2 border-primary" : "border-2 border-stone-400")}>
                     <div className="flex">
                         <HoverCardTrigger>
                             <div

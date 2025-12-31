@@ -17,5 +17,6 @@ export type NodeData = {
     personId: string,
     persons: Map<string, Person>,
     images: Map<string, ArrayBuffer>,
-    editable: boolean
+    editable: boolean,
+    isBold?: boolean
 }

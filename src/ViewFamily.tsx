@@ -196,6 +196,105 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
             })
     }, [rowPersons, workspace]);
 
+    useEffect(() => {
+        if (!workspace || !nodes || nodes.length === 0 || rowPersons?.size == 0) return;
+
+        // 1. Identify matching nodes
+        console.log("Checking for matches. Workspace:", workspace?.name);
+        const matchingNodeIds = new Set<string>();
+        for (const node of nodes) {
+            if (node.type === NODE_TYPES.PEOPLE) {
+                const person = node.data.persons?.get(node.data.personId);
+                if (person?.lastName && workspace.name && workspace.name.toLowerCase().includes(person.lastName.toLowerCase())) {
+                    matchingNodeIds.add(node.id);
+                }
+            }
+        }
+
+        // 2. Check if Nodes need update
+        const nodesNeedUpdate: boolean = nodes.some(n => {
+            const shouldBeBold = matchingNodeIds.has(n.id);
+            const isBold = n.data.isBold ?? false;
+            return shouldBeBold !== isBold;
+        });
+        console.log("Nodes need update?", nodesNeedUpdate);
+        if (nodesNeedUpdate) {
+            setNodes(nds => nds.map(n => {
+                const shouldBeBold = matchingNodeIds.has(n.id);
+                if (shouldBeBold !== (n.data.isBold ?? false)) {
+                    return { ...n, data: { ...n.data, isBold: shouldBeBold } };
+                }
+                return n;
+            }));
+        }
+
+        if (matchingNodeIds.size === 0) {
+            // If no matches, ensure edges are reset if needed
+            const edgesNeedReset = edges.some(e => e.animated === true);
+            if (edgesNeedReset) {
+                setEdges(eds => eds.map(e => ({
+                    ...e,
+                    animated: false
+                })));
+            }
+            return;
+        }
+
+        // 3. Build child -> parents map for traversal
+        const childToParentEdges = new Map<string, Edge[]>();
+        for (const edge of edges) {
+            if (!childToParentEdges.has(edge.target)) {
+                childToParentEdges.set(edge.target, []);
+            }
+            childToParentEdges.get(edge.target)!.push(edge);
+        }
+
+        // 4. Traverse upwards
+        const edgesInPath = new Set<string>();
+        const queueMatches = Array.from(matchingNodeIds);
+        const visitedForPath = new Set<string>(matchingNodeIds);
+
+        while (queueMatches.length > 0) {
+            const currentId = queueMatches.shift()!;
+            const parentEdges = childToParentEdges.get(currentId);
+
+            if (parentEdges) {
+                for (const edge of parentEdges) {
+                    // Avoid cycles or redundant processing
+                    if (!edgesInPath.has(edge.id)) {
+                        edgesInPath.add(edge.id);
+                        if (!visitedForPath.has(edge.source)) {
+                            visitedForPath.add(edge.source);
+                            queueMatches.push(edge.source);
+                        }
+                    }
+                }
+            }
+        }
+
+        // 5. Check if Edges need update
+        const edgesNeedUpdate = edges.some(e => {
+            const shouldBeBold = edgesInPath.has(e.id);
+            const isBold = e.animated === true; // Simplified check
+            return shouldBeBold !== isBold;
+        });
+        if (edgesNeedUpdate) {
+            setEdges(eds => eds.map(e => {
+                if (edgesInPath.has(e.id)) {
+                    return {
+                        ...e,
+                        animated: true
+                    };
+                }
+                return {
+                    ...e,
+                    animated: false
+                };
+            }));
+        }
+
+    }, [workspace, rowPersons, nodes, edges]);
+
     const editClicked: () => void = () => {
         setEditableButtonClicked(true)
         setNodes((prevNodes) =>

@@ -316,7 +316,7 @@ function EditFamily({ setAuthenticated }: AuthProps): JSX.Element {
                                                     <input
                                                         type="text"
                                                         value={row.yearOfBirth}
-                                                        onChange={(e) => handleInputChange(row.id, "yob", e.target.value)}
+                                                        onChange={(e) => handleInputChange(row.id, "yearOfBirth", e.target.value)}
                                                         className="w-full bg-muted/30 border-b border-primary/20 focus:border-primary px-0 py-1 text-sm focus:outline-none transition-colors"
                                                         placeholder="Year"
                                                     />
@@ -330,7 +330,7 @@ function EditFamily({ setAuthenticated }: AuthProps): JSX.Element {
                                                     <input
                                                         type="text"
                                                         value={row.yearOfDeath}
-                                                        onChange={(e) => handleInputChange(row.id, "yod", e.target.value)}
+                                                        onChange={(e) => handleInputChange(row.id, "yearOfDeath", e.target.value)}
                                                         className="w-full bg-muted/30 border-b border-primary/20 focus:border-primary px-0 py-1 text-sm focus:outline-none transition-colors"
                                                         placeholder="Year"
                                                     />

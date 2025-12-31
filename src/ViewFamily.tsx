@@ -205,7 +205,7 @@ function ViewFamily({ setAuthenticated }: AuthProps) {
         for (const node of nodes) {
             if (node.type === NODE_TYPES.PEOPLE) {
                 const person = node.data.persons?.get(node.data.personId);
-                if (person?.lastName && workspace.name && workspace.name.toLowerCase().includes(person.lastName.toLowerCase())) {
+                if (person?.lastName && workspace.name && person.lastName.toLowerCase().includes(workspace.name.toLowerCase())) {
                     matchingNodeIds.add(node.id);
                 }
             }
